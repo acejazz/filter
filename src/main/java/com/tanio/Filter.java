@@ -1,10 +1,9 @@
 package com.tanio;
 
-import java.util.Collections;
 import java.util.List;
 
-public class Filter {
-    public List perform(List<Object> target, Condition condition) {
-        return Collections.emptyList();
+class Filter {
+    <T> List<T> perform(List<T> target, Condition condition) {
+        return target;
     }
 }
