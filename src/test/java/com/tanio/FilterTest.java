@@ -16,41 +16,42 @@ public class FilterTest {
 
     @Test
     void filterEmptyList() {
-        List<?> result = sut.perform(emptyList(), new Condition());
+        Condition anyCondition = new Condition();
+        List<Entity> result = sut.perform(emptyList(), anyCondition);
         assertThat(result).isEqualTo(emptyList());
     }
 
     @Test
-    void filterSingletonList() {
-        Entity tenFieldEntity = new Entity();
-        tenFieldEntity.integerField = 10;
+    void filterSingletonList_passingFilter() {
+        Entity tenFieldEntity = entity(10);
 
-        Condition integerFieldEqualToTen = new Condition();
-        integerFieldEqualToTen.fieldName = "integer_field";
-        integerFieldEqualToTen.operator = "equal";
-        integerFieldEqualToTen.value = 10;
-
-        List<Entity> result = sut.perform(singletonList(tenFieldEntity), integerFieldEqualToTen);
+        List<Entity> result =
+                sut.perform(
+                        singletonList(tenFieldEntity),
+                        condition("integer_field", "equal", 10));
         assertThat(result).isEqualTo(singletonList(tenFieldEntity));
+    }
+
+    @Test
+    void filterSingletonList_rejectingFilter() {
+        Entity tenFieldEntity = entity(10);
+
+        List<Entity> result =
+                sut.perform(
+                        singletonList(tenFieldEntity),
+                        condition("integer_field", "equal", 13));
+        assertThat(result).isEqualTo(emptyList());
     }
 
     @ParameterizedTest
     @ValueSource(ints = {7, 13, 0, -5})
     void filterWithEqualIntegerField_firstElement(int value) {
-        Entity equalValueEntity = new Entity();
-        equalValueEntity.integerField = value;
-
-        Entity notEqualValueEntity = new Entity();
-        notEqualValueEntity.integerField = value + 1;
-
-        Condition integerFieldEqualToValue = new Condition();
-        integerFieldEqualToValue.fieldName = "integer_field";
-        integerFieldEqualToValue.operator = "equal";
-        integerFieldEqualToValue.value = value;
+        Entity equalValueEntity = entity(value);
+        Entity notEqualValueEntity = entity(value + 1);
 
         List<Entity> result = sut.perform(
                 Arrays.asList(equalValueEntity, notEqualValueEntity),
-                integerFieldEqualToValue);
+                condition("integer_field", "equal", value));
 
         assertThat(result).isEqualTo(singletonList(equalValueEntity));
     }
@@ -58,21 +59,27 @@ public class FilterTest {
     @ParameterizedTest
     @ValueSource(ints = {7, 13, 0, -5})
     void filterWithEqualIntegerField_secondElement(int value) {
-        Entity equalValueEntity = new Entity();
-        equalValueEntity.integerField = value;
-
-        Entity notEqualValueEntity = new Entity();
-        notEqualValueEntity.integerField = value + 1;
-
-        Condition integerFieldEqualToValue = new Condition();
-        integerFieldEqualToValue.fieldName = "integer_field";
-        integerFieldEqualToValue.operator = "equal";
-        integerFieldEqualToValue.value = value;
+        Entity equalValueEntity = entity(value);
+        Entity notEqualValueEntity = entity(value + 1);
 
         List<Entity> result = sut.perform(
                 Arrays.asList(notEqualValueEntity, equalValueEntity),
-                integerFieldEqualToValue);
+                condition("integer_field", "equal", value));
 
         assertThat(result).isEqualTo(singletonList(equalValueEntity));
+    }
+
+    Entity entity(int value) {
+        Entity result = new Entity();
+        result.integerField = value;
+        return result;
+    }
+
+    Condition condition(String fieldName, String operator, int value) {
+        Condition result = new Condition();
+        result.fieldName = fieldName;
+        result.operator = operator;
+        result.value = value;
+        return result;
     }
 }
