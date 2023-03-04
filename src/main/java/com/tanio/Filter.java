@@ -12,18 +12,22 @@ class Filter {
     }
 
     private static boolean matchesCondition(Condition condition, Entity entity) {
-        Long fieldValue = getFieldValue(condition.fieldName, entity);
-        return fieldValue.equals(condition.value);
+        Object fieldValue = getFieldValue(condition.fieldName, entity);
+
+        Long fieldNumberValue = ((Number) fieldValue).longValue();
+        Long conditionNumberValue = ((Number) condition.value).longValue();
+
+        return fieldNumberValue.equals(conditionNumberValue);
     }
 
-    private static Long getFieldValue(String fieldName, Entity entity) {
+    private static Object getFieldValue(String fieldName, Entity entity) {
         return extractField(fieldName, entity);
     }
 
-    private static Long extractField(String fieldName, Entity entity) {
+    private static Object extractField(String fieldName, Entity entity) {
         try {
             Field field = entity.getClass().getField(fieldName);
-            return ((Number) field.get(entity)).longValue();
+            return field.get(entity);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
