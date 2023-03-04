@@ -11,14 +11,17 @@ class Filter {
     }
 
     private static boolean matchesCondition(Condition condition, Entity entity) {
-        if (condition.fieldName.equals("integer_field")) {
-            return entity.integerField == condition.value;
+        long fieldValue = getFieldValue(condition.fieldName, entity);
+        return fieldValue == condition.value;
+    }
+
+    private static long getFieldValue(String fieldName, Entity entity) {
+        if (fieldName.equals("integer_field")) {
+            return entity.integerField;
         }
-        if (condition.fieldName.equals("short_field")) {
-            return entity.shortField == condition.value;
+        if (fieldName.equals("short_field")) {
+            return entity.shortField;
         }
-        else {
-            return entity.longField == condition.value;
-        }
+        return entity.longField;
     }
 }
