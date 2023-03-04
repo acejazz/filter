@@ -70,6 +70,19 @@ public class FilterTest {
     }
 
     @ParameterizedTest
+    @ValueSource(shorts = {7, 13, 0, -5})
+    void filterWithEqualShortField(short value) {
+        Entity matchingEntity = entityWithShort(value);
+        Entity notMatchingEntity = entityWithShort((short) (value + 1));
+
+        List<Entity> result = sut.perform(
+                Arrays.asList(matchingEntity, notMatchingEntity),
+                condition("short_field", "equal", value));
+
+        assertThat(result).isEqualTo(singletonList(matchingEntity));
+    }
+
+    @ParameterizedTest
     @ValueSource(ints = {7, 13, 0, -5})
     void filterWithEqualIntegerField_secondElement(int value) {
         Entity matchingEntity = entityWithInteger(value);
@@ -91,6 +104,12 @@ public class FilterTest {
     Entity entityWithLong(long value) {
         Entity result = new Entity();
         result.longField = value;
+        return result;
+    }
+
+    Entity entityWithShort(short value) {
+        Entity result = new Entity();
+        result.shortField = value;
         return result;
     }
 

@@ -14,6 +14,9 @@ class Filter {
         if (condition.fieldName.equals("integer_field")) {
             return entity.integerField == condition.value;
         }
+        if (condition.fieldName.equals("short_field")) {
+            return entity.shortField == condition.value;
+        }
         else {
             return entity.longField == condition.value;
         }
