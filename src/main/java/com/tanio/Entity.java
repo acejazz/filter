@@ -1,7 +1,11 @@
 package com.tanio;
 
 public class Entity {
-    public int integerField;
-    public long longField;
-    public short shortField;
+    public Integer integerField;
+    public Long longField;
+    public Short shortField;
+
+    public int integerPrimitiveField;
+    public long longPrimitiveField;
+    public short shortPrimitiveField;
 }

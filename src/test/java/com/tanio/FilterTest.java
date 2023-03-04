@@ -57,6 +57,32 @@ public class FilterTest {
     }
 
     @ParameterizedTest
+    @ValueSource(ints = {7, 13, 0, -5})
+    void filterWithEqualIntegerField_secondElement(int value) {
+        Entity matchingEntity = entityWithInteger(value);
+        Entity notMatchingEntity = entityWithInteger(value + 1);
+
+        List<Entity> result = sut.perform(
+                Arrays.asList(notMatchingEntity, matchingEntity),
+                condition("integerField", "equal", value));
+
+        assertThat(result).isEqualTo(singletonList(matchingEntity));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {7, 13, 0, -5})
+    void filterWithEqualIntegerPrimitiveField(int value) {
+        Entity matchingEntity = entityWithPrimitiveInteger(value);
+        Entity notMatchingEntity = entityWithPrimitiveInteger(value + 1);
+
+        List<Entity> result = sut.perform(
+                Arrays.asList(matchingEntity, notMatchingEntity),
+                condition("integerPrimitiveField", "equal", value));
+
+        assertThat(result).isEqualTo(singletonList(matchingEntity));
+    }
+
+    @ParameterizedTest
     @ValueSource(longs = {7, 13, 0, -5})
     void filterWithEqualLongField(long value) {
         Entity matchingEntity = entityWithLong(value);
@@ -65,6 +91,19 @@ public class FilterTest {
         List<Entity> result = sut.perform(
                 Arrays.asList(matchingEntity, notMatchingEntity),
                 condition("longField", "equal", value));
+
+        assertThat(result).isEqualTo(singletonList(matchingEntity));
+    }
+
+    @ParameterizedTest
+    @ValueSource(longs = {7, 13, 0, -5})
+    void filterWithEqualLongPrimitiveField(long value) {
+        Entity matchingEntity = entityWithPrimitiveLong(value);
+        Entity notMatchingEntity = entityWithPrimitiveLong(value + 1);
+
+        List<Entity> result = sut.perform(
+                Arrays.asList(matchingEntity, notMatchingEntity),
+                condition("longPrimitiveField", "equal", value));
 
         assertThat(result).isEqualTo(singletonList(matchingEntity));
     }
@@ -83,33 +122,51 @@ public class FilterTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {7, 13, 0, -5})
-    void filterWithEqualIntegerField_secondElement(int value) {
-        Entity matchingEntity = entityWithInteger(value);
-        Entity notMatchingEntity = entityWithInteger(value + 1);
+    @ValueSource(shorts = {7, 13, 0, -5})
+    void filterWithEqualShortPrimitiveField(short value) {
+        Entity matchingEntity = entityWithPrimitiveShort(value);
+        Entity notMatchingEntity = entityWithPrimitiveShort((short) (value + 1));
 
         List<Entity> result = sut.perform(
-                Arrays.asList(notMatchingEntity, matchingEntity),
-                condition("integerField", "equal", value));
+                Arrays.asList(matchingEntity, notMatchingEntity),
+                condition("shortPrimitiveField", "equal", value));
 
         assertThat(result).isEqualTo(singletonList(matchingEntity));
     }
 
-    Entity entityWithInteger(int value) {
+    Entity entityWithInteger(Integer value) {
         Entity result = new Entity();
         result.integerField = value;
         return result;
     }
 
-    Entity entityWithLong(long value) {
+    Entity entityWithPrimitiveInteger(int value) {
+        Entity result = new Entity();
+        result.integerPrimitiveField = value;
+        return result;
+    }
+
+    Entity entityWithLong(Long value) {
         Entity result = new Entity();
         result.longField = value;
         return result;
     }
 
-    Entity entityWithShort(short value) {
+    Entity entityWithPrimitiveLong(long value) {
+        Entity result = new Entity();
+        result.longPrimitiveField = value;
+        return result;
+    }
+
+    Entity entityWithShort(Short value) {
         Entity result = new Entity();
         result.shortField = value;
+        return result;
+    }
+
+    Entity entityWithPrimitiveShort(short value) {
+        Entity result = new Entity();
+        result.shortPrimitiveField = value;
         return result;
     }
 

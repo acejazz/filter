@@ -1,7 +1,7 @@
 package com.tanio;
 
 class Condition {
-    long value;
+    Long value;
     String operator;
     String fieldName;
 }
