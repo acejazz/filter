@@ -1,5 +1,6 @@
 package com.tanio;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,12 +17,15 @@ class Filter {
     }
 
     private static long getFieldValue(String fieldName, Entity entity) {
-        if (fieldName.equals("integerField")) {
-            return entity.integerField;
+        return extractField(fieldName, entity);
+    }
+
+    private static long extractField(String fieldName, Entity entity) {
+        try {
+            Field field = entity.getClass().getField(fieldName);
+            return ((Number) field.get(entity)).longValue();
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
-        if (fieldName.equals("shortField")) {
-            return entity.shortField;
-        }
-        return entity.longField;
     }
 }
