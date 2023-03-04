@@ -23,7 +23,7 @@ public class FilterTest {
 
     @Test
     void filterSingletonList_passingFilter() {
-        Entity tenFieldEntity = entity(10);
+        Entity tenFieldEntity = entityWithInteger(10);
 
         List<Entity> result =
                 sut.perform(
@@ -34,7 +34,7 @@ public class FilterTest {
 
     @Test
     void filterSingletonList_rejectingFilter() {
-        Entity tenFieldEntity = entity(10);
+        Entity tenFieldEntity = entityWithInteger(10);
 
         List<Entity> result =
                 sut.perform(
@@ -46,36 +46,55 @@ public class FilterTest {
     @ParameterizedTest
     @ValueSource(ints = {7, 13, 0, -5})
     void filterWithEqualIntegerField_firstElement(int value) {
-        Entity equalValueEntity = entity(value);
-        Entity notEqualValueEntity = entity(value + 1);
+        Entity matchingEntity = entityWithInteger(value);
+        Entity notMatchingEntity = entityWithInteger(value + 1);
 
         List<Entity> result = sut.perform(
-                Arrays.asList(equalValueEntity, notEqualValueEntity),
+                Arrays.asList(matchingEntity, notMatchingEntity),
                 condition("integer_field", "equal", value));
 
-        assertThat(result).isEqualTo(singletonList(equalValueEntity));
+        assertThat(result).isEqualTo(singletonList(matchingEntity));
+    }
+
+    @ParameterizedTest
+    @ValueSource(longs = {7, 13, 0, -5})
+    void filterWithEqualLongField(long value) {
+        Entity matchingEntity = entityWithLong(value);
+        Entity notMatchingEntity = entityWithLong(value + 1);
+
+        List<Entity> result = sut.perform(
+                Arrays.asList(matchingEntity, notMatchingEntity),
+                condition("long_field", "equal", value));
+
+        assertThat(result).isEqualTo(singletonList(matchingEntity));
     }
 
     @ParameterizedTest
     @ValueSource(ints = {7, 13, 0, -5})
     void filterWithEqualIntegerField_secondElement(int value) {
-        Entity equalValueEntity = entity(value);
-        Entity notEqualValueEntity = entity(value + 1);
+        Entity matchingEntity = entityWithInteger(value);
+        Entity notMatchingEntity = entityWithInteger(value + 1);
 
         List<Entity> result = sut.perform(
-                Arrays.asList(notEqualValueEntity, equalValueEntity),
+                Arrays.asList(notMatchingEntity, matchingEntity),
                 condition("integer_field", "equal", value));
 
-        assertThat(result).isEqualTo(singletonList(equalValueEntity));
+        assertThat(result).isEqualTo(singletonList(matchingEntity));
     }
 
-    Entity entity(int value) {
+    Entity entityWithInteger(int value) {
         Entity result = new Entity();
         result.integerField = value;
         return result;
     }
 
-    Condition condition(String fieldName, String operator, int value) {
+    Entity entityWithLong(long value) {
+        Entity result = new Entity();
+        result.longField = value;
+        return result;
+    }
+
+    Condition condition(String fieldName, String operator, long value) {
         Condition result = new Condition();
         result.fieldName = fieldName;
         result.operator = operator;
