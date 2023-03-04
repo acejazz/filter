@@ -16,10 +16,10 @@ class Filter {
     }
 
     private static long getFieldValue(String fieldName, Entity entity) {
-        if (fieldName.equals("integer_field")) {
+        if (fieldName.equals("integerField")) {
             return entity.integerField;
         }
-        if (fieldName.equals("short_field")) {
+        if (fieldName.equals("shortField")) {
             return entity.shortField;
         }
         return entity.longField;

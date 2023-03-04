@@ -28,7 +28,7 @@ public class FilterTest {
         List<Entity> result =
                 sut.perform(
                         singletonList(tenFieldEntity),
-                        condition("integer_field", "equal", 10));
+                        condition("integerField", "equal", 10));
         assertThat(result).isEqualTo(singletonList(tenFieldEntity));
     }
 
@@ -39,7 +39,7 @@ public class FilterTest {
         List<Entity> result =
                 sut.perform(
                         singletonList(tenFieldEntity),
-                        condition("integer_field", "equal", 13));
+                        condition("integerField", "equal", 13));
         assertThat(result).isEqualTo(emptyList());
     }
 
@@ -51,7 +51,7 @@ public class FilterTest {
 
         List<Entity> result = sut.perform(
                 Arrays.asList(matchingEntity, notMatchingEntity),
-                condition("integer_field", "equal", value));
+                condition("integerField", "equal", value));
 
         assertThat(result).isEqualTo(singletonList(matchingEntity));
     }
@@ -64,7 +64,7 @@ public class FilterTest {
 
         List<Entity> result = sut.perform(
                 Arrays.asList(matchingEntity, notMatchingEntity),
-                condition("long_field", "equal", value));
+                condition("longField", "equal", value));
 
         assertThat(result).isEqualTo(singletonList(matchingEntity));
     }
@@ -77,7 +77,7 @@ public class FilterTest {
 
         List<Entity> result = sut.perform(
                 Arrays.asList(matchingEntity, notMatchingEntity),
-                condition("short_field", "equal", value));
+                condition("shortField", "equal", value));
 
         assertThat(result).isEqualTo(singletonList(matchingEntity));
     }
@@ -90,7 +90,7 @@ public class FilterTest {
 
         List<Entity> result = sut.perform(
                 Arrays.asList(notMatchingEntity, matchingEntity),
-                condition("integer_field", "equal", value));
+                condition("integerField", "equal", value));
 
         assertThat(result).isEqualTo(singletonList(matchingEntity));
     }
