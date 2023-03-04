@@ -25,10 +25,6 @@ class Filter {
     }
 
     private static Object getFieldValue(String fieldName, Entity entity) {
-        return extractField(fieldName, entity);
-    }
-
-    private static Object extractField(String fieldName, Entity entity) {
         try {
             Field field = entity.getClass().getField(fieldName);
             return field.get(entity);
