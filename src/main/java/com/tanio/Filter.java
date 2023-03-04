@@ -12,15 +12,15 @@ class Filter {
     }
 
     private static boolean matchesCondition(Condition condition, Entity entity) {
-        long fieldValue = getFieldValue(condition.fieldName, entity);
-        return fieldValue == condition.value;
+        Long fieldValue = getFieldValue(condition.fieldName, entity);
+        return fieldValue.equals(condition.value);
     }
 
-    private static long getFieldValue(String fieldName, Entity entity) {
+    private static Long getFieldValue(String fieldName, Entity entity) {
         return extractField(fieldName, entity);
     }
 
-    private static long extractField(String fieldName, Entity entity) {
+    private static Long extractField(String fieldName, Entity entity) {
         try {
             Field field = entity.getClass().getField(fieldName);
             return ((Number) field.get(entity)).longValue();
