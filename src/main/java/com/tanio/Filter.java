@@ -2,8 +2,6 @@ package com.tanio;
 
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.Locale;
-import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 
 class Filter {
@@ -24,27 +22,38 @@ class Filter {
     }
 
     private static Object getFieldValue(String fieldName, Object entity) {
-        if (!fieldName.contains(".")) {
-            try {
-                String methodName = getterMethodName(fieldName);
-                Method method = entity.getClass().getMethod(methodName);
-                return method.invoke(entity);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+        final String separator = ".";
+        int dotIndex = fieldName.indexOf(separator);
+
+        if (dotIndex == -1) {
+            String methodName = getterMethodName(fieldName);
+            return invokeMethod(methodName, entity);
         }
 
-        int dotIndex = fieldName.indexOf(".");
-        String topLevelFieldName = fieldName.substring(0, dotIndex);
-        String remainingLevelFieldNames = fieldName.substring(dotIndex + 1);
+        String topLevelFieldName = extractTopLevelFieldName(fieldName, dotIndex);
         String methodName = getterMethodName(topLevelFieldName);
+        Object topLevelFieldValue = invokeMethod(methodName, entity);
+        String remainingLevelFieldNames = extractRemainingLevelFieldNames(fieldName, dotIndex);
+        return getFieldValue(remainingLevelFieldNames, topLevelFieldValue);
+    }
+
+    private static String extractRemainingLevelFieldNames(String fieldName, int dotIndex) {
+        return fieldName.substring(dotIndex + 1);
+    }
+
+    private static String extractTopLevelFieldName(String fieldName, int dotIndex) {
+        return fieldName.substring(0, dotIndex);
+    }
+
+    private static Object invokeMethod(String methodName, Object entity) {
+        Object methodInvocationResult;
         try {
             Method method = entity.getClass().getMethod(methodName);
-            Object nestedInstance = method.invoke(entity);
-            return getFieldValue(remainingLevelFieldNames, nestedInstance);
+            methodInvocationResult = method.invoke(entity);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        return methodInvocationResult;
     }
 
     private static String getterMethodName(String fieldName) {
