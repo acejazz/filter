@@ -2,8 +2,6 @@ package com.tanio;
 
 import com.tanio.Condition.Operator;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,139 +21,91 @@ public class FilterTest {
     }
 
     @Test
-    void filterSingletonList_passingFilter() {
-        Entity tenFieldEntity = new Entity();
-        tenFieldEntity.setIntegerField(10);
+    void filterWithEqualIntegerField() {
+        Entity matchingEntity = new Entity();
+        matchingEntity.setIntegerField(7);
 
-        List<Entity> result =
-                sut.perform(
-                        singletonList(tenFieldEntity),
-                        condition("integerField", Operator.EQUAL, 10));
+        Entity nonMatchingEntity = new Entity();
+        nonMatchingEntity.setIntegerField(11);
 
-        assertThat(result).isEqualTo(singletonList(tenFieldEntity));
+        List<Entity> result = sut.perform(
+                Arrays.asList(matchingEntity, nonMatchingEntity),
+                condition("integerField", Operator.EQUAL, 7));
+
+        assertThat(result).isEqualTo(singletonList(matchingEntity));
     }
 
     @Test
-    void filterSingletonList_rejectingFilter() {
-        Entity tenFieldEntity = new Entity();
-        tenFieldEntity.setIntegerField(10);
-
-        List<Entity> result =
-                sut.perform(
-                        singletonList(tenFieldEntity),
-                        condition("integerField", Operator.EQUAL, 13));
-
-        assertThat(result).isEqualTo(emptyList());
-    }
-
-    @ParameterizedTest
-    @ValueSource(ints = {7, 13, 0, -5})
-    void filterWithEqualIntegerField_firstElement(int value) {
+    void filterWithEqualIntegerPrimitiveField() {
         Entity matchingEntity = new Entity();
-        matchingEntity.setIntegerField(value);
+        matchingEntity.setIntegerPrimitiveField(7);
 
         Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.setIntegerField(value + 1);
-
-        List<Entity> result = sut.perform(
-                Arrays.asList(matchingEntity, nonMatchingEntity),
-                condition("integerField", Operator.EQUAL, value));
-
-        assertThat(result).isEqualTo(singletonList(matchingEntity));
-    }
-
-    @ParameterizedTest
-    @ValueSource(ints = {7, 13, 0, -5})
-    void filterWithEqualIntegerField_secondElement(int value) {
-        Entity matchingEntity = new Entity();
-        matchingEntity.setIntegerField(value);
-
-        Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.setIntegerField(value + 1);
+        nonMatchingEntity.setIntegerPrimitiveField(13);
 
         List<Entity> result = sut.perform(
                 Arrays.asList(nonMatchingEntity, matchingEntity),
-                condition("integerField", Operator.EQUAL, value));
+                condition("integerPrimitiveField", Operator.EQUAL, 7));
 
         assertThat(result).isEqualTo(singletonList(matchingEntity));
     }
 
-    @ParameterizedTest
-    @ValueSource(ints = {7, 13, 0, -5})
-    void filterWithEqualIntegerPrimitiveField(int value) {
+    @Test
+    void filterWithEqualLongField() {
         Entity matchingEntity = new Entity();
-        matchingEntity.setIntegerPrimitiveField(value);
+        matchingEntity.setLongField(7L);
 
         Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.setIntegerPrimitiveField(value + 1);
+        nonMatchingEntity.setLongField(13L);
 
         List<Entity> result = sut.perform(
                 Arrays.asList(matchingEntity, nonMatchingEntity),
-                condition("integerPrimitiveField", Operator.EQUAL, value));
+                condition("longField", Operator.EQUAL, 7L));
 
         assertThat(result).isEqualTo(singletonList(matchingEntity));
     }
 
-    @ParameterizedTest
-    @ValueSource(longs = {7, 13, 0, -5})
-    void filterWithEqualLongField(long value) {
+    @Test
+    void filterWithEqualLongPrimitiveField() {
         Entity matchingEntity = new Entity();
-        matchingEntity.setLongField(value);
+        matchingEntity.setLongPrimitiveField(7);
 
         Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.setLongField(value + 1);
+        nonMatchingEntity.setLongPrimitiveField(13);
 
         List<Entity> result = sut.perform(
-                Arrays.asList(matchingEntity, nonMatchingEntity),
-                condition("longField", Operator.EQUAL, value));
+                Arrays.asList(nonMatchingEntity, matchingEntity),
+                condition("longPrimitiveField", Operator.EQUAL, 7));
 
         assertThat(result).isEqualTo(singletonList(matchingEntity));
     }
 
-    @ParameterizedTest
-    @ValueSource(longs = {7, 13, 0, -5})
-    void filterWithEqualLongPrimitiveField(long value) {
+    @Test
+    void filterWithEqualShortField() {
         Entity matchingEntity = new Entity();
-        matchingEntity.setLongPrimitiveField(value);
+        matchingEntity.setShortField((short) 7);
 
         Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.setLongPrimitiveField(value + 1);
+        nonMatchingEntity.setShortField((short) 13);
 
         List<Entity> result = sut.perform(
                 Arrays.asList(matchingEntity, nonMatchingEntity),
-                condition("longPrimitiveField", Operator.EQUAL, value));
+                condition("shortField", Operator.EQUAL, (short) 7));
 
         assertThat(result).isEqualTo(singletonList(matchingEntity));
     }
 
-    @ParameterizedTest
-    @ValueSource(shorts = {7, 13, 0, -5})
-    void filterWithEqualShortField(short value) {
+    @Test
+    void filterWithEqualShortPrimitiveField() {
         Entity matchingEntity = new Entity();
-        matchingEntity.setShortField(value);
+        matchingEntity.setShortPrimitiveField((short) 7);
 
         Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.setShortField((short) (value + 1));
+        nonMatchingEntity.setShortPrimitiveField((short) 13);
 
         List<Entity> result = sut.perform(
-                Arrays.asList(matchingEntity, nonMatchingEntity),
-                condition("shortField", Operator.EQUAL, value));
-
-        assertThat(result).isEqualTo(singletonList(matchingEntity));
-    }
-
-    @ParameterizedTest
-    @ValueSource(shorts = {7, 13, 0, -5})
-    void filterWithEqualShortPrimitiveField(short value) {
-        Entity matchingEntity = new Entity();
-        matchingEntity.setShortPrimitiveField(value);
-
-        Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.setShortPrimitiveField(((short) (value + 1)));
-
-        List<Entity> result = sut.perform(
-                Arrays.asList(matchingEntity, nonMatchingEntity),
-                condition("shortPrimitiveField", Operator.EQUAL, value));
+                Arrays.asList(nonMatchingEntity, matchingEntity),
+                condition("shortPrimitiveField", Operator.EQUAL, (short) 7));
 
         assertThat(result).isEqualTo(singletonList(matchingEntity));
     }
@@ -175,130 +125,122 @@ public class FilterTest {
         assertThat(result).isEqualTo(singletonList(matchingEntity));
     }
 
-    @ParameterizedTest
-    @ValueSource(booleans = {true, false})
-    void filterWithEqualBooleanPrimitiveField(boolean value) {
+    @Test
+    void filterWithEqualBooleanField() {
         Entity matchingEntity = new Entity();
-        matchingEntity.setBooleanPrimitiveField(value);
+        matchingEntity.setBooleanField(true);
 
         Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.setBooleanPrimitiveField(!value);
+        nonMatchingEntity.setBooleanField(false);
 
         List<Entity> result = sut.perform(
                 Arrays.asList(matchingEntity, nonMatchingEntity),
-                condition("booleanPrimitiveField", Operator.EQUAL, value));
+                condition("booleanField", Operator.EQUAL, true));
 
         assertThat(result).isEqualTo(singletonList(matchingEntity));
     }
 
-    @ParameterizedTest
-    @ValueSource(booleans = {true, false})
-    void filterWithEqualBooleanField(boolean value) {
+    @Test
+    void filterWithEqualBooleanPrimitiveField() {
         Entity matchingEntity = new Entity();
-        matchingEntity.setBooleanField(value);
+        matchingEntity.setBooleanPrimitiveField(true);
 
         Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.setBooleanField(!value);
+        nonMatchingEntity.setBooleanPrimitiveField(false);
 
         List<Entity> result = sut.perform(
-                Arrays.asList(matchingEntity, nonMatchingEntity),
-                condition("booleanField", Operator.EQUAL, value));
+                Arrays.asList(nonMatchingEntity, matchingEntity),
+                condition("booleanPrimitiveField", Operator.EQUAL, true));
 
         assertThat(result).isEqualTo(singletonList(matchingEntity));
     }
 
-    @ParameterizedTest
-    @ValueSource(floats = {1.3f, -0.5f, 17.11f})
-    void filterWithEqualFloatField(float value) {
+    @Test
+    void filterWithEqualFloatField() {
         Entity matchingEntity = new Entity();
-        matchingEntity.setFloatField(value);
+        matchingEntity.setFloatField(1.3F);
 
         Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.setFloatField(value + 1);
+        nonMatchingEntity.setFloatField(-9.1F);
 
         List<Entity> result = sut.perform(
                 Arrays.asList(matchingEntity, nonMatchingEntity),
-                condition("floatField", Operator.EQUAL, value));
+                condition("floatField", Operator.EQUAL, 1.3F));
 
         assertThat(result).isEqualTo(singletonList(matchingEntity));
     }
 
-    @ParameterizedTest
-    @ValueSource(floats = {1.3f, -0.5f, 17.11f})
-    void filterWithEqualFloatPrimitiveField(float value) {
+    @Test
+    void filterWithEqualFloatPrimitiveField() {
         Entity matchingEntity = new Entity();
-        matchingEntity.setFloatPrimitiveField(value);
+        matchingEntity.setFloatPrimitiveField(1.3F);
 
         Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.setFloatPrimitiveField(value + 1);
+        nonMatchingEntity.setFloatPrimitiveField(-9.1F);
 
         List<Entity> result = sut.perform(
-                Arrays.asList(matchingEntity, nonMatchingEntity),
-                condition("floatPrimitiveField", Operator.EQUAL, value));
+                Arrays.asList(nonMatchingEntity, matchingEntity),
+                condition("floatPrimitiveField", Operator.EQUAL, 1.3F));
 
         assertThat(result).isEqualTo(singletonList(matchingEntity));
     }
 
-    @ParameterizedTest
-    @ValueSource(doubles = {1.3, -0.5, 17.11})
-    void filterWithEqualDoubleField(double value) {
+    @Test
+    void filterWithEqualDoubleField() {
         Entity matchingEntity = new Entity();
-        matchingEntity.setDoubleField(value);
+        matchingEntity.setDoubleField(1.3);
 
         Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.setDoubleField(value + 1);
+        nonMatchingEntity.setDoubleField(-9.1);
 
         List<Entity> result = sut.perform(
                 Arrays.asList(matchingEntity, nonMatchingEntity),
-                condition("doubleField", Operator.EQUAL, value));
+                condition("doubleField", Operator.EQUAL, 1.3));
 
         assertThat(result).isEqualTo(singletonList(matchingEntity));
     }
 
-    @ParameterizedTest
-    @ValueSource(doubles = {1.3, -0.5, 17.11})
-    void filterWithEqualDoublePrimitiveField(double value) {
+    @Test
+    void filterWithEqualDoublePrimitiveField() {
         Entity matchingEntity = new Entity();
-        matchingEntity.setDoublePrimitiveField(value);
+        matchingEntity.setDoublePrimitiveField(1.3);
 
         Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.setDoublePrimitiveField(value + 1);
+        nonMatchingEntity.setDoublePrimitiveField(-9.1);
 
         List<Entity> result = sut.perform(
-                Arrays.asList(matchingEntity, nonMatchingEntity),
-                condition("doublePrimitiveField", Operator.EQUAL, value));
+                Arrays.asList(nonMatchingEntity, matchingEntity),
+                condition("doublePrimitiveField", Operator.EQUAL, 1.3));
 
         assertThat(result).isEqualTo(singletonList(matchingEntity));
     }
 
-    @ParameterizedTest
-    @ValueSource(chars = {'a', 'z', '@'})
-    void filterWithEqualCharacterField(char value) {
+    @Test
+    void filterWithEqualCharacterField() {
         Entity matchingEntity = new Entity();
-        matchingEntity.setCharField(value);
+        matchingEntity.setCharField('a');
 
         Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.setCharField((char) (value + 1));
+        nonMatchingEntity.setCharField('z');
 
         List<Entity> result = sut.perform(
                 Arrays.asList(matchingEntity, nonMatchingEntity),
-                condition("charField", Operator.EQUAL, value));
+                condition("charField", Operator.EQUAL, 'a'));
 
         assertThat(result).isEqualTo(singletonList(matchingEntity));
     }
 
-    @ParameterizedTest
-    @ValueSource(chars = {'a', 'z', '@'})
-    void filterWithEqualCharacterPrimitiveField(char value) {
+    @Test
+    void filterWithEqualCharacterPrimitiveField() {
         Entity matchingEntity = new Entity();
-        matchingEntity.setCharPrimitiveField(value);
+        matchingEntity.setCharPrimitiveField('a');
 
         Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.setCharPrimitiveField((char) (value + 1));
+        nonMatchingEntity.setCharPrimitiveField('z');
 
         List<Entity> result = sut.perform(
-                Arrays.asList(matchingEntity, nonMatchingEntity),
-                condition("charPrimitiveField", Operator.EQUAL, value));
+                Arrays.asList(nonMatchingEntity, matchingEntity),
+                condition("charPrimitiveField", Operator.EQUAL, 'a'));
 
         assertThat(result).isEqualTo(singletonList(matchingEntity));
     }

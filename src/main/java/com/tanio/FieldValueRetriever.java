@@ -5,22 +5,22 @@ import java.lang.reflect.Method;
 class FieldValueRetriever {
     Object retrieveFieldValue(String fieldName, Object object) {
         final String separator = ".";
-        int dotIndex = fieldName.indexOf(separator);
+        int separatorIndex = fieldName.indexOf(separator);
 
-        if (dotIndex == -1) {
+        if (separatorIndex == -1) {
             String methodName = getterMethodName(fieldName);
             return invokeMethod(methodName, object);
         }
 
-        String topLevelFieldName = extractTopLevelFieldName(fieldName, dotIndex);
+        String topLevelFieldName = extractTopLevelFieldName(fieldName, separatorIndex);
         String methodName = getterMethodName(topLevelFieldName);
         Object topLevelFieldValue = invokeMethod(methodName, object);
-        String remainingLevelFieldNames = extractRemainingLevelFieldNames(fieldName, dotIndex);
+        String remainingLevelFieldNames = extractRemainingLevelFieldNames(fieldName, separatorIndex);
         return retrieveFieldValue(remainingLevelFieldNames, topLevelFieldValue);
     }
 
-    private static String extractRemainingLevelFieldNames(String fieldName, int dotIndex) {
-        return fieldName.substring(dotIndex + 1);
+    private static String getterMethodName(String fieldName) {
+        return "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
     }
 
     private static String extractTopLevelFieldName(String fieldName, int dotIndex) {
@@ -38,7 +38,7 @@ class FieldValueRetriever {
         return methodInvocationResult;
     }
 
-    private static String getterMethodName(String fieldName) {
-        return "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+    private static String extractRemainingLevelFieldNames(String fieldName, int dotIndex) {
+        return fieldName.substring(dotIndex + 1);
     }
 }

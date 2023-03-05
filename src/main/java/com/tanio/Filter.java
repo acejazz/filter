@@ -15,6 +15,7 @@ class Filter {
 
     private boolean matchesCondition(Condition condition, Entity entity) {
         Object fieldValue = fieldValueRetriever.retrieveFieldValue(condition.fieldName, entity);
+
         return fieldConditionEvaluator.evaluateCondition(
                 condition.operator,
                 condition.value,
