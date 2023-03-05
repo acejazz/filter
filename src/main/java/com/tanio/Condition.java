@@ -1,9 +1,9 @@
 package com.tanio;
 
 class Condition {
-    Object value;
-    Operator operator;
     String fieldName;
+    Operator operator;
+    Object value;
 
     enum Operator {
         EQUAL, NOT_EQUAL

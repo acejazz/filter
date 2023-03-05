@@ -5,48 +5,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 class Filter {
+    FieldConditionEvaluator fieldConditionEvaluator = new FieldConditionEvaluator();
+
     List<Entity> perform(List<Entity> target, Condition condition) {
         return target.stream()
                 .filter(it -> matchesCondition(condition, it))
                 .collect(Collectors.toList());
     }
 
-    private static boolean matchesCondition(Condition condition, Entity entity) {
+    private boolean matchesCondition(Condition condition, Entity entity) {
         Object fieldValue = getFieldValue(condition.fieldName, entity);
-        Object conditionValue = condition.value;
-
-        Class<?> conditionValueClass = conditionValue.getClass();
-        if (conditionValueClass.equals(String.class)) {
-            if (condition.operator.equals(Condition.Operator.EQUAL)) {
-                return conditionValue.equals(fieldValue);
-            }
-            return !conditionValue.equals(fieldValue);
-        }
-
-        if (conditionValueClass.equals(Boolean.class)) {
-            if (condition.operator.equals(Condition.Operator.EQUAL)) {
-                return conditionValue.equals(fieldValue);
-            }
-            return !conditionValue.equals(fieldValue);
-        }
-
-        if (conditionValueClass.equals(Character.class)) {
-            if (condition.operator.equals(Condition.Operator.EQUAL)) {
-                return conditionValue.equals(fieldValue);
-            }
-            return !conditionValue.equals(fieldValue);
-        }
-
-        if (Number.class.isAssignableFrom(conditionValueClass)) {
-            Double conditionNumberValue = ((Number) conditionValue).doubleValue();
-            Double fieldNumberValue = ((Number) fieldValue).doubleValue();
-            if (condition.operator.equals(Condition.Operator.EQUAL)) {
-                return conditionNumberValue.equals(fieldNumberValue);
-            }
-            return !conditionNumberValue.equals(fieldNumberValue);
-        }
-
-        throw new FilterException("Filter not applicable to objects");
+        return fieldConditionEvaluator.evaluateCondition(
+                condition.operator,
+                condition.value,
+                fieldValue);
     }
 
     private static Object getFieldValue(String fieldName, Entity entity) {
@@ -56,12 +28,6 @@ class Filter {
             return method.invoke(entity);
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    static class FilterException extends RuntimeException {
-        public FilterException(String message) {
-            super(message);
         }
     }
 }

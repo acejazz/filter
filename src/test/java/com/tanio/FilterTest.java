@@ -11,7 +11,6 @@ import java.util.List;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class FilterTest {
     Filter sut = new Filter();
@@ -302,84 +301,6 @@ public class FilterTest {
                 condition("charPrimitiveField", Operator.EQUAL, value));
 
         assertThat(result).isEqualTo(singletonList(matchingEntity));
-    }
-
-    @ParameterizedTest
-    @ValueSource(ints = {7, 13, 0, -5})
-    void filterWithNotEqualIntegerField(int value) {
-        Entity matchingEntity = new Entity();
-        matchingEntity.setIntegerField(value + 1);
-
-        Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.setIntegerField(value);
-
-        List<Entity> result = sut.perform(
-                Arrays.asList(matchingEntity, nonMatchingEntity),
-                condition("integerField", Operator.NOT_EQUAL, value));
-
-        assertThat(result).isEqualTo(singletonList(matchingEntity));
-    }
-
-    @Test
-    void filterWithNotEqualStringField() {
-        Entity matchingEntity = new Entity();
-        matchingEntity.setStringField("Bye");
-
-        Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.setStringField("Hello");
-
-        List<Entity> result = sut.perform(
-                Arrays.asList(matchingEntity, nonMatchingEntity),
-                condition("stringField", Operator.NOT_EQUAL, "Hello"));
-
-        assertThat(result).isEqualTo(singletonList(matchingEntity));
-    }
-
-    @ParameterizedTest
-    @ValueSource(booleans = {true, false})
-    void filterWithNotEqualBooleanField(boolean value) {
-        Entity matchingEntity = new Entity();
-        matchingEntity.setBooleanField(!value);
-
-        Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.setBooleanField(value);
-
-        List<Entity> result = sut.perform(
-                Arrays.asList(matchingEntity, nonMatchingEntity),
-                condition("booleanField", Operator.NOT_EQUAL, value));
-
-        assertThat(result).isEqualTo(singletonList(matchingEntity));
-    }
-
-    @ParameterizedTest
-    @ValueSource(chars = {'a', 'z', '@'})
-    void filterWithNotEqualCharacterField(char value) {
-        Entity matchingEntity = new Entity();
-        matchingEntity.setCharField((char) (value + 1));
-
-        Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.setCharField(value);
-
-        List<Entity> result = sut.perform(
-                Arrays.asList(matchingEntity, nonMatchingEntity),
-                condition("charField", Operator.NOT_EQUAL, value));
-
-        assertThat(result).isEqualTo(singletonList(matchingEntity));
-    }
-
-    @Test
-    void handleObjectFields() {
-        Entity objectFieldEntity = new Entity();
-        objectFieldEntity.setObjectField(new Object());
-
-        Operator anyOperator = Operator.EQUAL;
-        Object anyValue = new Object();
-        assertThatThrownBy(() ->
-                sut.perform(
-                        singletonList(objectFieldEntity),
-                        condition("objectField", anyOperator, anyValue)))
-                .isInstanceOf(Filter.FilterException.class)
-                .hasMessage("Filter not applicable to objects");
     }
 
     Condition condition(String fieldName, Operator operator, Object value) {
