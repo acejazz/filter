@@ -18,6 +18,8 @@ public class Entity {
     private double doublePrimitiveField;
     private char charPrimitiveField;
 
+    private Object objectField;
+
     public Integer getIntegerField() {
         return integerField;
     }
@@ -136,5 +138,13 @@ public class Entity {
 
     public void setCharPrimitiveField(char charPrimitiveField) {
         this.charPrimitiveField = charPrimitiveField;
+    }
+
+    public Object getObjectField() {
+        return objectField;
+    }
+
+    public void setObjectField(Object objectField) {
+        this.objectField = objectField;
     }
 }

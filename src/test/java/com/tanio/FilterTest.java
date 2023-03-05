@@ -11,6 +11,7 @@ import java.util.List;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class FilterTest {
     Filter sut = new Filter();
@@ -364,6 +365,21 @@ public class FilterTest {
                 condition("charField", Operator.NOT_EQUAL, value));
 
         assertThat(result).isEqualTo(singletonList(matchingEntity));
+    }
+
+    @Test
+    void handleObjectFields() {
+        Entity objectFieldEntity = new Entity();
+        objectFieldEntity.setObjectField(new Object());
+
+        Operator anyOperator = Operator.EQUAL;
+        Object anyValue = new Object();
+        assertThatThrownBy(() ->
+                sut.perform(
+                        singletonList(objectFieldEntity),
+                        condition("objectField", anyOperator, anyValue)))
+                .isInstanceOf(Filter.FilterException.class)
+                .hasMessage("Filter not applicable to objects");
     }
 
     Condition condition(String fieldName, Operator operator, Object value) {
