@@ -4,7 +4,6 @@ public class Entity {
     private Integer integerField;
     private Long longField;
     private Short shortField;
-    private String stringField;
     private Boolean booleanField;
     private Float floatField;
     private Double doubleField;
@@ -18,6 +17,7 @@ public class Entity {
     private double doublePrimitiveField;
     private char charPrimitiveField;
 
+    private String stringField;
     private Object objectField;
 
     private NestedEntity nestedEntity;

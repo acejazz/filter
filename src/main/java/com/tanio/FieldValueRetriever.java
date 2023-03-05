@@ -3,18 +3,18 @@ package com.tanio;
 import java.lang.reflect.Method;
 
 class FieldValueRetriever {
-    Object retrieveFieldValue(String fieldName, Object entity) {
+    Object retrieveFieldValue(String fieldName, Object object) {
         final String separator = ".";
         int dotIndex = fieldName.indexOf(separator);
 
         if (dotIndex == -1) {
             String methodName = getterMethodName(fieldName);
-            return invokeMethod(methodName, entity);
+            return invokeMethod(methodName, object);
         }
 
         String topLevelFieldName = extractTopLevelFieldName(fieldName, dotIndex);
         String methodName = getterMethodName(topLevelFieldName);
-        Object topLevelFieldValue = invokeMethod(methodName, entity);
+        Object topLevelFieldValue = invokeMethod(methodName, object);
         String remainingLevelFieldNames = extractRemainingLevelFieldNames(fieldName, dotIndex);
         return retrieveFieldValue(remainingLevelFieldNames, topLevelFieldValue);
     }
