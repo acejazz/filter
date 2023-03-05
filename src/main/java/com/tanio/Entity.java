@@ -20,6 +20,8 @@ public class Entity {
 
     private Object objectField;
 
+    private NestedEntity nestedEntity;
+
     public Integer getIntegerField() {
         return integerField;
     }
@@ -146,5 +148,25 @@ public class Entity {
 
     public void setObjectField(Object objectField) {
         this.objectField = objectField;
+    }
+
+    public NestedEntity getNestedEntity() {
+        return nestedEntity;
+    }
+
+    public void setNestedEntity(NestedEntity nestedEntity) {
+        this.nestedEntity = nestedEntity;
+    }
+}
+
+class NestedEntity {
+    private String stringField;
+
+    public String getStringField() {
+        return stringField;
+    }
+
+    public void setStringField(String stringField) {
+        this.stringField = stringField;
     }
 }
