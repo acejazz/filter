@@ -324,6 +324,33 @@ public class FilterTest {
         assertThat(result).isEqualTo(singletonList(matchingEntity));
     }
 
+    @Test
+    void filterFromNestedObject_twoLevels() {
+        NestedNestedEntity nestedNestedEntity = new NestedNestedEntity();
+        nestedNestedEntity.setStringField("anything");
+
+        NestedEntity matchingNestedEntity = new NestedEntity();
+        matchingNestedEntity.setNestedNestedEntity(nestedNestedEntity);
+
+        Entity matchingEntity = new Entity();
+        matchingEntity.setNestedEntity(matchingNestedEntity);
+
+        NestedNestedEntity nonMatchingNestedNestedEntity = new NestedNestedEntity();
+        nonMatchingNestedNestedEntity.setStringField("notAnything");
+
+        NestedEntity nonMatchingNestedEntity = new NestedEntity();
+        nonMatchingNestedEntity.setNestedNestedEntity(nonMatchingNestedNestedEntity);
+
+        Entity nonMatchingEntity = new Entity();
+        nonMatchingEntity.setNestedEntity(nonMatchingNestedEntity);
+
+        List<Entity> result = sut.perform(
+                Arrays.asList(matchingEntity, nonMatchingEntity),
+                condition("nestedEntity.nestedNestedEntity.stringField", Operator.EQUAL, "anything"));
+
+        assertThat(result).isEqualTo(singletonList(matchingEntity));
+    }
+
     Condition condition(String fieldName, Operator operator, Object value) {
         Condition result = new Condition();
         result.fieldName = fieldName;

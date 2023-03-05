@@ -161,6 +161,27 @@ public class Entity {
 
 class NestedEntity {
     private String stringField;
+    private NestedNestedEntity nestedNestedEntity;
+
+    public String getStringField() {
+        return stringField;
+    }
+
+    public void setStringField(String stringField) {
+        this.stringField = stringField;
+    }
+
+    public NestedNestedEntity getNestedNestedEntity() {
+        return nestedNestedEntity;
+    }
+
+    public void setNestedNestedEntity(NestedNestedEntity nestedNestedEntity) {
+        this.nestedNestedEntity = nestedNestedEntity;
+    }
+}
+
+class NestedNestedEntity {
+    private String stringField;
 
     public String getStringField() {
         return stringField;
