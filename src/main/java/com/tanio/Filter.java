@@ -16,20 +16,32 @@ class Filter {
         Object conditionValue = condition.value;
 
         if (conditionValue.getClass().equals(String.class)) {
-            return conditionValue.equals(fieldValue);
+            if (condition.operator.equals(Condition.Operator.EQUAL)) {
+                return conditionValue.equals(fieldValue);
+            }
+            return !conditionValue.equals(fieldValue);
         }
 
         if (conditionValue.getClass().equals(Boolean.class)) {
-            return conditionValue.equals(fieldValue);
+            if (condition.operator.equals(Condition.Operator.EQUAL)) {
+                return conditionValue.equals(fieldValue);
+            }
+            return !conditionValue.equals(fieldValue);
         }
 
         if (conditionValue.getClass().equals(Character.class)) {
-            return conditionValue.equals(fieldValue);
+            if (condition.operator.equals(Condition.Operator.EQUAL)) {
+                return conditionValue.equals(fieldValue);
+            }
+            return !conditionValue.equals(fieldValue);
         }
 
         Double conditionNumberValue = ((Number) conditionValue).doubleValue();
         Double fieldNumberValue = ((Number) fieldValue).doubleValue();
-        return conditionNumberValue.equals(fieldNumberValue);
+        if (condition.operator.equals(Condition.Operator.EQUAL)) {
+            return conditionNumberValue.equals(fieldNumberValue);
+        }
+        return !conditionNumberValue.equals(fieldNumberValue);
     }
 
     private static Object getFieldValue(String fieldName, Entity entity) {

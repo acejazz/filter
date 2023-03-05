@@ -2,6 +2,10 @@ package com.tanio;
 
 class Condition {
     Object value;
-    String operator;
+    Operator operator;
     String fieldName;
+
+    enum Operator {
+        EQUAL, NOT_EQUAL
+    }
 }
