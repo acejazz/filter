@@ -120,6 +120,6 @@ class FieldConditionEvaluatorTest {
     void handleObject() {
         assertThatThrownBy(() -> sut.evaluateCondition(Operator.EQUAL, new Object(), "anything"))
                 .isInstanceOf(FilterException.class)
-                .hasMessage("Filter not applicable to objects");
+                .hasMessage("Filter applicable only to primitives, primitive wrappers and strings");
     }
 }

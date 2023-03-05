@@ -8,18 +8,18 @@ class FieldValueRetriever {
         int separatorIndex = fieldName.indexOf(separator);
 
         if (separatorIndex == -1) {
-            String methodName = getterMethodName(fieldName);
+            String methodName = transformToGetterMethodName(fieldName);
             return invokeMethod(methodName, object);
         }
 
         String topLevelFieldName = extractTopLevelFieldName(fieldName, separatorIndex);
-        String methodName = getterMethodName(topLevelFieldName);
+        String methodName = transformToGetterMethodName(topLevelFieldName);
         Object topLevelFieldValue = invokeMethod(methodName, object);
         String remainingLevelFieldNames = extractRemainingLevelFieldNames(fieldName, separatorIndex);
         return retrieveFieldValue(remainingLevelFieldNames, topLevelFieldValue);
     }
 
-    private static String getterMethodName(String fieldName) {
+    private static String transformToGetterMethodName(String fieldName) {
         return "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
     }
 
@@ -27,11 +27,11 @@ class FieldValueRetriever {
         return fieldName.substring(0, dotIndex);
     }
 
-    private static Object invokeMethod(String methodName, Object entity) {
+    private static Object invokeMethod(String methodName, Object object) {
         Object methodInvocationResult;
         try {
-            Method method = entity.getClass().getMethod(methodName);
-            methodInvocationResult = method.invoke(entity);
+            Method method = object.getClass().getMethod(methodName);
+            methodInvocationResult = method.invoke(object);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

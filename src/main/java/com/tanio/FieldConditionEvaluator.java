@@ -36,6 +36,6 @@ class FieldConditionEvaluator {
             return !conditionNumberValue.equals(fieldNumberValue);
         }
 
-        throw new FilterException("Filter not applicable to objects");
+        throw new FilterException("Filter applicable only to primitives, primitive wrappers and strings");
     }
 }
