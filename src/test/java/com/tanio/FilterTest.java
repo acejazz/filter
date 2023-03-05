@@ -149,6 +149,36 @@ public class FilterTest {
         assertThat(result).isEqualTo(singletonList(matchingEntity));
     }
 
+    @Test
+    void filterWithEqualBooleanPrimitiveField() {
+        Entity matchingEntity = new Entity();
+        matchingEntity.booleanPrimitiveField = true;
+
+        Entity nonMatchingEntity = new Entity();
+        nonMatchingEntity.booleanPrimitiveField = false;
+
+        List<Entity> result = sut.perform(
+                Arrays.asList(matchingEntity, nonMatchingEntity),
+                condition("booleanPrimitiveField", "equal", true));
+
+        assertThat(result).isEqualTo(singletonList(matchingEntity));
+    }
+
+    @Test
+    void filterWithEqualBooleanField() {
+        Entity matchingEntity = new Entity();
+        matchingEntity.booleanField = true;
+
+        Entity nonMatchingEntity = new Entity();
+        nonMatchingEntity.booleanField = false;
+
+        List<Entity> result = sut.perform(
+                Arrays.asList(matchingEntity, nonMatchingEntity),
+                condition("booleanField", "equal", true));
+
+        assertThat(result).isEqualTo(singletonList(matchingEntity));
+    }
+
     Entity entityWithInteger(Integer value) {
         Entity result = new Entity();
         result.integerField = value;

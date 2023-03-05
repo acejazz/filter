@@ -5,8 +5,10 @@ public class Entity {
     public Long longField;
     public Short shortField;
     public String stringField;
+    public boolean booleanField;
 
     public int integerPrimitiveField;
     public long longPrimitiveField;
     public short shortPrimitiveField;
+    public boolean booleanPrimitiveField;
 }

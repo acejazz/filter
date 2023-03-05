@@ -19,6 +19,10 @@ class Filter {
             return conditionValue.equals(fieldValue);
         }
 
+        if (conditionValue.getClass().equals(Boolean.class)) {
+            return conditionValue.equals(fieldValue);
+        }
+
         Long conditionNumberValue = ((Number) conditionValue).longValue();
         Long fieldNumberValue = ((Number) fieldValue).longValue();
         return conditionNumberValue.equals(fieldNumberValue);
