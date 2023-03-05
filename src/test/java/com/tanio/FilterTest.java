@@ -179,6 +179,96 @@ public class FilterTest {
         assertThat(result).isEqualTo(singletonList(matchingEntity));
     }
 
+    @Test
+    void filterWithEqualFloatField() {
+        Entity matchingEntity = new Entity();
+        matchingEntity.floatField = 1.3f;
+
+        Entity nonMatchingEntity = new Entity();
+        nonMatchingEntity.floatField = -12f;
+
+        List<Entity> result = sut.perform(
+                Arrays.asList(matchingEntity, nonMatchingEntity),
+                condition("floatField", "equal", 1.3f));
+
+        assertThat(result).isEqualTo(singletonList(matchingEntity));
+    }
+
+    @Test
+    void filterWithEqualFloatPrimitiveField() {
+        Entity matchingEntity = new Entity();
+        matchingEntity.floatPrimitiveField = 1.3f;
+
+        Entity nonMatchingEntity = new Entity();
+        nonMatchingEntity.floatPrimitiveField = -12f;
+
+        List<Entity> result = sut.perform(
+                Arrays.asList(matchingEntity, nonMatchingEntity),
+                condition("floatPrimitiveField", "equal", 1.3f));
+
+        assertThat(result).isEqualTo(singletonList(matchingEntity));
+    }
+
+    @Test
+    void filterWithEqualDoubleField() {
+        Entity matchingEntity = new Entity();
+        matchingEntity.doubleField = 1.3;
+
+        Entity nonMatchingEntity = new Entity();
+        nonMatchingEntity.doubleField = -12d;
+
+        List<Entity> result = sut.perform(
+                Arrays.asList(matchingEntity, nonMatchingEntity),
+                condition("doubleField", "equal", 1.3));
+
+        assertThat(result).isEqualTo(singletonList(matchingEntity));
+    }
+
+    @Test
+    void filterWithEqualDoublePrimitiveField() {
+        Entity matchingEntity = new Entity();
+        matchingEntity.doublePrimitiveField = 1.3;
+
+        Entity nonMatchingEntity = new Entity();
+        nonMatchingEntity.doublePrimitiveField = -12d;
+
+        List<Entity> result = sut.perform(
+                Arrays.asList(matchingEntity, nonMatchingEntity),
+                condition("doublePrimitiveField", "equal", 1.3));
+
+        assertThat(result).isEqualTo(singletonList(matchingEntity));
+    }
+
+    @Test
+    void filterWithEqualCharacterField() {
+        Entity matchingEntity = new Entity();
+        matchingEntity.charField = 'a';
+
+        Entity nonMatchingEntity = new Entity();
+        nonMatchingEntity.charField = 'Z';
+
+        List<Entity> result = sut.perform(
+                Arrays.asList(matchingEntity, nonMatchingEntity),
+                condition("charField", "equal", 'a'));
+
+        assertThat(result).isEqualTo(singletonList(matchingEntity));
+    }
+
+    @Test
+    void filterWithEqualCharacterPrimitiveField() {
+        Entity matchingEntity = new Entity();
+        matchingEntity.charPrimitiveField = 'a';
+
+        Entity nonMatchingEntity = new Entity();
+        nonMatchingEntity.charPrimitiveField = 'Z';
+
+        List<Entity> result = sut.perform(
+                Arrays.asList(matchingEntity, nonMatchingEntity),
+                condition("charPrimitiveField", "equal", 'a'));
+
+        assertThat(result).isEqualTo(singletonList(matchingEntity));
+    }
+
     Entity entityWithInteger(Integer value) {
         Entity result = new Entity();
         result.integerField = value;

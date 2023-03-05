@@ -23,8 +23,12 @@ class Filter {
             return conditionValue.equals(fieldValue);
         }
 
-        Long conditionNumberValue = ((Number) conditionValue).longValue();
-        Long fieldNumberValue = ((Number) fieldValue).longValue();
+        if (conditionValue.getClass().equals(Character.class)) {
+            return conditionValue.equals(fieldValue);
+        }
+
+        Double conditionNumberValue = ((Number) conditionValue).doubleValue();
+        Double fieldNumberValue = ((Number) fieldValue).doubleValue();
         return conditionNumberValue.equals(fieldNumberValue);
     }
 
