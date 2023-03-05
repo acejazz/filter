@@ -24,7 +24,7 @@ public class FilterTest {
     @Test
     void filterSingletonList_passingFilter() {
         Entity tenFieldEntity = new Entity();
-        tenFieldEntity.integerField = 10;
+        tenFieldEntity.setIntegerField(10);
 
         List<Entity> result =
                 sut.perform(
@@ -37,7 +37,7 @@ public class FilterTest {
     @Test
     void filterSingletonList_rejectingFilter() {
         Entity tenFieldEntity = new Entity();
-        tenFieldEntity.integerField = 10;
+        tenFieldEntity.setIntegerField(10);
 
         List<Entity> result =
                 sut.perform(
@@ -51,10 +51,10 @@ public class FilterTest {
     @ValueSource(ints = {7, 13, 0, -5})
     void filterWithEqualIntegerField_firstElement(int value) {
         Entity matchingEntity = new Entity();
-        matchingEntity.integerField = value;
+        matchingEntity.setIntegerField(value);
 
         Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.integerField = value + 1;
+        nonMatchingEntity.setIntegerField(value + 1);
 
         List<Entity> result = sut.perform(
                 Arrays.asList(matchingEntity, nonMatchingEntity),
@@ -67,10 +67,10 @@ public class FilterTest {
     @ValueSource(ints = {7, 13, 0, -5})
     void filterWithEqualIntegerField_secondElement(int value) {
         Entity matchingEntity = new Entity();
-        matchingEntity.integerField = value;
+        matchingEntity.setIntegerField(value);
 
         Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.integerField = value + 1;
+        nonMatchingEntity.setIntegerField(value + 1);
 
         List<Entity> result = sut.perform(
                 Arrays.asList(nonMatchingEntity, matchingEntity),
@@ -83,10 +83,10 @@ public class FilterTest {
     @ValueSource(ints = {7, 13, 0, -5})
     void filterWithEqualIntegerPrimitiveField(int value) {
         Entity matchingEntity = new Entity();
-        matchingEntity.integerPrimitiveField = value;
+        matchingEntity.setIntegerPrimitiveField(value);
 
         Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.integerPrimitiveField = value + 1;
+        nonMatchingEntity.setIntegerPrimitiveField(value + 1);
 
         List<Entity> result = sut.perform(
                 Arrays.asList(matchingEntity, nonMatchingEntity),
@@ -99,10 +99,10 @@ public class FilterTest {
     @ValueSource(longs = {7, 13, 0, -5})
     void filterWithEqualLongField(long value) {
         Entity matchingEntity = new Entity();
-        matchingEntity.longField = value;
+        matchingEntity.setLongField(value);
 
         Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.longField = value + 1;
+        nonMatchingEntity.setLongField(value + 1);
 
         List<Entity> result = sut.perform(
                 Arrays.asList(matchingEntity, nonMatchingEntity),
@@ -115,10 +115,10 @@ public class FilterTest {
     @ValueSource(longs = {7, 13, 0, -5})
     void filterWithEqualLongPrimitiveField(long value) {
         Entity matchingEntity = new Entity();
-        matchingEntity.longPrimitiveField = value;
+        matchingEntity.setLongPrimitiveField(value);
 
         Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.longPrimitiveField = value + 1;
+        nonMatchingEntity.setLongPrimitiveField(value + 1);
 
         List<Entity> result = sut.perform(
                 Arrays.asList(matchingEntity, nonMatchingEntity),
@@ -131,10 +131,10 @@ public class FilterTest {
     @ValueSource(shorts = {7, 13, 0, -5})
     void filterWithEqualShortField(short value) {
         Entity matchingEntity = new Entity();
-        matchingEntity.shortField = value;
+        matchingEntity.setShortField(value);
 
         Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.shortField = ((short) (value + 1));
+        nonMatchingEntity.setShortField((short) (value + 1));
 
         List<Entity> result = sut.perform(
                 Arrays.asList(matchingEntity, nonMatchingEntity),
@@ -147,10 +147,10 @@ public class FilterTest {
     @ValueSource(shorts = {7, 13, 0, -5})
     void filterWithEqualShortPrimitiveField(short value) {
         Entity matchingEntity = new Entity();
-        matchingEntity.shortPrimitiveField = value;
+        matchingEntity.setShortPrimitiveField(value);
 
         Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.shortPrimitiveField = ((short) (value + 1));
+        nonMatchingEntity.setShortPrimitiveField(((short) (value + 1)));
 
         List<Entity> result = sut.perform(
                 Arrays.asList(matchingEntity, nonMatchingEntity),
@@ -162,10 +162,10 @@ public class FilterTest {
     @Test
     void filterWithEqualStringField() {
         Entity matchingEntity = new Entity();
-        matchingEntity.stringField = "Hello";
+        matchingEntity.setStringField("Hello");
 
         Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.stringField = "Bye";
+        nonMatchingEntity.setStringField("Bye");
 
         List<Entity> result = sut.perform(
                 Arrays.asList(matchingEntity, nonMatchingEntity),
@@ -178,10 +178,10 @@ public class FilterTest {
     @ValueSource(booleans = {true, false})
     void filterWithEqualBooleanPrimitiveField(boolean value) {
         Entity matchingEntity = new Entity();
-        matchingEntity.booleanPrimitiveField = value;
+        matchingEntity.setBooleanPrimitiveField(value);
 
         Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.booleanPrimitiveField = !value;
+        nonMatchingEntity.setBooleanPrimitiveField(!value);
 
         List<Entity> result = sut.perform(
                 Arrays.asList(matchingEntity, nonMatchingEntity),
@@ -194,10 +194,10 @@ public class FilterTest {
     @ValueSource(booleans = {true, false})
     void filterWithEqualBooleanField(boolean value) {
         Entity matchingEntity = new Entity();
-        matchingEntity.booleanField = value;
+        matchingEntity.setBooleanField(value);
 
         Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.booleanField = !value;
+        nonMatchingEntity.setBooleanField(!value);
 
         List<Entity> result = sut.perform(
                 Arrays.asList(matchingEntity, nonMatchingEntity),
@@ -210,10 +210,10 @@ public class FilterTest {
     @ValueSource(floats = {1.3f, -0.5f, 17.11f})
     void filterWithEqualFloatField(float value) {
         Entity matchingEntity = new Entity();
-        matchingEntity.floatField = value;
+        matchingEntity.setFloatField(value);
 
         Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.floatField = value + 1;
+        nonMatchingEntity.setFloatField(value + 1);
 
         List<Entity> result = sut.perform(
                 Arrays.asList(matchingEntity, nonMatchingEntity),
@@ -226,10 +226,10 @@ public class FilterTest {
     @ValueSource(floats = {1.3f, -0.5f, 17.11f})
     void filterWithEqualFloatPrimitiveField(float value) {
         Entity matchingEntity = new Entity();
-        matchingEntity.floatPrimitiveField = value;
+        matchingEntity.setFloatPrimitiveField(value);
 
         Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.floatPrimitiveField = value + 1;
+        nonMatchingEntity.setFloatPrimitiveField(value + 1);
 
         List<Entity> result = sut.perform(
                 Arrays.asList(matchingEntity, nonMatchingEntity),
@@ -242,10 +242,10 @@ public class FilterTest {
     @ValueSource(doubles = {1.3, -0.5, 17.11})
     void filterWithEqualDoubleField(double value) {
         Entity matchingEntity = new Entity();
-        matchingEntity.doubleField = value;
+        matchingEntity.setDoubleField(value);
 
         Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.doubleField = value + 1;
+        nonMatchingEntity.setDoubleField(value + 1);
 
         List<Entity> result = sut.perform(
                 Arrays.asList(matchingEntity, nonMatchingEntity),
@@ -258,10 +258,10 @@ public class FilterTest {
     @ValueSource(doubles = {1.3, -0.5, 17.11})
     void filterWithEqualDoublePrimitiveField(double value) {
         Entity matchingEntity = new Entity();
-        matchingEntity.doublePrimitiveField = value;
+        matchingEntity.setDoublePrimitiveField(value);
 
         Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.doublePrimitiveField = value + 1;
+        nonMatchingEntity.setDoublePrimitiveField(value + 1);
 
         List<Entity> result = sut.perform(
                 Arrays.asList(matchingEntity, nonMatchingEntity),
@@ -274,10 +274,10 @@ public class FilterTest {
     @ValueSource(chars = {'a', 'z', '@'})
     void filterWithEqualCharacterField(char value) {
         Entity matchingEntity = new Entity();
-        matchingEntity.charField = value;
+        matchingEntity.setCharField(value);
 
         Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.charField = (char) (value + 1);
+        nonMatchingEntity.setCharField((char) (value + 1));
 
         List<Entity> result = sut.perform(
                 Arrays.asList(matchingEntity, nonMatchingEntity),
@@ -290,10 +290,10 @@ public class FilterTest {
     @ValueSource(chars = {'a', 'z', '@'})
     void filterWithEqualCharacterPrimitiveField(char value) {
         Entity matchingEntity = new Entity();
-        matchingEntity.charPrimitiveField = value;
+        matchingEntity.setCharPrimitiveField(value);
 
         Entity nonMatchingEntity = new Entity();
-        nonMatchingEntity.charPrimitiveField = (char) (value + 1);
+        nonMatchingEntity.setCharPrimitiveField((char) (value + 1));
 
         List<Entity> result = sut.perform(
                 Arrays.asList(matchingEntity, nonMatchingEntity),

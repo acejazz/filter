@@ -1,6 +1,6 @@
 package com.tanio;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,9 +34,10 @@ class Filter {
 
     private static Object getFieldValue(String fieldName, Entity entity) {
         try {
-            Field field = entity.getClass().getField(fieldName);
-            return field.get(entity);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
+            String methodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+            Method method = entity.getClass().getMethod(methodName);
+            return method.invoke(entity);
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
