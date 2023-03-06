@@ -10,7 +10,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FilterTest {
+class FilterTest {
     Filter sut = new Filter();
 
     @Test
@@ -270,19 +270,15 @@ public class FilterTest {
     void filterFromNestedObject_twoLevels() {
         NestedNestedEntity nestedNestedEntity = new NestedNestedEntity();
         nestedNestedEntity.setStringField("anything");
-
         NestedEntity matchingNestedEntity = new NestedEntity();
         matchingNestedEntity.setNestedNestedEntity(nestedNestedEntity);
-
         Entity matchingEntity = new Entity();
         matchingEntity.setNestedEntity(matchingNestedEntity);
 
         NestedNestedEntity nonMatchingNestedNestedEntity = new NestedNestedEntity();
         nonMatchingNestedNestedEntity.setStringField("notAnything");
-
         NestedEntity nonMatchingNestedEntity = new NestedEntity();
         nonMatchingNestedEntity.setNestedNestedEntity(nonMatchingNestedNestedEntity);
-
         Entity nonMatchingEntity = new Entity();
         nonMatchingEntity.setNestedEntity(nonMatchingNestedEntity);
 
@@ -291,6 +287,29 @@ public class FilterTest {
                 condition("nestedEntity.nestedNestedEntity.stringField", Operator.EQUAL, "anything"));
 
         assertThat(result).isEqualTo(singletonList(matchingEntity));
+    }
+
+    @Test
+    void performOrFilter() {
+        Entity firstConditionMatchingEntity = new Entity();
+        firstConditionMatchingEntity.setStringField("hello");
+
+        Entity secondConditionMatchingEntity = new Entity();
+        secondConditionMatchingEntity.setStringField("bye");
+
+        Entity notMatchingEntity = new Entity();
+        notMatchingEntity.setStringField("sup");
+
+        List<Entity> result = sut.performOr(
+                Arrays.asList(
+                        firstConditionMatchingEntity,
+                        secondConditionMatchingEntity,
+                        notMatchingEntity),
+                Arrays.asList(
+                        condition("stringField", Operator.EQUAL, "hello"),
+                        condition("stringField", Operator.EQUAL, "bye")));
+
+        assertThat(result).containsExactlyInAnyOrder(firstConditionMatchingEntity, secondConditionMatchingEntity);
     }
 
     Condition condition(String fieldName, Operator operator, Object value) {

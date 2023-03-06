@@ -4,30 +4,30 @@ import com.tanio.Condition.Operator;
 
 class FieldConditionEvaluator {
     boolean evaluateCondition(Operator conditionOperator, Object first, Object second) {
-        Class<?> conditionValueClass = first.getClass();
+        Class<?> firstObjectClass = first.getClass();
 
-        if (conditionValueClass.equals(String.class)) {
+        if (firstObjectClass.equals(String.class)) {
             if (conditionOperator.equals(Operator.EQUAL)) {
                 return first.equals(second);
             }
             return !first.equals(second);
         }
 
-        if (conditionValueClass.equals(Boolean.class)) {
+        if (firstObjectClass.equals(Boolean.class)) {
             if (conditionOperator.equals(Operator.EQUAL)) {
                 return first.equals(second);
             }
             return !first.equals(second);
         }
 
-        if (conditionValueClass.equals(Character.class)) {
+        if (firstObjectClass.equals(Character.class)) {
             if (conditionOperator.equals(Operator.EQUAL)) {
                 return first.equals(second);
             }
             return !first.equals(second);
         }
 
-        if (Number.class.isAssignableFrom(conditionValueClass)) {
+        if (Number.class.isAssignableFrom(firstObjectClass)) {
             Double conditionNumberValue = ((Number) first).doubleValue();
             Double fieldNumberValue = ((Number) second).doubleValue();
             if (conditionOperator.equals(Operator.EQUAL)) {
