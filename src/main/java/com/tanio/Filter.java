@@ -1,9 +1,6 @@
 package com.tanio;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 class Filter {
@@ -17,21 +14,18 @@ class Filter {
     }
 
     <T> List<T> performOr(List<T> target, List<Condition> conditions) {
-        List<List<T>> conditionResults = new ArrayList<>();
-        for (Condition condition : conditions) {
-            conditionResults.add(perform(target, condition));
-        }
-        return union(conditionResults);
+        return target.stream()
+                .filter(it -> matchesAtLeastOneCondition(conditions, it))
+                .collect(Collectors.toList());
     }
 
-    private static <T> List<T> union(List<List<T>> lists) {
-        Set<T> result = new HashSet<>();
-
-        for (List<T> list : lists) {
-            result.addAll(list);
+    private <T> boolean matchesAtLeastOneCondition(List<Condition> conditions, T t) {
+        for (Condition condition : conditions) {
+            if (matchesCondition(condition, t)) {
+                return true;
+            }
         }
-
-        return new ArrayList<>(result);
+        return false;
     }
 
     private <T> boolean matchesCondition(Condition condition, T object) {
