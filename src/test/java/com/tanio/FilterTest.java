@@ -312,6 +312,30 @@ class FilterTest {
         assertThat(result).containsExactlyInAnyOrder(firstConditionMatchingEntity, secondConditionMatchingEntity);
     }
 
+    @Test
+    void performAndFilter() {
+        Entity conditionMatchingEntity = new Entity();
+        conditionMatchingEntity.setStringField("hello");
+        conditionMatchingEntity.setIntegerField(13);
+
+        Entity notMatchingEntity0 = new Entity();
+        notMatchingEntity0.setStringField("hello");
+
+        Entity notMatchingEntity1 = new Entity();
+        notMatchingEntity1.setIntegerField(13);
+
+        List<Entity> result = sut.performAnd(
+                Arrays.asList(
+                        conditionMatchingEntity,
+                        notMatchingEntity0,
+                        notMatchingEntity1),
+                Arrays.asList(
+                        condition("stringField", Operator.EQUAL, "hello"),
+                        condition("integerField", Operator.EQUAL, 13)));
+
+        assertThat(result).containsExactlyInAnyOrder(conditionMatchingEntity);
+    }
+
     Condition condition(String fieldName, Operator operator, Object value) {
         Condition result = new Condition();
         result.fieldName = fieldName;

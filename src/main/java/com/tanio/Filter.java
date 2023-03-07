@@ -19,13 +19,18 @@ class Filter {
                 .collect(Collectors.toList());
     }
 
+    <T> List<T> performAnd(List<T> target, List<Condition> conditions) {
+        return target.stream()
+                .filter(it -> matchesAllConditions(conditions, it))
+                .collect(Collectors.toList());
+    }
+
     private <T> boolean matchesAtLeastOneCondition(List<Condition> conditions, T t) {
-        for (Condition condition : conditions) {
-            if (matchesCondition(condition, t)) {
-                return true;
-            }
-        }
-        return false;
+        return conditions.stream().anyMatch(it -> matchesCondition(it, t));
+    }
+
+    private <T> boolean matchesAllConditions(List<Condition> conditions, T t) {
+        return conditions.stream().allMatch(it -> matchesCondition(it, t));
     }
 
     private <T> boolean matchesCondition(Condition condition, T object) {
