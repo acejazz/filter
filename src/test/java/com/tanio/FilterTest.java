@@ -296,7 +296,7 @@ class FilterTest {
     @Nested
     class MultipleConditions {
         @Test
-        void performOrFilter() {
+        void performCompoundOrCondition() {
             Entity firstConditionMatchingEntity = new Entity();
             firstConditionMatchingEntity.setStringField("hello");
 
@@ -306,20 +306,24 @@ class FilterTest {
             Entity notMatchingEntity = new Entity();
             notMatchingEntity.setStringField("sup");
 
-            List<Entity> result = sut.performOr(
+            CompoundCondition compoundCondition = new CompoundCondition();
+            compoundCondition.booleanOperator = BooleanOperator.OR;
+            compoundCondition.conditions = Arrays.asList(
+                    condition("stringField", Operator.EQUAL, "hello"),
+                    condition("stringField", Operator.EQUAL, "bye"));
+
+            List<Entity> result = sut.perform(
                     Arrays.asList(
                             firstConditionMatchingEntity,
                             secondConditionMatchingEntity,
                             notMatchingEntity),
-                    Arrays.asList(
-                            condition("stringField", Operator.EQUAL, "hello"),
-                            condition("stringField", Operator.EQUAL, "bye")));
+                    compoundCondition);
 
             assertThat(result).containsExactlyInAnyOrder(firstConditionMatchingEntity, secondConditionMatchingEntity);
         }
 
         @Test
-        void performAndFilter() {
+        void performCompoundAndCondition() {
             Entity conditionMatchingEntity = new Entity();
             conditionMatchingEntity.setStringField("hello");
             conditionMatchingEntity.setIntegerField(13);
@@ -330,20 +334,24 @@ class FilterTest {
             Entity notMatchingEntity1 = new Entity();
             notMatchingEntity1.setIntegerField(13);
 
-            List<Entity> result = sut.performAnd(
+            CompoundCondition compoundCondition = new CompoundCondition();
+            compoundCondition.booleanOperator = BooleanOperator.AND;
+            compoundCondition.conditions = Arrays.asList(
+                    condition("stringField", Operator.EQUAL, "hello"),
+                    condition("integerField", Operator.EQUAL, 13));
+
+            List<Entity> result = sut.perform(
                     Arrays.asList(
                             conditionMatchingEntity,
                             notMatchingEntity0,
                             notMatchingEntity1),
-                    Arrays.asList(
-                            condition("stringField", Operator.EQUAL, "hello"),
-                            condition("integerField", Operator.EQUAL, 13)));
+                    compoundCondition);
 
             assertThat(result).containsExactlyInAnyOrder(conditionMatchingEntity);
         }
 
         @Test
-        void performNotFilter() {
+        void performCompoundNotCondition() {
             Entity conditionMatchingEntity = new Entity();
 
             Entity notMatchingEntity0 = new Entity();
@@ -356,15 +364,19 @@ class FilterTest {
             notMatchingEntity2.setStringField("hello");
             notMatchingEntity2.setIntegerField(13);
 
-            List<Entity> result = sut.performNot(
+            CompoundCondition compoundCondition = new CompoundCondition();
+            compoundCondition.booleanOperator = BooleanOperator.NOT;
+            compoundCondition.conditions = Arrays.asList(
+                    condition("stringField", Operator.EQUAL, "hello"),
+                    condition("integerField", Operator.EQUAL, 13));
+
+            List<Entity> result = sut.perform(
                     Arrays.asList(
                             conditionMatchingEntity,
                             notMatchingEntity0,
                             notMatchingEntity1,
                             notMatchingEntity2),
-                    Arrays.asList(
-                            condition("stringField", Operator.EQUAL, "hello"),
-                            condition("integerField", Operator.EQUAL, 13)));
+                    compoundCondition);
 
             assertThat(result).containsExactlyInAnyOrder(conditionMatchingEntity);
         }
