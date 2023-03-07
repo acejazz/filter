@@ -25,6 +25,12 @@ class Filter {
                 .collect(Collectors.toList());
     }
 
+    <T> List<T> performNot(List<T> target, List<Condition> conditions) {
+        return target.stream()
+                .filter(it -> !matchesAtLeastOneCondition(conditions, it))
+                .collect(Collectors.toList());
+    }
+
     private <T> boolean matchesAtLeastOneCondition(List<Condition> conditions, T t) {
         return conditions.stream().anyMatch(it -> matchesCondition(it, t));
     }

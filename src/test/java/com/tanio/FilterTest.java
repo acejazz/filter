@@ -336,6 +336,33 @@ class FilterTest {
         assertThat(result).containsExactlyInAnyOrder(conditionMatchingEntity);
     }
 
+    @Test
+    void performNotFilter() {
+        Entity conditionMatchingEntity = new Entity();
+
+        Entity notMatchingEntity0 = new Entity();
+        notMatchingEntity0.setStringField("hello");
+
+        Entity notMatchingEntity1 = new Entity();
+        notMatchingEntity1.setIntegerField(13);
+
+        Entity notMatchingEntity2 = new Entity();
+        notMatchingEntity2.setStringField("hello");
+        notMatchingEntity2.setIntegerField(13);
+
+        List<Entity> result = sut.performNot(
+                Arrays.asList(
+                        conditionMatchingEntity,
+                        notMatchingEntity0,
+                        notMatchingEntity1,
+                        notMatchingEntity2),
+                Arrays.asList(
+                        condition("stringField", Operator.EQUAL, "hello"),
+                        condition("integerField", Operator.EQUAL, 13)));
+
+        assertThat(result).containsExactlyInAnyOrder(conditionMatchingEntity);
+    }
+
     Condition condition(String fieldName, Operator operator, Object value) {
         Condition result = new Condition();
         result.fieldName = fieldName;
