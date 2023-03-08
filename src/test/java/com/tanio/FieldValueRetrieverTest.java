@@ -9,115 +9,115 @@ class FieldValueRetrieverTest {
 
     @Test
     void retrieveIntegerFieldValue() {
-        Entity entity = new Entity();
-        entity.setIntegerField(17);
-        assertThat(sut.retrieveFieldValue("integerField", entity)).isEqualTo(17);
+        TestEntity testEntity = new TestEntity();
+        testEntity.setIntegerField(17);
+        assertThat(sut.retrieveFieldValue("integerField", testEntity)).isEqualTo(17);
     }
 
     @Test
     void retrieveIntegerPrimitiveFieldValue() {
-        Entity entity = new Entity();
-        entity.setIntegerPrimitiveField(17);
-        assertThat(sut.retrieveFieldValue("integerPrimitiveField", entity)).isEqualTo(17);
+        TestEntity testEntity = new TestEntity();
+        testEntity.setIntegerPrimitiveField(17);
+        assertThat(sut.retrieveFieldValue("integerPrimitiveField", testEntity)).isEqualTo(17);
     }
 
     @Test
     void retrieveLongFieldValue() {
-        Entity entity = new Entity();
-        entity.setLongField(17L);
-        assertThat(sut.retrieveFieldValue("longField", entity)).isEqualTo(17L);
+        TestEntity testEntity = new TestEntity();
+        testEntity.setLongField(17L);
+        assertThat(sut.retrieveFieldValue("longField", testEntity)).isEqualTo(17L);
     }
 
     @Test
     void retrieveLongPrimitiveFieldValue() {
-        Entity entity = new Entity();
-        entity.setLongPrimitiveField(17L);
-        assertThat(sut.retrieveFieldValue("longPrimitiveField", entity)).isEqualTo(17L);
+        TestEntity testEntity = new TestEntity();
+        testEntity.setLongPrimitiveField(17L);
+        assertThat(sut.retrieveFieldValue("longPrimitiveField", testEntity)).isEqualTo(17L);
     }
 
     @Test
     void retrieveShortFieldValue() {
-        Entity entity = new Entity();
-        entity.setShortField((short) 17);
-        assertThat(sut.retrieveFieldValue("shortField", entity)).isEqualTo((short) 17);
+        TestEntity testEntity = new TestEntity();
+        testEntity.setShortField((short) 17);
+        assertThat(sut.retrieveFieldValue("shortField", testEntity)).isEqualTo((short) 17);
     }
 
     @Test
     void retrieveShortPrimitiveFieldValue() {
-        Entity entity = new Entity();
-        entity.setShortPrimitiveField((short) 17);
-        assertThat(sut.retrieveFieldValue("shortPrimitiveField", entity)).isEqualTo((short) 17);
+        TestEntity testEntity = new TestEntity();
+        testEntity.setShortPrimitiveField((short) 17);
+        assertThat(sut.retrieveFieldValue("shortPrimitiveField", testEntity)).isEqualTo((short) 17);
     }
 
     @Test
     void retrieveBooleanFieldValue() {
-        Entity entity = new Entity();
-        entity.setBooleanField(true);
-        assertThat(sut.retrieveFieldValue("booleanField", entity)).isEqualTo(true);
+        TestEntity testEntity = new TestEntity();
+        testEntity.setBooleanField(true);
+        assertThat(sut.retrieveFieldValue("booleanField", testEntity)).isEqualTo(true);
     }
 
     @Test
     void retrieveBooleanPrimitiveFieldValue() {
-        Entity entity = new Entity();
-        entity.setBooleanPrimitiveField(true);
-        assertThat(sut.retrieveFieldValue("booleanPrimitiveField", entity)).isEqualTo(true);
+        TestEntity testEntity = new TestEntity();
+        testEntity.setBooleanPrimitiveField(true);
+        assertThat(sut.retrieveFieldValue("booleanPrimitiveField", testEntity)).isEqualTo(true);
     }
 
     @Test
     void retrieveFloatFieldValue() {
-        Entity entity = new Entity();
-        entity.setFloatField(1.5F);
-        assertThat(sut.retrieveFieldValue("floatField", entity)).isEqualTo(1.5F);
+        TestEntity testEntity = new TestEntity();
+        testEntity.setFloatField(1.5F);
+        assertThat(sut.retrieveFieldValue("floatField", testEntity)).isEqualTo(1.5F);
     }
 
     @Test
     void retrieveFloatPrimitiveFieldValue() {
-        Entity entity = new Entity();
-        entity.setFloatPrimitiveField(1.5F);
-        assertThat(sut.retrieveFieldValue("floatPrimitiveField", entity)).isEqualTo(1.5F);
+        TestEntity testEntity = new TestEntity();
+        testEntity.setFloatPrimitiveField(1.5F);
+        assertThat(sut.retrieveFieldValue("floatPrimitiveField", testEntity)).isEqualTo(1.5F);
     }
 
     @Test
     void retrieveDoubleFieldValue() {
-        Entity entity = new Entity();
-        entity.setDoubleField(1.5);
-        assertThat(sut.retrieveFieldValue("doubleField", entity)).isEqualTo(1.5);
+        TestEntity testEntity = new TestEntity();
+        testEntity.setDoubleField(1.5);
+        assertThat(sut.retrieveFieldValue("doubleField", testEntity)).isEqualTo(1.5);
     }
 
     @Test
     void retrieveDoublePrimitiveFieldValue() {
-        Entity entity = new Entity();
-        entity.setDoublePrimitiveField(1.5);
-        assertThat(sut.retrieveFieldValue("doublePrimitiveField", entity)).isEqualTo(1.5);
+        TestEntity testEntity = new TestEntity();
+        testEntity.setDoublePrimitiveField(1.5);
+        assertThat(sut.retrieveFieldValue("doublePrimitiveField", testEntity)).isEqualTo(1.5);
     }
 
     @Test
     void retrieveCharacterFieldValue() {
-        Entity entity = new Entity();
-        entity.setCharField('a');
-        assertThat(sut.retrieveFieldValue("charField", entity)).isEqualTo('a');
+        TestEntity testEntity = new TestEntity();
+        testEntity.setCharField('a');
+        assertThat(sut.retrieveFieldValue("charField", testEntity)).isEqualTo('a');
     }
 
     @Test
     void retrieveCharPrimitiveFieldValue() {
-        Entity entity = new Entity();
-        entity.setCharPrimitiveField('a');
-        assertThat(sut.retrieveFieldValue("charPrimitiveField", entity)).isEqualTo('a');
+        TestEntity testEntity = new TestEntity();
+        testEntity.setCharPrimitiveField('a');
+        assertThat(sut.retrieveFieldValue("charPrimitiveField", testEntity)).isEqualTo('a');
     }
 
     @Test
     void retrieveStringFieldValue() {
-        Entity entity = new Entity();
-        entity.setStringField("Hello");
-        assertThat(sut.retrieveFieldValue("stringField", entity)).isEqualTo("Hello");
+        TestEntity testEntity = new TestEntity();
+        testEntity.setStringField("Hello");
+        assertThat(sut.retrieveFieldValue("stringField", testEntity)).isEqualTo("Hello");
     }
 
     @Test
     void retrieveNestedInstance() {
         NestedEntity nestedEntity = new NestedEntity();
-        Entity entity = new Entity();
-        entity.setNestedEntity(nestedEntity);
-        assertThat(sut.retrieveFieldValue("nestedEntity", entity)).isEqualTo(nestedEntity);
+        TestEntity testEntity = new TestEntity();
+        testEntity.setNestedEntity(nestedEntity);
+        assertThat(sut.retrieveFieldValue("nestedEntity", testEntity)).isEqualTo(nestedEntity);
     }
 
     @Test
@@ -125,8 +125,8 @@ class FieldValueRetrieverTest {
         NestedNestedEntity nestedNestedEntity = new NestedNestedEntity();
         NestedEntity nestedEntity = new NestedEntity();
         nestedEntity.setNestedNestedEntity(nestedNestedEntity);
-        Entity entity = new Entity();
-        entity.setNestedEntity(nestedEntity);
-        assertThat(sut.retrieveFieldValue("nestedEntity.nestedNestedEntity", entity)).isEqualTo(nestedNestedEntity);
+        TestEntity testEntity = new TestEntity();
+        testEntity.setNestedEntity(nestedEntity);
+        assertThat(sut.retrieveFieldValue("nestedEntity.nestedNestedEntity", testEntity)).isEqualTo(nestedNestedEntity);
     }
 }

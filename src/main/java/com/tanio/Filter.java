@@ -38,19 +38,13 @@ class Filter {
     }
 
     private static <T> List<T> or(List<List<T>> resultLists) {
-        List<T> result = new ArrayList<>();
-        for (List<T> resultList : resultLists) {
-            for (T element : resultList) {
-                if (!result.contains(element)) {
-                    result.add(element);
-                }
-            }
-        }
-        return result;
+        return resultLists.stream()
+                .flatMap(List::stream)
+                .toList();
     }
 
-    private static <T> List<T> not(List<T> target, List<T> list) {
-        List<T> result = new ArrayList<>(List.copyOf(target));
+    private static <T> List<T> not(List<T> universe, List<T> list) {
+        List<T> result = new ArrayList<>(List.copyOf(universe));
         result.removeAll(list);
         return result;
     }

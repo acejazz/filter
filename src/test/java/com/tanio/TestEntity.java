@@ -1,6 +1,6 @@
 package com.tanio;
 
-public class Entity {
+public class TestEntity {
     private Integer integerField;
     private Long longField;
     private Short shortField;
