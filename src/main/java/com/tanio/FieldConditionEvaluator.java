@@ -7,33 +7,34 @@ class FieldConditionEvaluator {
         Class<?> firstObjectClass = first.getClass();
 
         if (firstObjectClass.equals(String.class)) {
-            if (conditionOperator.equals(Operator.EQUAL)) {
-                return first.equals(second);
-            }
-            return !first.equals(second);
+            return switch (conditionOperator) {
+                case EQUAL -> first.equals(second);
+                case NOT_EQUAL -> !first.equals(second);
+            };
         }
 
         if (firstObjectClass.equals(Boolean.class)) {
-            if (conditionOperator.equals(Operator.EQUAL)) {
-                return first.equals(second);
-            }
-            return !first.equals(second);
+            return switch (conditionOperator) {
+                case EQUAL -> first.equals(second);
+                case NOT_EQUAL -> !first.equals(second);
+            };
         }
 
         if (firstObjectClass.equals(Character.class)) {
-            if (conditionOperator.equals(Operator.EQUAL)) {
-                return first.equals(second);
-            }
-            return !first.equals(second);
+            return switch (conditionOperator) {
+                case EQUAL -> first.equals(second);
+                case NOT_EQUAL -> !first.equals(second);
+            };
         }
 
         if (Number.class.isAssignableFrom(firstObjectClass)) {
-            Double conditionNumberValue = ((Number) first).doubleValue();
-            Double fieldNumberValue = ((Number) second).doubleValue();
-            if (conditionOperator.equals(Operator.EQUAL)) {
-                return conditionNumberValue.equals(fieldNumberValue);
-            }
-            return !conditionNumberValue.equals(fieldNumberValue);
+            Double firstNumberValue = ((Number) first).doubleValue();
+            Double secondNumberValue = ((Number) second).doubleValue();
+
+            return switch (conditionOperator) {
+                case EQUAL -> firstNumberValue.equals(secondNumberValue);
+                case NOT_EQUAL -> !firstNumberValue.equals(secondNumberValue);
+            };
         }
 
         throw new FilterException("Filter applicable only to primitives, primitive wrappers and strings");

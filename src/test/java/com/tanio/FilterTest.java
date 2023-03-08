@@ -519,7 +519,7 @@ class FilterTest {
 
             assertThat(result).containsExactlyInAnyOrder(testEntity4);
 
-//            write tests for nested conditions, perhaps with new test entities
+// TODO:           write tests for two level nested conditions, perhaps with new test entities
         }
     }
 

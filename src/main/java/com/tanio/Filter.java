@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.List.copyOf;
+
 class Filter {
     private final FieldConditionEvaluator fieldConditionEvaluator = new FieldConditionEvaluator();
     private final FieldValueRetriever fieldValueRetriever = new FieldValueRetriever();
@@ -28,13 +30,20 @@ class Filter {
         };
     }
 
+    // TODO: Do we still need this?
+    <T> List<T> perform(List<T> target, Condition condition) {
+        return target.stream()
+                .filter(it -> matchesCondition(condition, it))
+                .collect(Collectors.toList());
+    }
+
     private static <T> List<T> and(List<List<T>> resultLists) {
         Iterator<List<T>> iterator = resultLists.iterator();
-        List<T> firstResultList = iterator.next();
+        List<T> result = iterator.next();
         while (iterator.hasNext()) {
-            firstResultList.retainAll(iterator.next());
+            result.retainAll(iterator.next());
         }
-        return firstResultList;
+        return result;
     }
 
     private static <T> List<T> or(List<List<T>> resultLists) {
@@ -44,15 +53,9 @@ class Filter {
     }
 
     private static <T> List<T> not(List<T> universe, List<T> list) {
-        List<T> result = new ArrayList<>(List.copyOf(universe));
+        List<T> result = new ArrayList<>(copyOf(universe));
         result.removeAll(list);
         return result;
-    }
-
-    <T> List<T> perform(List<T> target, Condition condition) {
-        return target.stream()
-                .filter(it -> matchesCondition(condition, it))
-                .collect(Collectors.toList());
     }
 
     private <T> List<T> performOr(List<T> target, List<Condition> conditions) {
