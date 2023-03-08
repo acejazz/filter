@@ -4,6 +4,7 @@ import com.tanio.Condition.Operator;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -296,7 +297,7 @@ class FilterTest {
     @Nested
     class MultipleConditions {
         @Test
-        void performCompoundOrCondition() {
+        void performCompoundCondition_or() {
             Entity firstConditionMatchingEntity = new Entity();
             firstConditionMatchingEntity.setStringField("hello");
 
@@ -323,7 +324,7 @@ class FilterTest {
         }
 
         @Test
-        void performCompoundAndCondition() {
+        void performCompoundCondition_and() {
             Entity conditionMatchingEntity = new Entity();
             conditionMatchingEntity.setStringField("hello");
             conditionMatchingEntity.setIntegerField(13);
@@ -351,7 +352,7 @@ class FilterTest {
         }
 
         @Test
-        void performCompoundNotCondition() {
+        void performCompoundCondition_not() {
             Entity conditionMatchingEntity = new Entity();
 
             Entity notMatchingEntity0 = new Entity();
@@ -379,6 +380,141 @@ class FilterTest {
                     compoundCondition);
 
             assertThat(result).containsExactlyInAnyOrder(conditionMatchingEntity);
+        }
+
+        @Test
+        void performCompoundConditionNested_or() {
+            CompoundCondition nestedCondition0 = new CompoundCondition();
+            nestedCondition0.booleanOperator = BooleanOperator.OR;
+            nestedCondition0.conditions = Arrays.asList(
+                    condition("stringField", Operator.EQUAL, "hello"),
+                    condition("stringField", Operator.EQUAL, "bye"));
+
+            CompoundCondition nestedCondition1 = new CompoundCondition();
+            nestedCondition1.booleanOperator = BooleanOperator.OR;
+            nestedCondition1.conditions = Arrays.asList(
+                    condition("stringField", Operator.EQUAL, "good morning"),
+                    condition("stringField", Operator.EQUAL, "good night"));
+
+            CompoundCondition outerCondition = new CompoundCondition();
+            outerCondition.booleanOperator = BooleanOperator.OR;
+            outerCondition.compoundConditions = new ArrayList<>();
+            outerCondition.compoundConditions.add(nestedCondition0);
+            outerCondition.compoundConditions.add(nestedCondition1);
+
+            Entity entity0 = new Entity();
+            entity0.setStringField("hello");
+
+            Entity entity1 = new Entity();
+            entity1.setStringField("bye");
+
+            Entity entity2 = new Entity();
+            entity2.setStringField("good morning");
+
+            Entity entity3 = new Entity();
+            entity3.setStringField("good night");
+
+            Entity entity4 = new Entity();
+            entity4.setStringField("batman");
+
+            List<Entity> result = sut.perform(Arrays.asList(entity0, entity1, entity2, entity3, entity4), outerCondition);
+
+            assertThat(result).containsExactlyInAnyOrder(entity0, entity1, entity2, entity3);
+        }
+
+        @Test
+        void performCompoundConditionNested_and() {
+            CompoundCondition nestedCondition0 = new CompoundCondition();
+            nestedCondition0.booleanOperator = BooleanOperator.AND;
+            nestedCondition0.conditions = Arrays.asList(
+                    condition("stringField", Operator.EQUAL, "hello"),
+                    condition("integerField", Operator.EQUAL, 13));
+
+            CompoundCondition nestedCondition1 = new CompoundCondition();
+            nestedCondition1.booleanOperator = BooleanOperator.AND;
+            nestedCondition1.conditions = Arrays.asList(
+                    condition("booleanField", Operator.EQUAL, true),
+                    condition("charField", Operator.EQUAL, 'a'));
+
+            CompoundCondition outerCondition = new CompoundCondition();
+            outerCondition.booleanOperator = BooleanOperator.AND;
+            outerCondition.compoundConditions = new ArrayList<>();
+            outerCondition.compoundConditions.add(nestedCondition0);
+            outerCondition.compoundConditions.add(nestedCondition1);
+
+            Entity entity0 = new Entity();
+            entity0.setStringField("hello");
+            entity0.setIntegerField(13);
+            entity0.setBooleanField(true);
+            entity0.setCharField('a');
+
+            Entity entity1 = new Entity();
+            entity1.setStringField("bye");
+            entity1.setIntegerField(13);
+            entity1.setBooleanField(true);
+            entity1.setCharField('a');
+
+            Entity entity2 = new Entity();
+            entity2.setStringField("hello");
+            entity2.setIntegerField(17);
+            entity2.setBooleanField(true);
+            entity2.setCharField('a');
+
+            Entity entity3 = new Entity();
+            entity3.setStringField("hello");
+            entity3.setIntegerField(13);
+            entity3.setBooleanField(false);
+            entity3.setCharField('a');
+
+            Entity entity4 = new Entity();
+            entity4.setStringField("hello");
+            entity4.setIntegerField(13);
+            entity4.setBooleanField(true);
+            entity4.setCharField('z');
+
+            List<Entity> result = sut.perform(Arrays.asList(entity0, entity1, entity2, entity3, entity4), outerCondition);
+
+            assertThat(result).containsExactly(entity0);
+        }
+
+        @Test
+        void performCompoundConditionNested_not() {
+            CompoundCondition nestedCondition0 = new CompoundCondition();
+            nestedCondition0.booleanOperator = BooleanOperator.OR;
+            nestedCondition0.conditions = Arrays.asList(
+                    condition("stringField", Operator.EQUAL, "hello"),
+                    condition("stringField", Operator.EQUAL, "bye"));
+
+            CompoundCondition nestedCondition1 = new CompoundCondition();
+            nestedCondition1.booleanOperator = BooleanOperator.OR;
+            nestedCondition1.conditions = Arrays.asList(
+                    condition("stringField", Operator.EQUAL, "good morning"),
+                    condition("stringField", Operator.EQUAL, "good night"));
+
+            CompoundCondition outerCondition = new CompoundCondition();
+            outerCondition.booleanOperator = BooleanOperator.NOT;
+            outerCondition.compoundConditions = new ArrayList<>();
+            outerCondition.compoundConditions.add(nestedCondition0);
+            outerCondition.compoundConditions.add(nestedCondition1);
+
+            Entity entity0 = new Entity();
+            entity0.setStringField("hello");
+
+            Entity entity1 = new Entity();
+            entity1.setStringField("bye");
+
+            Entity entity2 = new Entity();
+            entity2.setStringField("good morning");
+
+            Entity entity3 = new Entity();
+            entity3.setStringField("good night");
+
+            Entity entity4 = new Entity();
+            entity4.setStringField("batman");
+
+            List<Entity> result = sut.perform(Arrays.asList(entity0, entity1, entity2, entity3, entity4), outerCondition);
+
+            assertThat(result).containsExactlyInAnyOrder(entity4);
         }
     }
 
