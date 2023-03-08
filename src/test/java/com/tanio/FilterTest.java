@@ -382,6 +382,11 @@ class FilterTest {
             assertThat(result).containsExactlyInAnyOrder(conditionMatchingEntity);
         }
 
+
+    }
+
+    @Nested
+    class NestedConditions {
         @Test
         void performCompoundConditionNested_or() {
             CompoundCondition nestedCondition0 = new CompoundCondition();
@@ -398,9 +403,9 @@ class FilterTest {
 
             CompoundCondition outerCondition = new CompoundCondition();
             outerCondition.booleanOperator = BooleanOperator.OR;
-            outerCondition.compoundConditions = new ArrayList<>();
-            outerCondition.compoundConditions.add(nestedCondition0);
-            outerCondition.compoundConditions.add(nestedCondition1);
+            outerCondition.nestedConditions = new ArrayList<>();
+            outerCondition.nestedConditions.add(nestedCondition0);
+            outerCondition.nestedConditions.add(nestedCondition1);
 
             Entity entity0 = new Entity();
             entity0.setStringField("hello");
@@ -438,9 +443,9 @@ class FilterTest {
 
             CompoundCondition outerCondition = new CompoundCondition();
             outerCondition.booleanOperator = BooleanOperator.AND;
-            outerCondition.compoundConditions = new ArrayList<>();
-            outerCondition.compoundConditions.add(nestedCondition0);
-            outerCondition.compoundConditions.add(nestedCondition1);
+            outerCondition.nestedConditions = new ArrayList<>();
+            outerCondition.nestedConditions.add(nestedCondition0);
+            outerCondition.nestedConditions.add(nestedCondition1);
 
             Entity entity0 = new Entity();
             entity0.setStringField("hello");
@@ -493,9 +498,9 @@ class FilterTest {
 
             CompoundCondition outerCondition = new CompoundCondition();
             outerCondition.booleanOperator = BooleanOperator.NOT;
-            outerCondition.compoundConditions = new ArrayList<>();
-            outerCondition.compoundConditions.add(nestedCondition0);
-            outerCondition.compoundConditions.add(nestedCondition1);
+            outerCondition.nestedConditions = new ArrayList<>();
+            outerCondition.nestedConditions.add(nestedCondition0);
+            outerCondition.nestedConditions.add(nestedCondition1);
 
             Entity entity0 = new Entity();
             entity0.setStringField("hello");

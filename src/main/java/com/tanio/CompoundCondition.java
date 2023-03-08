@@ -5,5 +5,5 @@ import java.util.List;
 class CompoundCondition {
     BooleanOperator booleanOperator;
     List<Condition> conditions;
-    List<CompoundCondition> compoundConditions;
+    List<CompoundCondition> nestedConditions;
 }

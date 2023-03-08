@@ -14,41 +14,48 @@ class Filter {
             return switch (compoundCondition.booleanOperator) {
                 case OR -> performOr(target, compoundCondition.conditions);
                 case AND -> performAnd(target, compoundCondition.conditions);
-                default -> performNot(target, compoundCondition.conditions);
+                case NOT -> performNot(target, compoundCondition.conditions);
             };
         }
 
-        List<CompoundCondition> compoundConditions = compoundCondition.compoundConditions;
+        List<List<T>> nestedResults = compoundCondition.nestedConditions.stream()
+                .map(it -> perform(target, it))
+                .toList();
+        return switch (compoundCondition.booleanOperator) {
+            case OR -> or(nestedResults);
+            case AND -> and(nestedResults);
+            case NOT -> not(target, nestedResults);
+        };
+    }
 
-        if (compoundCondition.booleanOperator == BooleanOperator.OR) {
-            List<T> result = new ArrayList<>();
-            for (CompoundCondition cc : compoundConditions) {
-                List<T> ccResult = perform(target, cc);
-                for (T t : ccResult) {
-                    if (!result.contains(t)) {
-                        result.add(t);
-                    }
+    private static <T> List<T> and(List<List<T>> resultLists) {
+        Iterator<List<T>> iterator = resultLists.iterator();
+        List<T> firstResultList = iterator.next();
+        while (iterator.hasNext()) {
+            firstResultList.retainAll(iterator.next());
+        }
+        return firstResultList;
+    }
+
+    private static <T> List<T> or(List<List<T>> resultLists) {
+        List<T> result = new ArrayList<>();
+        for (List<T> resultList : resultLists) {
+            for (T element : resultList) {
+                if (!result.contains(element)) {
+                    result.add(element);
                 }
             }
-            return result;
-        }
-
-        if (compoundCondition.booleanOperator == BooleanOperator.AND) {
-            Iterator<CompoundCondition> iterator = compoundConditions.iterator();
-            List<T> result = perform(target, iterator.next());
-            while (iterator.hasNext()) {
-                result.retainAll(perform(target, iterator.next()));
-            }
-            return result;
-        }
-
-        List<T> result = new ArrayList<>(List.copyOf(target));
-        for (CompoundCondition cc : compoundConditions) {
-            result.removeAll(perform(target, cc));
         }
         return result;
     }
 
+    private static <T> List<T> not(List<T> target, List<List<T>> resultLists) {
+        List<T> result = new ArrayList<>(List.copyOf(target));
+        for (List<T> list : resultLists) {
+            result.removeAll(list);
+        }
+        return result;
+    }
 
     <T> List<T> perform(List<T> target, Condition condition) {
         return target.stream()
