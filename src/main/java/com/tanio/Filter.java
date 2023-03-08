@@ -24,7 +24,7 @@ class Filter {
         return switch (compoundCondition.booleanOperator) {
             case OR -> or(nestedResults);
             case AND -> and(nestedResults);
-            case NOT -> not(target, nestedResults);
+            case NOT -> not(target, or(nestedResults));
         };
     }
 
@@ -49,11 +49,9 @@ class Filter {
         return result;
     }
 
-    private static <T> List<T> not(List<T> target, List<List<T>> resultLists) {
+    private static <T> List<T> not(List<T> target, List<T> list) {
         List<T> result = new ArrayList<>(List.copyOf(target));
-        for (List<T> list : resultLists) {
-            result.removeAll(list);
-        }
+        result.removeAll(list);
         return result;
     }
 
