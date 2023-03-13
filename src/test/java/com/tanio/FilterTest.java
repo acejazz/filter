@@ -518,8 +518,75 @@ class FilterTest {
             List<TestEntity> result = sut.perform(Arrays.asList(testEntity0, testEntity1, testEntity2, testEntity3, testEntity4), outerCondition);
 
             assertThat(result).containsExactlyInAnyOrder(testEntity4);
+        }
 
-// TODO:           write tests for two level nested conditions, perhaps with new test entities
+        @Test
+        void performCompoundConditionNested_mixedAndOr() {
+            MusicArtist beatles = new MusicArtist();
+            beatles.name = "Beatles";
+            beatles.genre = "Rock";
+            beatles.numberOfComponents = 4;
+            beatles.country = "UK";
+
+            MusicArtist rollingStones = new MusicArtist();
+            rollingStones.name = "Rolling Stones";
+            rollingStones.genre = "Rock";
+            rollingStones.numberOfComponents = 4;
+            rollingStones.country = "UK";
+
+            MusicArtist madonna = new MusicArtist();
+            madonna.name = "Madonna";
+            madonna.genre = "Pop";
+            madonna.numberOfComponents = 1;
+            madonna.country = "USA";
+            madonna.alive = true;
+
+            MusicArtist marvinGaye = new MusicArtist();
+            marvinGaye.name = "Marvin Gaye";
+            marvinGaye.genre = "R&B";
+            marvinGaye.numberOfComponents = 1;
+            marvinGaye.country = "USA";
+            marvinGaye.alive = false;
+
+            MusicArtist bjork = new MusicArtist();
+            bjork.name = "Bjork";
+            bjork.genre = "Art Pop";
+            bjork.numberOfComponents = 1;
+            bjork.country = "Iceland";
+            bjork.alive = true;
+
+            MusicArtist edithPiaf = new MusicArtist();
+            edithPiaf.name = "Edith Piaf";
+            edithPiaf.genre = "Cabaret";
+            edithPiaf.numberOfComponents = 1;
+            edithPiaf.country = "France";
+            edithPiaf.alive = false;
+
+            MusicArtist nirvana = new MusicArtist();
+            nirvana.name = "Nirvana";
+            nirvana.genre = "Rock";
+            nirvana.numberOfComponents = 3;
+            nirvana.country = "USA";
+
+            CompoundCondition isAnglophone = new CompoundCondition();
+            isAnglophone.booleanOperator = BooleanOperator.OR;
+            isAnglophone.conditions = Arrays.asList(
+                    condition("country", Operator.EQUAL, "UK"),
+                    condition("country", Operator.EQUAL, "USA"));
+
+            CompoundCondition isBand = new CompoundCondition();
+            isBand.booleanOperator = BooleanOperator.OR;
+            isBand.conditions = Arrays.asList(
+                    condition("numberOfComponents", Operator.EQUAL, 3),
+                    condition("numberOfComponents", Operator.EQUAL, 4));
+
+            CompoundCondition isAnglophoneBand = new CompoundCondition();
+            isAnglophoneBand.booleanOperator = BooleanOperator.AND;
+            isAnglophoneBand.nestedConditions = Arrays.asList(isAnglophone, isBand);
+
+            List<MusicArtist> bands = Arrays.asList(beatles, rollingStones, madonna, marvinGaye, bjork, edithPiaf, nirvana);
+            List<MusicArtist> anglophoneBands = sut.perform(bands, isAnglophoneBand);
+            assertThat(anglophoneBands).containsExactlyInAnyOrder(beatles, rollingStones, nirvana);
         }
     }
 
@@ -529,5 +596,33 @@ class FilterTest {
         result.operator = operator;
         result.value = value;
         return result;
+    }
+}
+
+class MusicArtist {
+    String name;
+    String genre;
+    int numberOfComponents;
+    String country;
+    boolean alive;
+
+    public String getName() {
+        return name;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public int getNumberOfComponents() {
+        return numberOfComponents;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public boolean isAlive() {
+        return alive;
     }
 }
