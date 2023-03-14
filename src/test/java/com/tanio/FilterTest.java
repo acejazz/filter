@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -520,73 +521,158 @@ class FilterTest {
             assertThat(result).containsExactlyInAnyOrder(testEntity4);
         }
 
-        @Test
-        void performCompoundConditionNested_mixedAndOr() {
-            MusicArtist beatles = new MusicArtist();
-            beatles.name = "Beatles";
-            beatles.genre = "Rock";
-            beatles.numberOfComponents = 4;
-            beatles.country = "UK";
+        @Nested
+        class CompoundConditions {
+            @Test
+            void performCompoundConditionNested_mixedAndOr() {
+                CompoundCondition isAnglophone = new CompoundCondition();
+                isAnglophone.booleanOperator = BooleanOperator.OR;
+                isAnglophone.conditions = Arrays.asList(
+                        condition("country", Operator.EQUAL, "UK"),
+                        condition("country", Operator.EQUAL, "USA"));
 
-            MusicArtist rollingStones = new MusicArtist();
-            rollingStones.name = "Rolling Stones";
-            rollingStones.genre = "Rock";
-            rollingStones.numberOfComponents = 4;
-            rollingStones.country = "UK";
+                CompoundCondition isBand = new CompoundCondition();
+                isBand.booleanOperator = BooleanOperator.OR;
+                isBand.conditions = Arrays.asList(
+                        condition("numberOfComponents", Operator.EQUAL, 3),
+                        condition("numberOfComponents", Operator.EQUAL, 4));
 
-            MusicArtist madonna = new MusicArtist();
-            madonna.name = "Madonna";
-            madonna.genre = "Pop";
-            madonna.numberOfComponents = 1;
-            madonna.country = "USA";
-            madonna.alive = true;
+                CompoundCondition isAnglophoneBand = new CompoundCondition();
+                isAnglophoneBand.booleanOperator = BooleanOperator.AND;
+                isAnglophoneBand.nestedConditions = Arrays.asList(isAnglophone, isBand);
 
-            MusicArtist marvinGaye = new MusicArtist();
-            marvinGaye.name = "Marvin Gaye";
-            marvinGaye.genre = "R&B";
-            marvinGaye.numberOfComponents = 1;
-            marvinGaye.country = "USA";
-            marvinGaye.alive = false;
+                List<MusicArtist> musicArtists = Arrays.asList(
+                        beatles(),
+                        rollingStones(),
+                        madonna(),
+                        marvinGaye(),
+                        bjork(),
+                        edithPiaf(),
+                        nirvana(),
+                        eltonJohn(),
+                        bruceSpringsteen());
+                List<MusicArtist> result = sut.perform(musicArtists, isAnglophoneBand);
+                assertThat(result).containsExactlyInAnyOrder(beatles(), rollingStones(), nirvana());
+            }
 
-            MusicArtist bjork = new MusicArtist();
-            bjork.name = "Bjork";
-            bjork.genre = "Art Pop";
-            bjork.numberOfComponents = 1;
-            bjork.country = "Iceland";
-            bjork.alive = true;
+            @Test
+            void performCompoundConditionNested_mixedOrAnd() {
+                CompoundCondition isAmericanSingleSinger = new CompoundCondition();
+                isAmericanSingleSinger.booleanOperator = BooleanOperator.AND;
+                isAmericanSingleSinger.conditions = Arrays.asList(
+                        condition("country", Operator.EQUAL, "USA"),
+                        condition("numberOfComponents", Operator.NOT_EQUAL, 3),
+                        condition("numberOfComponents", Operator.NOT_EQUAL, 4));
 
-            MusicArtist edithPiaf = new MusicArtist();
-            edithPiaf.name = "Edith Piaf";
-            edithPiaf.genre = "Cabaret";
-            edithPiaf.numberOfComponents = 1;
-            edithPiaf.country = "France";
-            edithPiaf.alive = false;
+                CompoundCondition isEnglishPopArtist = new CompoundCondition();
+                isEnglishPopArtist.booleanOperator = BooleanOperator.AND;
+                isEnglishPopArtist.conditions = Arrays.asList(
+                        condition("country", Operator.EQUAL, "UK"),
+                        condition("genre", Operator.EQUAL, "Pop"));
 
-            MusicArtist nirvana = new MusicArtist();
-            nirvana.name = "Nirvana";
-            nirvana.genre = "Rock";
-            nirvana.numberOfComponents = 3;
-            nirvana.country = "USA";
+                CompoundCondition isAnglophoneBand = new CompoundCondition();
+                isAnglophoneBand.booleanOperator = BooleanOperator.OR;
+                isAnglophoneBand.nestedConditions = Arrays.asList(isAmericanSingleSinger, isEnglishPopArtist);
 
-            CompoundCondition isAnglophone = new CompoundCondition();
-            isAnglophone.booleanOperator = BooleanOperator.OR;
-            isAnglophone.conditions = Arrays.asList(
-                    condition("country", Operator.EQUAL, "UK"),
-                    condition("country", Operator.EQUAL, "USA"));
+                List<MusicArtist> musicArtists = Arrays.asList(
+                        beatles(),
+                        rollingStones(),
+                        madonna(),
+                        marvinGaye(),
+                        bjork(),
+                        edithPiaf(),
+                        nirvana(),
+                        eltonJohn(),
+                        bruceSpringsteen());
+                List<MusicArtist> result = sut.perform(musicArtists, isAnglophoneBand);
+                assertThat(result).containsExactlyInAnyOrder(marvinGaye(), bruceSpringsteen(), eltonJohn(), madonna());
+            }
 
-            CompoundCondition isBand = new CompoundCondition();
-            isBand.booleanOperator = BooleanOperator.OR;
-            isBand.conditions = Arrays.asList(
-                    condition("numberOfComponents", Operator.EQUAL, 3),
-                    condition("numberOfComponents", Operator.EQUAL, 4));
+            MusicArtist beatles() {
+                MusicArtist beatles = new MusicArtist();
+                beatles.name = "Beatles";
+                beatles.genre = "Rock";
+                beatles.numberOfComponents = 4;
+                beatles.country = "UK";
+                return beatles;
+            }
 
-            CompoundCondition isAnglophoneBand = new CompoundCondition();
-            isAnglophoneBand.booleanOperator = BooleanOperator.AND;
-            isAnglophoneBand.nestedConditions = Arrays.asList(isAnglophone, isBand);
+            MusicArtist rollingStones() {
+                MusicArtist rollingStones = new MusicArtist();
+                rollingStones.name = "Rolling Stones";
+                rollingStones.genre = "Rock";
+                rollingStones.numberOfComponents = 4;
+                rollingStones.country = "UK";
+                return rollingStones;
+            }
 
-            List<MusicArtist> bands = Arrays.asList(beatles, rollingStones, madonna, marvinGaye, bjork, edithPiaf, nirvana);
-            List<MusicArtist> anglophoneBands = sut.perform(bands, isAnglophoneBand);
-            assertThat(anglophoneBands).containsExactlyInAnyOrder(beatles, rollingStones, nirvana);
+            MusicArtist madonna() {
+                MusicArtist madonna = new MusicArtist();
+                madonna.name = "Madonna";
+                madonna.genre = "Pop";
+                madonna.numberOfComponents = 1;
+                madonna.country = "USA";
+                madonna.alive = true;
+                return madonna;
+            }
+
+            MusicArtist marvinGaye() {
+                MusicArtist marvinGaye = new MusicArtist();
+                marvinGaye.name = "Marvin Gaye";
+                marvinGaye.genre = "R&B";
+                marvinGaye.numberOfComponents = 1;
+                marvinGaye.country = "USA";
+                marvinGaye.alive = false;
+                return marvinGaye;
+            }
+
+            MusicArtist bjork() {
+                MusicArtist bjork = new MusicArtist();
+                bjork.name = "Bjork";
+                bjork.genre = "Art Pop";
+                bjork.numberOfComponents = 1;
+                bjork.country = "Iceland";
+                bjork.alive = true;
+                return bjork;
+            }
+
+            MusicArtist edithPiaf() {
+                MusicArtist edithPiaf = new MusicArtist();
+                edithPiaf.name = "Edith Piaf";
+                edithPiaf.genre = "Cabaret";
+                edithPiaf.numberOfComponents = 1;
+                edithPiaf.country = "France";
+                edithPiaf.alive = false;
+                return edithPiaf;
+            }
+
+            MusicArtist nirvana() {
+                MusicArtist nirvana = new MusicArtist();
+                nirvana.name = "Nirvana";
+                nirvana.genre = "Rock";
+                nirvana.numberOfComponents = 3;
+                nirvana.country = "USA";
+                return nirvana;
+            }
+
+            MusicArtist bruceSpringsteen() {
+                MusicArtist bruceSpringsteen = new MusicArtist();
+                bruceSpringsteen.name = "Bruce Springsteen";
+                bruceSpringsteen.genre = "Rock";
+                bruceSpringsteen.numberOfComponents = 1;
+                bruceSpringsteen.country = "USA";
+                return bruceSpringsteen;
+            }
+
+            MusicArtist eltonJohn() {
+                MusicArtist eltonJohn = new MusicArtist();
+                eltonJohn.name = "Elton John";
+                eltonJohn.genre = "Pop";
+                eltonJohn.numberOfComponents = 1;
+                eltonJohn.country = "UK";
+                eltonJohn.alive = true;
+                return eltonJohn;
+            }
         }
     }
 
@@ -624,5 +710,18 @@ class MusicArtist {
 
     public boolean isAlive() {
         return alive;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MusicArtist that = (MusicArtist) o;
+        return numberOfComponents == that.numberOfComponents && alive == that.alive && Objects.equals(name, that.name) && Objects.equals(genre, that.genre) && Objects.equals(country, that.country);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, genre, numberOfComponents, country, alive);
     }
 }
