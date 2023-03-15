@@ -588,6 +588,38 @@ class FilterTest {
                 assertThat(result).containsExactlyInAnyOrder(marvinGaye(), bruceSpringsteen(), eltonJohn(), madonna());
             }
 
+            @Test
+            void performCompoundConditionNested_mixedOrAndNot() {
+                CompoundCondition isNotAmericanBand = new CompoundCondition();
+                isNotAmericanBand.booleanOperator = BooleanOperator.NOT;
+                isNotAmericanBand.conditions = Arrays.asList(
+                        condition("country", Operator.EQUAL, "USA"),
+                        condition("numberOfComponents", Operator.EQUAL, 1));
+
+                CompoundCondition isNotEnglishBand = new CompoundCondition();
+                isNotEnglishBand.booleanOperator = BooleanOperator.NOT;
+                isNotEnglishBand.conditions = Arrays.asList(
+                        condition("country", Operator.EQUAL, "UK"),
+                        condition("numberOfComponents", Operator.EQUAL, 1));
+
+                CompoundCondition isNotAnglophoneBand = new CompoundCondition();
+                isNotAnglophoneBand.booleanOperator = BooleanOperator.OR;
+                isNotAnglophoneBand.nestedConditions = Arrays.asList(isNotAmericanBand, isNotEnglishBand);
+
+                List<MusicArtist> musicArtists = Arrays.asList(
+                        beatles(),
+                        rollingStones(),
+                        madonna(),
+                        marvinGaye(),
+                        bjork(),
+                        edithPiaf(),
+                        nirvana(),
+                        eltonJohn(),
+                        bruceSpringsteen());
+                List<MusicArtist> result = sut.perform(musicArtists, isNotAnglophoneBand);
+                assertThat(result).containsExactlyInAnyOrder(beatles(), rollingStones(), nirvana());
+            }
+
             MusicArtist beatles() {
                 MusicArtist beatles = new MusicArtist();
                 beatles.name = "Beatles";
