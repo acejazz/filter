@@ -165,6 +165,28 @@ class FieldConditionEvaluatorTest {
         }
     }
 
+    @Nested
+    class EnumTests {
+        @Test
+        void evaluateEqual() {
+            assertTrue(sut.evaluateCondition(Operator.EQUAL, "ENUM_VALUE0", TestEnum.ENUM_VALUE0));
+            assertFalse(sut.evaluateCondition(Operator.EQUAL, "ENUM_VALUE1", TestEnum.ENUM_VALUE0));
+        }
+
+        @Test
+        void evaluateNotEqual() {
+            assertTrue(sut.evaluateCondition(Operator.NOT_EQUAL, "ENUM_VALUE0", TestEnum.ENUM_VALUE1));
+            assertFalse(sut.evaluateCondition(Operator.NOT_EQUAL, "ENUM_VALUE1", TestEnum.ENUM_VALUE1));
+        }
+
+        @Test
+        void evaluateLowerThan() {
+            assertTrue(sut.evaluateCondition(Operator.LOWER_THAN, "ENUM_VALUE0", TestEnum.ENUM_VALUE1));
+            assertFalse(sut.evaluateCondition(Operator.LOWER_THAN, "ENUM_VALUE1", TestEnum.ENUM_VALUE1));
+            assertFalse(sut.evaluateCondition(Operator.LOWER_THAN, "ENUM_VALUE1", TestEnum.ENUM_VALUE0));
+        }
+    }
+
     @Test
     void handleObject() {
         assertThatThrownBy(() -> sut.evaluateCondition(Operator.EQUAL, new Object(), "anything"))

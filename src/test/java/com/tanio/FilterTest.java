@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -246,6 +245,21 @@ class FilterTest {
             List<TestEntity> result = sut.perform(
                     Arrays.asList(nonMatchingTestEntity, matchingTestEntity),
                     condition("charPrimitiveField", Operator.EQUAL, 'a'));
+
+            assertThat(result).isEqualTo(singletonList(matchingTestEntity));
+        }
+
+        @Test
+        void filterWithEqualEnum() {
+            TestEntity matchingTestEntity = new TestEntity();
+            matchingTestEntity.setEnumField(TestEnum.ENUM_VALUE0);
+
+            TestEntity nonMatchingTestEntity = new TestEntity();
+            nonMatchingTestEntity.setEnumField(TestEnum.ENUM_VALUE1);
+
+            List<TestEntity> result = sut.perform(
+                    Arrays.asList(nonMatchingTestEntity, matchingTestEntity),
+                    condition("enumField", Operator.EQUAL, "ENUM_VALUE0"));
 
             assertThat(result).isEqualTo(singletonList(matchingTestEntity));
         }
@@ -709,41 +723,5 @@ class FilterTest {
         result.operator = operator;
         result.value = value;
         return result;
-    }
-}
-
-class MusicArtist {
-    String name;
-    String genre;
-    int numberOfComponents;
-    String country;
-
-    public String getName() {
-        return name;
-    }
-
-    public String getGenre() {
-        return genre;
-    }
-
-    public int getNumberOfComponents() {
-        return numberOfComponents;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        MusicArtist that = (MusicArtist) o;
-        return numberOfComponents == that.numberOfComponents && Objects.equals(name, that.name) && Objects.equals(genre, that.genre) && Objects.equals(country, that.country);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, genre, numberOfComponents, country);
     }
 }

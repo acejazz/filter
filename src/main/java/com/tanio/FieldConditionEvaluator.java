@@ -4,8 +4,18 @@ import com.tanio.Condition.Operator;
 
 class FieldConditionEvaluator {
     boolean evaluateCondition(Operator conditionOperator, Object first, Object second) {
-        // TODO: Check they are the same instances of the same class
+        // TODO: Check they are the same instances of the same class?
         Class<?> firstObjectClass = first.getClass();
+
+        if (second.getClass().isEnum()) {
+            String firstString = first.toString();
+            String secondString = second.toString();
+            return switch (conditionOperator) {
+                case EQUAL -> firstString.equals(secondString);
+                case NOT_EQUAL -> !firstString.equals(secondString);
+                case LOWER_THAN -> firstString.compareTo(secondString) <= -1;
+            };
+        }
 
         if (firstObjectClass.equals(String.class)) {
             return switch (conditionOperator) {

@@ -19,6 +19,7 @@ public class TestEntity {
 
     private String stringField;
     private Object objectField;
+    private TestEnum enumField;
 
     private NestedEntity nestedEntity;
 
@@ -157,6 +158,14 @@ public class TestEntity {
     public void setNestedEntity(NestedEntity nestedEntity) {
         this.nestedEntity = nestedEntity;
     }
+
+    public TestEnum getEnumField() {
+        return enumField;
+    }
+
+    public void setEnumField(TestEnum enumField) {
+        this.enumField = enumField;
+    }
 }
 
 class NestedEntity {
@@ -190,4 +199,8 @@ class NestedNestedEntity {
     public void setStringField(String stringField) {
         this.stringField = stringField;
     }
+}
+
+enum TestEnum {
+    ENUM_VALUE0, ENUM_VALUE1
 }
