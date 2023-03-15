@@ -612,7 +612,6 @@ class FilterTest {
                 madonna.genre = "Pop";
                 madonna.numberOfComponents = 1;
                 madonna.country = "USA";
-                madonna.alive = true;
                 return madonna;
             }
 
@@ -622,7 +621,6 @@ class FilterTest {
                 marvinGaye.genre = "R&B";
                 marvinGaye.numberOfComponents = 1;
                 marvinGaye.country = "USA";
-                marvinGaye.alive = false;
                 return marvinGaye;
             }
 
@@ -632,7 +630,6 @@ class FilterTest {
                 bjork.genre = "Art Pop";
                 bjork.numberOfComponents = 1;
                 bjork.country = "Iceland";
-                bjork.alive = true;
                 return bjork;
             }
 
@@ -642,7 +639,6 @@ class FilterTest {
                 edithPiaf.genre = "Cabaret";
                 edithPiaf.numberOfComponents = 1;
                 edithPiaf.country = "France";
-                edithPiaf.alive = false;
                 return edithPiaf;
             }
 
@@ -670,7 +666,6 @@ class FilterTest {
                 eltonJohn.genre = "Pop";
                 eltonJohn.numberOfComponents = 1;
                 eltonJohn.country = "UK";
-                eltonJohn.alive = true;
                 return eltonJohn;
             }
         }
@@ -690,7 +685,6 @@ class MusicArtist {
     String genre;
     int numberOfComponents;
     String country;
-    boolean alive;
 
     public String getName() {
         return name;
@@ -708,20 +702,16 @@ class MusicArtist {
         return country;
     }
 
-    public boolean isAlive() {
-        return alive;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MusicArtist that = (MusicArtist) o;
-        return numberOfComponents == that.numberOfComponents && alive == that.alive && Objects.equals(name, that.name) && Objects.equals(genre, that.genre) && Objects.equals(country, that.country);
+        return numberOfComponents == that.numberOfComponents && Objects.equals(name, that.name) && Objects.equals(genre, that.genre) && Objects.equals(country, that.country);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, genre, numberOfComponents, country, alive);
+        return Objects.hash(name, genre, numberOfComponents, country);
     }
 }

@@ -3,11 +3,28 @@ package com.tanio;
 import java.lang.reflect.Method;
 
 class FieldValueRetriever {
+
+    private static final String SEPARATOR = ".";
+
     Object retrieveFieldValue(String fieldName, Object object) {
-        final String separator = ".";
-        int separatorIndex = fieldName.indexOf(separator);
+        int separatorIndex = fieldName.indexOf(SEPARATOR);
 
         if (separatorIndex == -1) {
+            boolean isFieldNameReferringToBoolean = fieldName.startsWith("is")
+                    && Character.isUpperCase(fieldName.charAt(2));
+            if (isFieldNameReferringToBoolean) {
+                try {
+                    Method method = object.getClass().getMethod(fieldName);
+                    boolean isReturnTypeBoolean = method.getReturnType().equals(boolean.class)
+                            || method.getReturnType().equals(Boolean.class);
+                    if (isReturnTypeBoolean) {
+                        return invokeMethod(fieldName, object);
+                    }
+                } catch (NoSuchMethodException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
             String methodName = transformToGetterMethodName(fieldName);
             return invokeMethod(methodName, object);
         }

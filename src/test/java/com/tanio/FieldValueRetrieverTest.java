@@ -57,6 +57,18 @@ class FieldValueRetrieverTest {
     }
 
     @Test
+    void retrieveBooleanFieldValue_is() {
+        BooleanTestEntity testEntity = new BooleanTestEntity();
+        assertThat(sut.retrieveFieldValue("isValid", testEntity)).isEqualTo(true);
+    }
+
+    @Test
+    void retrieveBooleanFieldValue_is_withWrapper() {
+        BooleanTestEntity testEntity = new BooleanTestEntity();
+        assertThat(sut.retrieveFieldValue("isValidWithWrapper", testEntity)).isEqualTo(true);
+    }
+
+    @Test
     void retrieveBooleanPrimitiveFieldValue() {
         TestEntity testEntity = new TestEntity();
         testEntity.setBooleanPrimitiveField(true);
@@ -128,5 +140,14 @@ class FieldValueRetrieverTest {
         TestEntity testEntity = new TestEntity();
         testEntity.setNestedEntity(nestedEntity);
         assertThat(sut.retrieveFieldValue("nestedEntity.nestedNestedEntity", testEntity)).isEqualTo(nestedNestedEntity);
+    }
+}
+
+class BooleanTestEntity {
+    public boolean isValid() {
+        return true;
+    }
+    public Boolean isValidWithWrapper() {
+        return true;
     }
 }
