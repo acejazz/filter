@@ -31,13 +31,6 @@ class Filter {
         };
     }
 
-    // TODO: Do we still need this?
-    <T> List<T> perform(List<T> target, Condition condition) {
-        return target.stream()
-                .filter(it -> matchesCondition(condition, it))
-                .collect(Collectors.toList());
-    }
-
     private static <T> List<T> and(List<List<T>> resultLists) {
         Iterator<List<T>> iterator = resultLists.iterator();
         List<T> result = iterator.next();

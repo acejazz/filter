@@ -4,8 +4,6 @@ import com.tanio.Condition.Operator;
 
 class FieldConditionEvaluator {
     boolean evaluateCondition(Operator operator, Object first, Object second) {
-        // TODO: Check they are the same instances of the same class?
-
         // The second object is the actual field value, so it rules the way the condition is evaluated
         Class<?> secondObjectClass = second.getClass();
 
