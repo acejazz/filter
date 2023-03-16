@@ -189,7 +189,7 @@ class FieldConditionEvaluatorTest {
 
     @Test
     void handleObject() {
-        assertThatThrownBy(() -> sut.evaluateCondition(Operator.EQUAL, new Object(), "anything"))
+        assertThatThrownBy(() -> sut.evaluateCondition(Operator.EQUAL, "anything", new Object()))
                 .isInstanceOf(FilterException.class)
                 .hasMessage("Filter applicable only to primitives, primitive wrappers and strings");
     }

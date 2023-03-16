@@ -26,6 +26,7 @@ class Filter {
         return switch (compoundCondition.booleanOperator) {
             case OR -> or(nestedResults);
             case AND -> and(nestedResults);
+            // !A and !B and !C = !(A or B or C)
             case NOT -> not(target, or(nestedResults));
         };
     }

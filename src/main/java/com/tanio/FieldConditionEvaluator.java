@@ -5,27 +5,23 @@ import com.tanio.Condition.Operator;
 class FieldConditionEvaluator {
     boolean evaluateCondition(Operator operator, Object first, Object second) {
         // TODO: Check they are the same instances of the same class?
-        Class<?> firstObjectClass = first.getClass();
 
-        if (second.getClass().isEnum()) {
-            String firstString = String.valueOf(first);
-            String secondString = String.valueOf(second);
-            return evaluateConditionForStrings(operator, firstString, secondString);
+        // The second object is the actual field value, so it rules the way the condition is evaluated
+        Class<?> secondObjectClass = second.getClass();
+
+        if (secondObjectClass.isEnum()) {
+            return evaluateConditionOnStringifiedObjects(operator, first, second);
         }
 
-        if (firstObjectClass.equals(String.class)) {
-            String firstString = String.valueOf(first);
-            String secondString = String.valueOf(second);
-            return evaluateConditionForStrings(operator, firstString, secondString);
+        if (secondObjectClass.equals(String.class)) {
+            return evaluateConditionOnStringifiedObjects(operator, first, second);
         }
 
-        if (firstObjectClass.equals(Character.class)) {
-            String firstString = String.valueOf(first);
-            String secondString = String.valueOf(second);
-            return evaluateConditionForStrings(operator, firstString, secondString);
+        if (secondObjectClass.equals(Character.class)) {
+            return evaluateConditionOnStringifiedObjects(operator, first, second);
         }
 
-        if (firstObjectClass.equals(Boolean.class)) {
+        if (secondObjectClass.equals(Boolean.class)) {
             return switch (operator) {
                 case EQUAL -> first.equals(second);
                 case NOT_EQUAL -> !first.equals(second);
@@ -33,7 +29,7 @@ class FieldConditionEvaluator {
             };
         }
 
-        if (Number.class.isAssignableFrom(firstObjectClass)) {
+        if (Number.class.isAssignableFrom(secondObjectClass)) {
             Double firstNumberValue = ((Number) first).doubleValue();
             Double secondNumberValue = ((Number) second).doubleValue();
 
@@ -47,7 +43,12 @@ class FieldConditionEvaluator {
         throw new FilterException("Filter applicable only to primitives, primitive wrappers and strings");
     }
 
-    private static boolean evaluateConditionForStrings(Operator conditionOperator, String firstString, String secondString) {
+    private static boolean evaluateConditionOnStringifiedObjects(Operator conditionOperator,
+                                                                 Object first,
+                                                                 Object second) {
+        String firstString = String.valueOf(first);
+        String secondString = String.valueOf(second);
+
         return switch (conditionOperator) {
             case EQUAL -> firstString.equals(secondString);
             case NOT_EQUAL -> !firstString.equals(secondString);
