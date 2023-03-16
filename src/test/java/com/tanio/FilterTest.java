@@ -425,7 +425,7 @@ class FilterTest {
     @Nested
     class NestedAndNonNestedConditions {
         @Test
-        void perform() {
+        void performAndOr() {
             TestEntity matchingNonNestedConditionEntity = new TestEntity();
             matchingNonNestedConditionEntity.setStringField("anything");
 
@@ -481,7 +481,71 @@ class FilterTest {
                                     nonMatchingNestedConditionEntity2
                             ), compoundCondition);
 
-            assertThat(result).containsExactlyInAnyOrder(matchingNestedConditionEntity, matchingNonNestedConditionEntity);
+            assertThat(result)
+                    .containsExactlyInAnyOrder(
+                            matchingNestedConditionEntity,
+                            matchingNonNestedConditionEntity);
+        }
+
+        @Test
+        void performOrAnd() {
+            TestEntity matchingNestedConditionEntity0 = new TestEntity();
+            matchingNestedConditionEntity0.setStringField("anything");
+            matchingNestedConditionEntity0.setCharField('x');
+
+            TestEntity matchingNestedConditionEntity1 = new TestEntity();
+            matchingNestedConditionEntity1.setIntegerField(13);
+
+            TestEntity matchingNonNestedConditionEntity = new TestEntity();
+            matchingNonNestedConditionEntity.setCharField('x');
+            matchingNonNestedConditionEntity.setBooleanField(true);
+
+            TestEntity nonMatchingEntity0 = new TestEntity();
+            nonMatchingEntity0.setStringField("something");
+            nonMatchingEntity0.setCharField('x');
+
+            TestEntity nonMatchingEntity1 = new TestEntity();
+            nonMatchingEntity1.setIntegerField(19);
+
+            TestEntity nonMatchingEntity2 = new TestEntity();
+            nonMatchingEntity2.setStringField("anything");
+            nonMatchingEntity2.setCharField('a');
+
+            Condition nestedCondition0 = new Condition();
+            nestedCondition0.fieldName = "stringField";
+            nestedCondition0.operator = Operator.EQUAL;
+            nestedCondition0.value = "anything";
+
+            Condition nestedCondition1 = new Condition();
+            nestedCondition1.fieldName = "integerField";
+            nestedCondition1.operator = Operator.EQUAL;
+            nestedCondition1.value = 13;
+
+            Condition nonNestedCondition = new Condition();
+            nonNestedCondition.fieldName = "charField";
+            nonNestedCondition.operator = Operator.EQUAL;
+            nonNestedCondition.value = 'x';
+
+            CompoundCondition nestedConditions = new CompoundCondition();
+            nestedConditions.booleanOperator = BooleanOperator.OR;
+            nestedConditions.conditions = Arrays.asList(nestedCondition0, nestedCondition1);
+
+            CompoundCondition condition = new CompoundCondition();
+            condition.booleanOperator = BooleanOperator.AND;
+            condition.conditions = singletonList(nonNestedCondition);
+            condition.nestedConditions = singletonList(nestedConditions);
+
+            List<TestEntity> result = sut.perform(
+                    Arrays.asList(
+                            matchingNonNestedConditionEntity,
+                            matchingNestedConditionEntity0,
+                            matchingNestedConditionEntity1,
+                            nonMatchingEntity0,
+                            nonMatchingEntity1,
+                            nonMatchingEntity2
+                    ), condition);
+
+            assertThat(result).containsExactlyInAnyOrder(matchingNestedConditionEntity0);
         }
     }
 
