@@ -6,6 +6,6 @@ class Condition {
     Object value;
 
     enum Operator {
-        EQUAL, LOWER_THAN, NOT_EQUAL
+        EQUAL, LOWER_THAN, GREATER_THAN, NOT_EQUAL
     }
 }

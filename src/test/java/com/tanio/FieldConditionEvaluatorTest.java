@@ -31,6 +31,13 @@ class FieldConditionEvaluatorTest {
             assertFalse(sut.evaluateCondition(Operator.LOWER_THAN, 7, 5));
             assertFalse(sut.evaluateCondition(Operator.LOWER_THAN, 7, 7));
         }
+
+        @Test
+        void evaluateGreaterThan() {
+            assertTrue(sut.evaluateCondition(Operator.GREATER_THAN, 7, 5));
+            assertFalse(sut.evaluateCondition(Operator.GREATER_THAN, 7, 11));
+            assertFalse(sut.evaluateCondition(Operator.GREATER_THAN, 7, 7));
+        }
     }
 
     @Nested
@@ -52,6 +59,13 @@ class FieldConditionEvaluatorTest {
             assertTrue(sut.evaluateCondition(Operator.LOWER_THAN, 7L, 11L));
             assertFalse(sut.evaluateCondition(Operator.LOWER_THAN, 7L, 5L));
             assertFalse(sut.evaluateCondition(Operator.LOWER_THAN, 7L, 7L));
+        }
+
+        @Test
+        void evaluateGreaterThan() {
+            assertTrue(sut.evaluateCondition(Operator.GREATER_THAN, 7L, 5L));
+            assertFalse(sut.evaluateCondition(Operator.GREATER_THAN, 7L, 11L));
+            assertFalse(sut.evaluateCondition(Operator.GREATER_THAN, 7L, 7L));
         }
     }
 
@@ -75,6 +89,13 @@ class FieldConditionEvaluatorTest {
             assertFalse(sut.evaluateCondition(Operator.LOWER_THAN, "hello", "bye"));
             assertFalse(sut.evaluateCondition(Operator.LOWER_THAN, "hello", "hello"));
         }
+
+        @Test
+        void evaluateGreaterThan() {
+            assertTrue(sut.evaluateCondition(Operator.GREATER_THAN, "hello", "bye"));
+            assertFalse(sut.evaluateCondition(Operator.GREATER_THAN, "bye", "hello"));
+            assertFalse(sut.evaluateCondition(Operator.GREATER_THAN, "hello", "hello"));
+        }
     }
 
     @Nested
@@ -96,6 +117,13 @@ class FieldConditionEvaluatorTest {
             assertThatThrownBy(() -> sut.evaluateCondition(Operator.LOWER_THAN, true, true))
                     .isInstanceOf(FilterException.class)
                     .hasMessage("'lower than' operator cannot be applied to booleans");
+        }
+
+        @Test
+        void handleGreaterThan() {
+            assertThatThrownBy(() -> sut.evaluateCondition(Operator.GREATER_THAN, true, true))
+                    .isInstanceOf(FilterException.class)
+                    .hasMessage("'greater than' operator cannot be applied to booleans");
         }
     }
 
@@ -119,6 +147,13 @@ class FieldConditionEvaluatorTest {
             assertFalse(sut.evaluateCondition(Operator.LOWER_THAN, 7.1F, 5.3F));
             assertFalse(sut.evaluateCondition(Operator.LOWER_THAN, 7.1F, 7.1F));
         }
+
+        @Test
+        void evaluateGreaterThan() {
+            assertTrue(sut.evaluateCondition(Operator.GREATER_THAN, 11.3F, 7.1F));
+            assertFalse(sut.evaluateCondition(Operator.GREATER_THAN, 5.3F, 7.1F));
+            assertFalse(sut.evaluateCondition(Operator.GREATER_THAN, 7.1F, 7.1F));
+        }
     }
 
     @Nested
@@ -140,6 +175,13 @@ class FieldConditionEvaluatorTest {
             assertTrue(sut.evaluateCondition(Operator.LOWER_THAN, 7.1, 11.3));
             assertFalse(sut.evaluateCondition(Operator.LOWER_THAN, 7.1, 5.3));
             assertFalse(sut.evaluateCondition(Operator.LOWER_THAN, 7.1, 7.1));
+        }
+
+        @Test
+        void evaluateGreaterThan() {
+            assertTrue(sut.evaluateCondition(Operator.GREATER_THAN, 11.3, 7.1));
+            assertFalse(sut.evaluateCondition(Operator.GREATER_THAN, 5.3, 7.1));
+            assertFalse(sut.evaluateCondition(Operator.GREATER_THAN, 7.1, 7.1));
         }
     }
 
@@ -163,6 +205,13 @@ class FieldConditionEvaluatorTest {
             assertFalse(sut.evaluateCondition(Operator.LOWER_THAN, 'b', 'a'));
             assertFalse(sut.evaluateCondition(Operator.LOWER_THAN, 'a', 'a'));
         }
+
+        @Test
+        void evaluateGreaterThan() {
+            assertTrue(sut.evaluateCondition(Operator.GREATER_THAN, 'b', 'a'));
+            assertFalse(sut.evaluateCondition(Operator.GREATER_THAN, 'a', 'b'));
+            assertFalse(sut.evaluateCondition(Operator.GREATER_THAN, 'a', 'a'));
+        }
     }
 
     @Nested
@@ -182,8 +231,15 @@ class FieldConditionEvaluatorTest {
         @Test
         void evaluateLowerThan() {
             assertTrue(sut.evaluateCondition(Operator.LOWER_THAN, "ENUM_VALUE0", TestEnum.ENUM_VALUE1));
-            assertFalse(sut.evaluateCondition(Operator.LOWER_THAN, "ENUM_VALUE1", TestEnum.ENUM_VALUE1));
             assertFalse(sut.evaluateCondition(Operator.LOWER_THAN, "ENUM_VALUE1", TestEnum.ENUM_VALUE0));
+            assertFalse(sut.evaluateCondition(Operator.LOWER_THAN, "ENUM_VALUE1", TestEnum.ENUM_VALUE1));
+        }
+
+        @Test
+        void evaluateGreaterThan() {
+            assertTrue(sut.evaluateCondition(Operator.GREATER_THAN, "ENUM_VALUE1", TestEnum.ENUM_VALUE0));
+            assertFalse(sut.evaluateCondition(Operator.GREATER_THAN, "ENUM_VALUE0", TestEnum.ENUM_VALUE1));
+            assertFalse(sut.evaluateCondition(Operator.GREATER_THAN, "ENUM_VALUE1", TestEnum.ENUM_VALUE1));
         }
     }
 
