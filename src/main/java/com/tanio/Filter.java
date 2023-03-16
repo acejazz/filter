@@ -12,6 +12,27 @@ class Filter {
     private final FieldValueRetriever fieldValueRetriever = new FieldValueRetriever();
 
     <T> List<T> perform(List<T> target, CompoundCondition compoundCondition) {
+        if (compoundCondition.conditions != null && compoundCondition.nestedConditions != null) {
+            List<List<T>> nonNestedConditionsResults = compoundCondition.conditions.stream()
+                    .map(it -> perform(target, it))
+                    .toList();
+
+            List<List<T>> nestedConditionsResults = compoundCondition.nestedConditions.stream()
+                    .map(it -> perform(target, it))
+                    .toList();
+
+            List<List<T>> allResults = new ArrayList<>();
+            allResults.addAll(nonNestedConditionsResults);
+            allResults.addAll(nestedConditionsResults);
+
+            return switch (compoundCondition.booleanOperator) {
+                case OR -> or(allResults);
+                case AND -> and(allResults);
+                // !A and !B and !C = !(A or B or C)
+                case NOT -> not(target, or(allResults));
+            };
+        }
+
         if (compoundCondition.conditions != null) {
             return switch (compoundCondition.booleanOperator) {
                 case OR -> performOr(target, compoundCondition.conditions);
@@ -29,6 +50,12 @@ class Filter {
             // !A and !B and !C = !(A or B or C)
             case NOT -> not(target, or(nestedResults));
         };
+    }
+
+    private <T> List<T> perform(List<T> target, Condition condition) {
+        return target.stream()
+                .filter(it -> matchesCondition(condition, it))
+                .collect(Collectors.toList());
     }
 
     private static <T> List<T> and(List<List<T>> resultLists) {

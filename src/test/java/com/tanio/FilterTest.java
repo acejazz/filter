@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class FilterTest {
@@ -418,6 +419,69 @@ class FilterTest {
                 eltonJohn.country = "UK";
                 return eltonJohn;
             }
+        }
+    }
+
+    @Nested
+    class NestedAndNonNestedConditions {
+        @Test
+        void perform() {
+            TestEntity matchingNonNestedConditionEntity = new TestEntity();
+            matchingNonNestedConditionEntity.setStringField("anything");
+
+            TestEntity matchingNestedConditionEntity = new TestEntity();
+            matchingNestedConditionEntity.setIntegerField(13);
+            matchingNestedConditionEntity.setCharField('x');
+
+            TestEntity nonMatchingNonNestedConditionEntity = new TestEntity();
+            nonMatchingNonNestedConditionEntity.setStringField("something");
+
+            TestEntity nonMatchingNestedConditionEntity0 = new TestEntity();
+            nonMatchingNestedConditionEntity0.setIntegerField(13);
+
+            TestEntity nonMatchingNestedConditionEntity1 = new TestEntity();
+            nonMatchingNestedConditionEntity1.setCharField('x');
+
+            TestEntity nonMatchingNestedConditionEntity2 = new TestEntity();
+            nonMatchingNestedConditionEntity2.setIntegerField(13);
+            nonMatchingNestedConditionEntity2.setCharField('a');
+
+            Condition nonNestedCondition = new Condition();
+            nonNestedCondition.fieldName = "stringField";
+            nonNestedCondition.operator = Operator.EQUAL;
+            nonNestedCondition.value = "anything";
+
+            Condition nestedCondition0 = new Condition();
+            nestedCondition0.fieldName = "integerField";
+            nestedCondition0.operator = Operator.EQUAL;
+            nestedCondition0.value = 13;
+
+            Condition nestedCondition1 = new Condition();
+            nestedCondition1.fieldName = "charField";
+            nestedCondition1.operator = Operator.EQUAL;
+            nestedCondition1.value = 'x';
+
+            CompoundCondition nestedConditions = new CompoundCondition();
+            nestedConditions.booleanOperator = BooleanOperator.AND;
+            nestedConditions.conditions = Arrays.asList(nestedCondition0, nestedCondition1);
+
+            CompoundCondition compoundCondition = new CompoundCondition();
+            compoundCondition.booleanOperator = BooleanOperator.OR;
+            compoundCondition.conditions = singletonList(nonNestedCondition);
+            compoundCondition.nestedConditions = singletonList(nestedConditions);
+
+            List<TestEntity> result =
+                    sut.perform(
+                            Arrays.asList(
+                                    matchingNestedConditionEntity,
+                                    matchingNonNestedConditionEntity,
+                                    nonMatchingNonNestedConditionEntity,
+                                    nonMatchingNestedConditionEntity0,
+                                    nonMatchingNestedConditionEntity1,
+                                    nonMatchingNestedConditionEntity2
+                            ), compoundCondition);
+
+            assertThat(result).containsExactlyInAnyOrder(matchingNestedConditionEntity, matchingNonNestedConditionEntity);
         }
     }
 
