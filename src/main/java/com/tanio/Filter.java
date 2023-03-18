@@ -106,15 +106,15 @@ class Filter {
     }
 
     private <T> boolean matchesCondition(Condition condition, T object) {
-        Object fieldValue = fieldValueRetriever.retrieveFieldValue(condition.fieldName, object);
+        Object fieldValue = fieldValueRetriever.retrieveFieldValue(condition.getFieldName(), object);
 
         if (fieldValue == null) {
             return false;
         }
 
         return fieldConditionEvaluator.evaluateCondition(
-                condition.operator,
-                condition.value,
+                condition.getOperator(),
+                condition.getValue(),
                 fieldValue);
     }
 }
