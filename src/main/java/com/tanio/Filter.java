@@ -12,12 +12,12 @@ class Filter {
     private final FieldValueRetriever fieldValueRetriever = new FieldValueRetriever();
 
     <T> List<T> perform(List<T> target, CompoundCondition compoundCondition) {
-        if (compoundCondition.getConditions() != null && compoundCondition.getNestedConditions() != null) {
+        if (compoundCondition.hasMixedLevelConditions()) {
             List<List<T>> nonNestedConditionsResults = compoundCondition.getConditions().stream()
                     .map(it -> perform(target, it))
                     .toList();
 
-            List<List<T>> nestedConditionsResults = compoundCondition.getConditions().stream()
+            List<List<T>> nestedConditionsResults = compoundCondition.getNestedConditions().stream()
                     .map(it -> perform(target, it))
                     .toList();
 
@@ -33,7 +33,7 @@ class Filter {
             };
         }
 
-        if (compoundCondition.getConditions() != null) {
+        if (compoundCondition.hasOnlyOneLevelConditions()) {
             return switch (compoundCondition.getBooleanOperator()) {
                 case OR -> performOr(target, compoundCondition.getConditions());
                 case AND -> performAnd(target, compoundCondition.getConditions());

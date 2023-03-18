@@ -11,16 +11,24 @@ class CompoundCondition {
 
     }
 
-    public BooleanOperator getBooleanOperator() {
+    BooleanOperator getBooleanOperator() {
         return booleanOperator;
     }
 
-    public List<Condition> getConditions() {
+    List<Condition> getConditions() {
         return conditions;
     }
 
-    public List<CompoundCondition> getNestedConditions() {
+    List<CompoundCondition> getNestedConditions() {
         return nestedConditions;
+    }
+
+    boolean hasMixedLevelConditions() {
+        return conditions != null && nestedConditions != null;
+    }
+
+    boolean hasOnlyOneLevelConditions() {
+        return conditions != null && nestedConditions == null;
     }
 
     static CompoundCondition or(Condition... conditions) {
