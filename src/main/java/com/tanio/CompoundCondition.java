@@ -1,91 +1,57 @@
 package com.tanio;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
-class CompoundCondition {
-    private BooleanOperator booleanOperator;
-    private List<Condition> conditions;
-    private List<CompoundCondition> nestedConditions;
+import static java.util.List.copyOf;
 
-    private CompoundCondition() {
+class CompoundCondition implements Evaluable {
+    private final BooleanOperator operator;
+    private final List<Evaluable> conditions;
 
+    CompoundCondition(BooleanOperator operator, List<Evaluable> conditions) {
+        this.operator = operator;
+        this.conditions = conditions;
     }
 
-    BooleanOperator getBooleanOperator() {
-        return booleanOperator;
+    @Override
+    public <T> List<T> evaluate(List<T> target) {
+        List<List<T>> results = conditions.stream()
+                .map(it -> it.evaluate(target))
+                .collect(Collectors.toList());
+
+        return switch (operator) {
+            case OR -> or(results);
+            case AND -> and(results);
+            // !A and !B and !C = !(A or B or C)
+            case NOT -> not(target, or(results));
+        };
     }
 
-    List<Condition> getConditions() {
-        return conditions;
-    }
-
-    List<CompoundCondition> getNestedConditions() {
-        return nestedConditions;
-    }
-
-    boolean hasMixedLevelConditions() {
-        return conditions != null && nestedConditions != null;
-    }
-
-    boolean hasOnlyOneLevelConditions() {
-        return conditions != null && nestedConditions == null;
-    }
-
-    static CompoundCondition or(Condition... conditions) {
-        CompoundCondition result = new CompoundCondition();
-        result.booleanOperator = BooleanOperator.OR;
-        result.conditions = List.of(conditions);
+    private static <T> List<T> and(List<List<T>> resultLists) {
+        Iterator<List<T>> iterator = resultLists.iterator();
+        List<T> result = new ArrayList<>(iterator.next());
+        while (iterator.hasNext()) {
+            result.retainAll(iterator.next());
+        }
         return result;
     }
 
-    static CompoundCondition and(Condition... conditions) {
-        CompoundCondition result = new CompoundCondition();
-        result.booleanOperator = BooleanOperator.AND;
-        result.conditions = List.of(conditions);
+    private static <T> List<T> or(List<List<T>> resultLists) {
+        return resultLists.stream()
+                .flatMap(List::stream)
+                .toList();
+    }
+
+    private static <T> List<T> not(List<T> universe, List<T> list) {
+        List<T> result = new ArrayList<>(copyOf(universe));
+        result.removeAll(list);
         return result;
     }
 
-    static CompoundCondition not(Condition... conditions) {
-        CompoundCondition result = new CompoundCondition();
-        result.booleanOperator = BooleanOperator.NOT;
-        result.conditions = List.of(conditions);
-        return result;
-    }
-
-    static CompoundCondition or(CompoundCondition... compoundConditions) {
-        CompoundCondition result = new CompoundCondition();
-        result.booleanOperator = BooleanOperator.OR;
-        result.nestedConditions = List.of(compoundConditions);
-        return result;
-    }
-
-    static CompoundCondition and(CompoundCondition... compoundConditions) {
-        CompoundCondition result = new CompoundCondition();
-        result.booleanOperator = BooleanOperator.AND;
-        result.nestedConditions = List.of(compoundConditions);
-        return result;
-    }
-
-    static CompoundCondition not(CompoundCondition... compoundConditions) {
-        CompoundCondition result = new CompoundCondition();
-        result.booleanOperator = BooleanOperator.NOT;
-        result.nestedConditions = List.of(compoundConditions);
-        return result;
-    }
-
-    static CompoundCondition or(List<Condition> conditions, CompoundCondition... compoundConditions) {
-        CompoundCondition result = new CompoundCondition();
-        result.booleanOperator = BooleanOperator.OR;
-        result.conditions = conditions;
-        result.nestedConditions = List.of(compoundConditions);
-        return result;
-    }
-
-    static CompoundCondition and(List<Condition> conditions, CompoundCondition... compoundConditions) {
-        CompoundCondition result = new CompoundCondition();
-        result.booleanOperator = BooleanOperator.AND;
-        result.conditions = conditions;
-        result.nestedConditions = List.of(compoundConditions);
-        return result;
+    enum BooleanOperator {
+        OR, AND, NOT
     }
 }

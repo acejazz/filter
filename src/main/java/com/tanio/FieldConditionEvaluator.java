@@ -1,6 +1,6 @@
 package com.tanio;
 
-import com.tanio.Condition.Operator;
+import com.tanio.SimpleCondition.Operator;
 
 class FieldConditionEvaluator {
     boolean evaluateCondition(Operator operator, Object first, Object second) {
