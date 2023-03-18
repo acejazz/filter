@@ -5,7 +5,7 @@ class Condition {
     private final Operator operator;
     private final Object value;
 
-    public Condition(String fieldName, Operator operator, Object value) {
+    private Condition(String fieldName, Operator operator, Object value) {
         this.fieldName = fieldName;
         this.operator = operator;
         this.value = value;

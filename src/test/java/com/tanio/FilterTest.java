@@ -30,8 +30,8 @@ class FilterTest {
             CompoundCondition compoundCondition = new CompoundCondition();
             compoundCondition.booleanOperator = BooleanOperator.OR;
             compoundCondition.conditions = Arrays.asList(
-                    new Condition("stringField", Operator.EQUAL, "hello"),
-                    new Condition("stringField", Operator.EQUAL, "bye"));
+                    has("stringField", Operator.EQUAL, "hello"),
+                    has("stringField", Operator.EQUAL, "bye"));
 
             List<TestEntity> result = sut.perform(
                     Arrays.asList(
@@ -40,7 +40,10 @@ class FilterTest {
                             notMatchingTestEntity),
                     compoundCondition);
 
-            assertThat(result).containsExactlyInAnyOrder(firstConditionMatchingTestEntity, secondConditionMatchingTestEntity);
+            assertThat(result)
+                    .containsExactlyInAnyOrder(
+                            firstConditionMatchingTestEntity,
+                            secondConditionMatchingTestEntity);
         }
 
         @Test
@@ -58,8 +61,8 @@ class FilterTest {
             CompoundCondition compoundCondition = new CompoundCondition();
             compoundCondition.booleanOperator = BooleanOperator.AND;
             compoundCondition.conditions = Arrays.asList(
-                    new Condition("stringField", Operator.EQUAL, "hello"),
-                    new Condition("integerField", Operator.EQUAL, 13));
+                    has("stringField", Operator.EQUAL, "hello"),
+                    has("integerField", Operator.EQUAL, 13));
 
             List<TestEntity> result = sut.perform(
                     Arrays.asList(
@@ -88,8 +91,8 @@ class FilterTest {
             CompoundCondition compoundCondition = new CompoundCondition();
             compoundCondition.booleanOperator = BooleanOperator.NOT;
             compoundCondition.conditions = Arrays.asList(
-                    new Condition("stringField", Operator.EQUAL, "hello"),
-                    new Condition("integerField", Operator.EQUAL, 13));
+                    has("stringField", Operator.EQUAL, "hello"),
+                    has("integerField", Operator.EQUAL, 13));
 
             List<TestEntity> result = sut.perform(
                     Arrays.asList(
@@ -135,7 +138,8 @@ class FilterTest {
                     Arrays.asList(testEntity0, testEntity1, testEntity2, testEntity3, testEntity4),
                     condition);
 
-            assertThat(result).containsExactlyInAnyOrder(testEntity0, testEntity1, testEntity2, testEntity3);
+            assertThat(result)
+                    .containsExactlyInAnyOrder(testEntity0, testEntity1, testEntity2, testEntity3);
         }
 
         @Test
@@ -277,7 +281,12 @@ class FilterTest {
                                 has("country", Operator.EQUAL, "UK"),
                                 has("genre", Operator.EQUAL, "Pop")));
                 List<MusicArtist> result = sut.perform(musicArtists, condition);
-                assertThat(result).containsExactlyInAnyOrder(marvinGaye(), bruceSpringsteen(), eltonJohn(), madonna());
+                assertThat(result)
+                        .containsExactlyInAnyOrder(
+                                marvinGaye(),
+                                bruceSpringsteen(),
+                                eltonJohn(),
+                                madonna());
             }
 
             @Test
