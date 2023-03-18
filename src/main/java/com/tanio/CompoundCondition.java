@@ -3,9 +3,25 @@ package com.tanio;
 import java.util.List;
 
 class CompoundCondition {
-    BooleanOperator booleanOperator;
-    List<Condition> conditions;
-    List<CompoundCondition> nestedConditions;
+    private BooleanOperator booleanOperator;
+    private List<Condition> conditions;
+    private List<CompoundCondition> nestedConditions;
+
+    private CompoundCondition() {
+
+    }
+
+    public BooleanOperator getBooleanOperator() {
+        return booleanOperator;
+    }
+
+    public List<Condition> getConditions() {
+        return conditions;
+    }
+
+    public List<CompoundCondition> getNestedConditions() {
+        return nestedConditions;
+    }
 
     static CompoundCondition or(Condition... conditions) {
         CompoundCondition result = new CompoundCondition();

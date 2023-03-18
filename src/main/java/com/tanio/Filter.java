@@ -12,12 +12,12 @@ class Filter {
     private final FieldValueRetriever fieldValueRetriever = new FieldValueRetriever();
 
     <T> List<T> perform(List<T> target, CompoundCondition compoundCondition) {
-        if (compoundCondition.conditions != null && compoundCondition.nestedConditions != null) {
-            List<List<T>> nonNestedConditionsResults = compoundCondition.conditions.stream()
+        if (compoundCondition.getConditions() != null && compoundCondition.getNestedConditions() != null) {
+            List<List<T>> nonNestedConditionsResults = compoundCondition.getConditions().stream()
                     .map(it -> perform(target, it))
                     .toList();
 
-            List<List<T>> nestedConditionsResults = compoundCondition.nestedConditions.stream()
+            List<List<T>> nestedConditionsResults = compoundCondition.getConditions().stream()
                     .map(it -> perform(target, it))
                     .toList();
 
@@ -25,7 +25,7 @@ class Filter {
             allResults.addAll(nonNestedConditionsResults);
             allResults.addAll(nestedConditionsResults);
 
-            return switch (compoundCondition.booleanOperator) {
+            return switch (compoundCondition.getBooleanOperator()) {
                 case OR -> or(allResults);
                 case AND -> and(allResults);
                 // !A and !B and !C = !(A or B or C)
@@ -33,18 +33,18 @@ class Filter {
             };
         }
 
-        if (compoundCondition.conditions != null) {
-            return switch (compoundCondition.booleanOperator) {
-                case OR -> performOr(target, compoundCondition.conditions);
-                case AND -> performAnd(target, compoundCondition.conditions);
-                case NOT -> performNot(target, compoundCondition.conditions);
+        if (compoundCondition.getConditions() != null) {
+            return switch (compoundCondition.getBooleanOperator()) {
+                case OR -> performOr(target, compoundCondition.getConditions());
+                case AND -> performAnd(target, compoundCondition.getConditions());
+                case NOT -> performNot(target, compoundCondition.getConditions());
             };
         }
 
-        List<List<T>> nestedResults = compoundCondition.nestedConditions.stream()
+        List<List<T>> nestedResults = compoundCondition.getNestedConditions().stream()
                 .map(it -> perform(target, it))
                 .toList();
-        return switch (compoundCondition.booleanOperator) {
+        return switch (compoundCondition.getBooleanOperator()) {
             case OR -> or(nestedResults);
             case AND -> and(nestedResults);
             // !A and !B and !C = !(A or B or C)

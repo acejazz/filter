@@ -27,9 +27,7 @@ class FilterTest {
             TestEntity notMatchingTestEntity = new TestEntity();
             notMatchingTestEntity.setStringField("sup");
 
-            CompoundCondition compoundCondition = new CompoundCondition();
-            compoundCondition.booleanOperator = BooleanOperator.OR;
-            compoundCondition.conditions = Arrays.asList(
+            CompoundCondition condition = CompoundCondition.or(
                     has("stringField", Operator.EQUAL, "hello"),
                     has("stringField", Operator.EQUAL, "bye"));
 
@@ -38,7 +36,7 @@ class FilterTest {
                             firstConditionMatchingTestEntity,
                             secondConditionMatchingTestEntity,
                             notMatchingTestEntity),
-                    compoundCondition);
+                    condition);
 
             assertThat(result)
                     .containsExactlyInAnyOrder(
@@ -58,9 +56,7 @@ class FilterTest {
             TestEntity notMatchingTestEntity1 = new TestEntity();
             notMatchingTestEntity1.setIntegerField(13);
 
-            CompoundCondition compoundCondition = new CompoundCondition();
-            compoundCondition.booleanOperator = BooleanOperator.AND;
-            compoundCondition.conditions = Arrays.asList(
+            CompoundCondition condition = CompoundCondition.and(
                     has("stringField", Operator.EQUAL, "hello"),
                     has("integerField", Operator.EQUAL, 13));
 
@@ -69,7 +65,7 @@ class FilterTest {
                             conditionMatchingTestEntity,
                             notMatchingTestEntity0,
                             notMatchingTestEntity1),
-                    compoundCondition);
+                    condition);
 
             assertThat(result).containsExactlyInAnyOrder(conditionMatchingTestEntity);
         }
@@ -88,9 +84,7 @@ class FilterTest {
             notMatchingTestEntity2.setStringField("hello");
             notMatchingTestEntity2.setIntegerField(13);
 
-            CompoundCondition compoundCondition = new CompoundCondition();
-            compoundCondition.booleanOperator = BooleanOperator.NOT;
-            compoundCondition.conditions = Arrays.asList(
+            CompoundCondition condition = CompoundCondition.not(
                     has("stringField", Operator.EQUAL, "hello"),
                     has("integerField", Operator.EQUAL, 13));
 
@@ -100,7 +94,7 @@ class FilterTest {
                             notMatchingTestEntity0,
                             notMatchingTestEntity1,
                             notMatchingTestEntity2),
-                    compoundCondition);
+                    condition);
 
             assertThat(result).containsExactlyInAnyOrder(conditionMatchingTestEntity);
         }
