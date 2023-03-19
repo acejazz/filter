@@ -1,7 +1,8 @@
 package com.tanio;
 
 import java.util.List;
+import java.util.Set;
 
 interface Evaluable {
-    <T> List<T> evaluate(List<T> target);
+    <T> Set<T> evaluate(List<T> target);
 }

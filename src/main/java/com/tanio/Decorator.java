@@ -3,6 +3,8 @@ package com.tanio;
 import com.tanio.CompoundCondition.BooleanOperator;
 import com.tanio.SimpleCondition.Operator;
 
+import java.util.stream.Collectors;
+
 import static com.tanio.CompoundCondition.BooleanOperator.*;
 import static com.tanio.SimpleCondition.Operator.*;
 
@@ -16,8 +18,7 @@ public class Decorator {
                     map(compoundConditionDto.getOperator()),
                     compoundConditionDto.getConditions().stream()
                             .map(this::decorate)
-                            .toList()
-            );
+                            .collect(Collectors.toSet()));
         }
 
         SimpleConditionDto simpleConditionDto = (SimpleConditionDto) condition;

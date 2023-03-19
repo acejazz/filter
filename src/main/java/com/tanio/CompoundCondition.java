@@ -1,24 +1,25 @@
 package com.tanio;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.List.copyOf;
 
 class CompoundCondition implements Evaluable {
     private final BooleanOperator operator;
-    private final List<Evaluable> conditions;
+    private final Set<Evaluable> conditions;
 
-    CompoundCondition(BooleanOperator operator, List<Evaluable> conditions) {
+    CompoundCondition(BooleanOperator operator, Set<Evaluable> conditions) {
         this.operator = operator;
         this.conditions = conditions;
     }
 
     @Override
-    public <T> List<T> evaluate(List<T> target) {
-        List<List<T>> results = conditions.stream()
+    public <T> Set<T> evaluate(List<T> target) {
+        List<Set<T>> results = conditions.stream()
                 .map(it -> it.evaluate(target))
                 .collect(Collectors.toList());
 
@@ -30,24 +31,24 @@ class CompoundCondition implements Evaluable {
         };
     }
 
-    private static <T> List<T> and(List<List<T>> resultLists) {
-        Iterator<List<T>> iterator = resultLists.iterator();
-        List<T> result = new ArrayList<>(iterator.next());
+    private static <T> Set<T> or(List<Set<T>> resultLists) {
+        return resultLists.stream()
+                .flatMap(Set::stream)
+                .collect(Collectors.toSet());
+    }
+
+    private static <T> Set<T> and(List<Set<T>> resultLists) {
+        Iterator<Set<T>> iterator = resultLists.iterator();
+        Set<T> result = new HashSet<>(iterator.next());
         while (iterator.hasNext()) {
             result.retainAll(iterator.next());
         }
         return result;
     }
 
-    private static <T> List<T> or(List<List<T>> resultLists) {
-        return resultLists.stream()
-                .flatMap(List::stream)
-                .toList();
-    }
-
-    private static <T> List<T> not(List<T> universe, List<T> list) {
-        List<T> result = new ArrayList<>(copyOf(universe));
-        result.removeAll(list);
+    private static <T> Set<T> not(List<T> universe, Set<T> set) {
+        Set<T> result = new HashSet<>(copyOf(universe));
+        result.removeAll(set);
         return result;
     }
 
@@ -55,7 +56,7 @@ class CompoundCondition implements Evaluable {
         return operator;
     }
 
-    public List<Evaluable> getConditions() {
+    public Set<Evaluable> getConditions() {
         return conditions;
     }
 

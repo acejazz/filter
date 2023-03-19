@@ -1,6 +1,7 @@
 package com.tanio;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 class SimpleCondition implements Evaluable {
@@ -24,10 +25,10 @@ class SimpleCondition implements Evaluable {
     }
 
     @Override
-    public <T> List<T> evaluate(List<T> target) {
+    public <T> Set<T> evaluate(List<T> target) {
         return target.stream()
                 .filter(this::matchesCondition)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
     private <T> boolean matchesCondition(T object) {
@@ -39,8 +40,8 @@ class SimpleCondition implements Evaluable {
 
         return fieldConditionEvaluator.evaluateCondition(
                 operator,
-                value,
-                fieldValue);
+                fieldValue,
+                value);
     }
 
     public String getFieldName() {

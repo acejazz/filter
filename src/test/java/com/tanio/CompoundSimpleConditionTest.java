@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,11 +27,11 @@ class CompoundSimpleConditionTest {
 
         CompoundCondition condition = new CompoundCondition(
                 CompoundCondition.BooleanOperator.OR,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("stringField", Operator.EQUAL, "hello", fieldConditionEvaluator, fieldValueRetriever),
                         new SimpleCondition("stringField", Operator.EQUAL, "bye", fieldConditionEvaluator, fieldValueRetriever)));
 
-        List<TestEntity> result = condition.evaluate(
+        Set<TestEntity> result = condition.evaluate(
                 Arrays.asList(
                         firstConditionMatchingTestEntity,
                         secondConditionMatchingTestEntity,
@@ -56,11 +57,11 @@ class CompoundSimpleConditionTest {
 
         CompoundCondition condition = new CompoundCondition(
                 CompoundCondition.BooleanOperator.AND,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("stringField", Operator.EQUAL, "hello", fieldConditionEvaluator, fieldValueRetriever),
                         new SimpleCondition("integerField", Operator.EQUAL, 13, fieldConditionEvaluator, fieldValueRetriever)));
 
-        List<TestEntity> result = condition.evaluate(
+        Set<TestEntity> result = condition.evaluate(
                 Arrays.asList(
                         conditionMatchingTestEntity,
                         notMatchingTestEntity0,
@@ -85,11 +86,11 @@ class CompoundSimpleConditionTest {
 
         CompoundCondition condition = new CompoundCondition(
                 CompoundCondition.BooleanOperator.NOT,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("stringField", Operator.EQUAL, "hello", fieldConditionEvaluator, fieldValueRetriever),
                         new SimpleCondition("integerField", Operator.EQUAL, 13, fieldConditionEvaluator, fieldValueRetriever)));
 
-        List<TestEntity> result = condition.evaluate(
+        Set<TestEntity> result = condition.evaluate(
                 Arrays.asList(
                         conditionMatchingTestEntity,
                         notMatchingTestEntity0,
@@ -118,21 +119,21 @@ class CompoundSimpleConditionTest {
 
         CompoundCondition first = new CompoundCondition(
                 CompoundCondition.BooleanOperator.OR,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("stringField", Operator.EQUAL, "hello", fieldConditionEvaluator, fieldValueRetriever),
                         new SimpleCondition("stringField", Operator.EQUAL, "bye", fieldConditionEvaluator, fieldValueRetriever)));
 
         CompoundCondition second = new CompoundCondition(
                 CompoundCondition.BooleanOperator.OR,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("stringField", Operator.EQUAL, "good morning", fieldConditionEvaluator, fieldValueRetriever),
                         new SimpleCondition("stringField", Operator.EQUAL, "good night", fieldConditionEvaluator, fieldValueRetriever)));
 
         CompoundCondition condition = new CompoundCondition(
                 CompoundCondition.BooleanOperator.OR,
-                Arrays.asList(first, second));
+                Set.of(first, second));
 
-        List<TestEntity> result = condition.evaluate(
+        Set<TestEntity> result = condition.evaluate(
                 Arrays.asList(testEntity0, testEntity1, testEntity2, testEntity3, testEntity4));
 
         assertThat(result)
@@ -173,21 +174,21 @@ class CompoundSimpleConditionTest {
 
         CompoundCondition first = new CompoundCondition(
                 CompoundCondition.BooleanOperator.AND,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("stringField", Operator.EQUAL, "hello", fieldConditionEvaluator, fieldValueRetriever),
                         new SimpleCondition("integerField", Operator.EQUAL, 13, fieldConditionEvaluator, fieldValueRetriever)));
 
         CompoundCondition second = new CompoundCondition(
                 CompoundCondition.BooleanOperator.AND,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("booleanField", Operator.EQUAL, true, fieldConditionEvaluator, fieldValueRetriever),
                         new SimpleCondition("charField", Operator.EQUAL, 'a', fieldConditionEvaluator, fieldValueRetriever)));
 
         CompoundCondition condition = new CompoundCondition(
                 CompoundCondition.BooleanOperator.AND,
-                Arrays.asList(first, second));
+                Set.of(first, second));
 
-        List<TestEntity> result =
+        Set<TestEntity> result =
                 condition.evaluate(
                         Arrays.asList(
                                 testEntity0,
@@ -218,21 +219,21 @@ class CompoundSimpleConditionTest {
 
         CompoundCondition first = new CompoundCondition(
                 CompoundCondition.BooleanOperator.OR,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("stringField", Operator.EQUAL, "hello", fieldConditionEvaluator, fieldValueRetriever),
                         new SimpleCondition("stringField", Operator.EQUAL, "bye", fieldConditionEvaluator, fieldValueRetriever)));
 
         CompoundCondition second = new CompoundCondition(
                 CompoundCondition.BooleanOperator.OR,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("stringField", Operator.EQUAL, "good morning", fieldConditionEvaluator, fieldValueRetriever),
                         new SimpleCondition("stringField", Operator.EQUAL, "good night", fieldConditionEvaluator, fieldValueRetriever)));
 
         CompoundCondition condition = new CompoundCondition(
                 CompoundCondition.BooleanOperator.NOT,
-                Arrays.asList(first, second));
+                Set.of(first, second));
 
-        List<TestEntity> result = condition.evaluate(
+        Set<TestEntity> result = condition.evaluate(
                 Arrays.asList(
                         testEntity0,
                         testEntity1,
@@ -258,21 +259,21 @@ class CompoundSimpleConditionTest {
 
         CompoundCondition first = new CompoundCondition(
                 CompoundCondition.BooleanOperator.OR,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("country", Operator.EQUAL, "UK", fieldConditionEvaluator, fieldValueRetriever),
                         new SimpleCondition("country", Operator.EQUAL, "USA", fieldConditionEvaluator, fieldValueRetriever)));
 
         CompoundCondition second = new CompoundCondition(
                 CompoundCondition.BooleanOperator.OR,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("numberOfComponents", Operator.EQUAL, 3, fieldConditionEvaluator, fieldValueRetriever),
                         new SimpleCondition("numberOfComponents", Operator.EQUAL, 4, fieldConditionEvaluator, fieldValueRetriever)));
 
         CompoundCondition condition = new CompoundCondition(
                 CompoundCondition.BooleanOperator.AND,
-                Arrays.asList(first, second));
+                Set.of(first, second));
 
-        List<MusicArtist> result = condition.evaluate(musicArtists);
+        Set<MusicArtist> result = condition.evaluate(musicArtists);
         assertThat(result).containsExactlyInAnyOrder(beatles(), rollingStones(), nirvana());
     }
 
@@ -291,22 +292,22 @@ class CompoundSimpleConditionTest {
 
         CompoundCondition first = new CompoundCondition(
                 CompoundCondition.BooleanOperator.AND,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("country", Operator.EQUAL, "USA", fieldConditionEvaluator, fieldValueRetriever),
                         new SimpleCondition("numberOfComponents", Operator.NOT_EQUAL, 3, fieldConditionEvaluator, fieldValueRetriever),
                         new SimpleCondition("numberOfComponents", Operator.NOT_EQUAL, 4, fieldConditionEvaluator, fieldValueRetriever)));
 
         CompoundCondition second = new CompoundCondition(
                 CompoundCondition.BooleanOperator.AND,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("country", Operator.EQUAL, "UK", fieldConditionEvaluator, fieldValueRetriever),
                         new SimpleCondition("genre", Operator.EQUAL, "Pop", fieldConditionEvaluator, fieldValueRetriever)));
 
         CompoundCondition condition = new CompoundCondition(
                 CompoundCondition.BooleanOperator.OR,
-                Arrays.asList(first, second));
+                Set.of(first, second));
 
-        List<MusicArtist> result = condition.evaluate(musicArtists);
+        Set<MusicArtist> result = condition.evaluate(musicArtists);
         assertThat(result)
                 .containsExactlyInAnyOrder(
                         marvinGaye(),
@@ -330,21 +331,21 @@ class CompoundSimpleConditionTest {
 
         CompoundCondition first = new CompoundCondition(
                 CompoundCondition.BooleanOperator.NOT,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("country", Operator.EQUAL, "USA", fieldConditionEvaluator, fieldValueRetriever),
                         new SimpleCondition("numberOfComponents", Operator.EQUAL, 1, fieldConditionEvaluator, fieldValueRetriever)));
 
         CompoundCondition second = new CompoundCondition(
                 CompoundCondition.BooleanOperator.NOT,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("country", Operator.EQUAL, "UK", fieldConditionEvaluator, fieldValueRetriever),
                         new SimpleCondition("numberOfComponents", Operator.EQUAL, 1, fieldConditionEvaluator, fieldValueRetriever)));
 
         CompoundCondition condition = new CompoundCondition(
                 CompoundCondition.BooleanOperator.OR,
-                Arrays.asList(first, second));
+                Set.of(first, second));
 
-        List<MusicArtist> result = condition.evaluate(musicArtists);
+        Set<MusicArtist> result = condition.evaluate(musicArtists);
         assertThat(result).containsExactlyInAnyOrder(beatles(), rollingStones(), nirvana());
     }
 
@@ -372,17 +373,17 @@ class CompoundSimpleConditionTest {
 
         CompoundCondition nested = new CompoundCondition(
                 CompoundCondition.BooleanOperator.AND,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("integerField", Operator.EQUAL, 13, fieldConditionEvaluator, fieldValueRetriever),
                         new SimpleCondition("charField", Operator.EQUAL, 'x', fieldConditionEvaluator, fieldValueRetriever)));
 
         CompoundCondition condition = new CompoundCondition(
                 CompoundCondition.BooleanOperator.OR,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("stringField", Operator.EQUAL, "anything", fieldConditionEvaluator, fieldValueRetriever),
                         nested));
 
-        List<TestEntity> result =
+        Set<TestEntity> result =
                 condition.evaluate(
                         Arrays.asList(
                                 matchingNestedConditionEntity,
@@ -424,17 +425,17 @@ class CompoundSimpleConditionTest {
 
         CompoundCondition nested = new CompoundCondition(
                 CompoundCondition.BooleanOperator.OR,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("stringField", Operator.EQUAL, "anything", fieldConditionEvaluator, fieldValueRetriever),
                         new SimpleCondition("integerField", Operator.EQUAL, 13, fieldConditionEvaluator, fieldValueRetriever)));
 
         CompoundCondition condition = new CompoundCondition(
                 CompoundCondition.BooleanOperator.AND,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("charField", Operator.EQUAL, 'x', fieldConditionEvaluator, fieldValueRetriever),
                         nested));
 
-        List<TestEntity> result = condition.evaluate(
+        Set<TestEntity> result = condition.evaluate(
                 Arrays.asList(
                         matchingNonNestedConditionEntity,
                         matchingNestedConditionEntity0,

@@ -36,4 +36,9 @@ class MusicArtist {
     public int hashCode() {
         return Objects.hash(name, genre, numberOfComponents, country);
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }
