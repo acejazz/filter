@@ -142,12 +142,3 @@ class FieldValueRetrieverTest {
         assertThat(sut.retrieveFieldValue("nestedEntity.nestedNestedEntity", testEntity)).isEqualTo(nestedNestedEntity);
     }
 }
-
-class BooleanTestEntity {
-    public boolean isValid() {
-        return true;
-    }
-    public Boolean isValidWithWrapper() {
-        return true;
-    }
-}

@@ -1,6 +1,6 @@
 package com.tanio;
 
-class TestPlatform {
+class Fixture {
     static MusicArtist beatles() {
         MusicArtist beatles = new MusicArtist();
         beatles.name = "Beatles";

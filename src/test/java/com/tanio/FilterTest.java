@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Set;
 
 import static com.tanio.CompoundCondition.BooleanOperator.*;
+import static com.tanio.Fixture.*;
 import static com.tanio.SimpleCondition.Operator.*;
-import static com.tanio.TestPlatform.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class FilterTest {

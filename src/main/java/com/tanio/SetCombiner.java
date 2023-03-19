@@ -26,12 +26,21 @@ class SetCombiner {
 
     <T> Set<T> not(List<T> target, List<Set<T>> resultLists) {
         // !A and !B and !C = !(A or B or C)
-        return not(target, or(resultLists));
+        Not<T> not = new Not<>(target);
+        return not.of(or(resultLists));
     }
 
-    private <T> Set<T> not(List<T> universe, Set<T> set) {
-        Set<T> result = new HashSet<>(copyOf(universe));
-        result.removeAll(set);
-        return result;
+    private static class Not<T> {
+        private final List<T> universe;
+
+        private Not(List<T> universe) {
+            this.universe = universe;
+        }
+
+        Set<T> of(Set<T> set) {
+            Set<T> result = new HashSet<>(copyOf(universe));
+            set.forEach(result::remove);
+            return result;
+        }
     }
 }

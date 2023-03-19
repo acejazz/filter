@@ -23,12 +23,12 @@ class Filter {
                 .collect(Collectors.toSet());
     }
 
-    private <T> Set<T> handleCompoundCondition(CompoundCondition compoundCondition, List<T> target) {
-        List<Set<T>> results = compoundCondition.getConditions().stream()
+    private <T> Set<T> handleCompoundCondition(CompoundCondition condition, List<T> target) {
+        List<Set<T>> results = condition.getConditions().stream()
                 .map(it -> evaluate(it, target))
-                .collect(Collectors.toList());
+                .toList();
 
-        return switch (compoundCondition.getOperator()) {
+        return switch (condition.getOperator()) {
             case OR -> setCombiner.or(results);
             case AND -> setCombiner.and(results);
             case NOT -> setCombiner.not(target, results);

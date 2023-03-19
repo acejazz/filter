@@ -1,7 +1,5 @@
 package com.tanio;
 
-import java.util.Objects;
-
 class MusicArtist {
     String name;
     String genre;
@@ -28,13 +26,15 @@ class MusicArtist {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         MusicArtist that = (MusicArtist) o;
-        return numberOfComponents == that.numberOfComponents && Objects.equals(name, that.name) && Objects.equals(genre, that.genre) && Objects.equals(country, that.country);
+
+        return name.equals(that.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, genre, numberOfComponents, country);
+        return name.hashCode();
     }
 
     @Override

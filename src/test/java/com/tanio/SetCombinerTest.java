@@ -34,7 +34,7 @@ class SetCombinerTest {
     void not() {
         List<String> universe = List.of("first", "second", "third", "fourth");
         Set<String> set0 = Set.of("first", "second");
-        Set<String> set1 = Set.of("fourth");
+        Set<String> set1 = Set.of("first", "fourth");
 
         Set<String> result = sut.not(universe, List.of(set0, set1));
 
