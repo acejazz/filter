@@ -7,12 +7,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import static com.tanio.TestPlatform.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CompoundConditionTest {
 
-    FieldValueRetriever fieldValueRetriever = new FieldValueRetriever();
-    FieldConditionEvaluator fieldConditionEvaluator = new FieldConditionEvaluator();
+    FieldValueRetriever retriever = new FieldValueRetriever();
+    FieldConditionEvaluator evaluator = new FieldConditionEvaluator();
 
     @Test
     void performCompoundCondition_or() {
@@ -28,14 +29,14 @@ class CompoundConditionTest {
         CompoundCondition condition = new CompoundCondition(
                 CompoundCondition.BooleanOperator.OR,
                 Set.of(
-                        new SimpleCondition("stringField", Operator.EQUAL, "hello", fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("stringField", Operator.EQUAL, "bye", fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleCondition("stringField", Operator.EQUAL, "hello"),
+                        new SimpleCondition("stringField", Operator.EQUAL, "bye")));
 
-        Set<TestEntity> result = condition.evaluate(
-                Arrays.asList(
-                        firstConditionMatchingTestEntity,
-                        secondConditionMatchingTestEntity,
-                        notMatchingTestEntity));
+        List<TestEntity> target = Arrays.asList(
+                firstConditionMatchingTestEntity,
+                secondConditionMatchingTestEntity,
+                notMatchingTestEntity);
+        Set<TestEntity> result = condition.evaluate(target, evaluator, retriever);
 
         assertThat(result)
                 .containsExactlyInAnyOrder(
@@ -58,14 +59,14 @@ class CompoundConditionTest {
         CompoundCondition condition = new CompoundCondition(
                 CompoundCondition.BooleanOperator.AND,
                 Set.of(
-                        new SimpleCondition("stringField", Operator.EQUAL, "hello", fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("integerField", Operator.EQUAL, 13, fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleCondition("stringField", Operator.EQUAL, "hello"),
+                        new SimpleCondition("integerField", Operator.EQUAL, 13)));
 
-        Set<TestEntity> result = condition.evaluate(
-                Arrays.asList(
-                        conditionMatchingTestEntity,
-                        notMatchingTestEntity0,
-                        notMatchingTestEntity1));
+        List<TestEntity> target = Arrays.asList(
+                conditionMatchingTestEntity,
+                notMatchingTestEntity0,
+                notMatchingTestEntity1);
+        Set<TestEntity> result = condition.evaluate(target, evaluator, retriever);
 
         assertThat(result).containsExactlyInAnyOrder(conditionMatchingTestEntity);
     }
@@ -87,15 +88,15 @@ class CompoundConditionTest {
         CompoundCondition condition = new CompoundCondition(
                 CompoundCondition.BooleanOperator.NOT,
                 Set.of(
-                        new SimpleCondition("stringField", Operator.EQUAL, "hello", fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("integerField", Operator.EQUAL, 13, fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleCondition("stringField", Operator.EQUAL, "hello"),
+                        new SimpleCondition("integerField", Operator.EQUAL, 13)));
 
-        Set<TestEntity> result = condition.evaluate(
-                Arrays.asList(
-                        conditionMatchingTestEntity,
-                        notMatchingTestEntity0,
-                        notMatchingTestEntity1,
-                        notMatchingTestEntity2));
+        List<TestEntity> target = Arrays.asList(
+                conditionMatchingTestEntity,
+                notMatchingTestEntity0,
+                notMatchingTestEntity1,
+                notMatchingTestEntity2);
+        Set<TestEntity> result = condition.evaluate(target, evaluator, retriever);
 
         assertThat(result).containsExactlyInAnyOrder(conditionMatchingTestEntity);
     }
@@ -120,21 +121,21 @@ class CompoundConditionTest {
         CompoundCondition first = new CompoundCondition(
                 CompoundCondition.BooleanOperator.OR,
                 Set.of(
-                        new SimpleCondition("stringField", Operator.EQUAL, "hello", fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("stringField", Operator.EQUAL, "bye", fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleCondition("stringField", Operator.EQUAL, "hello"),
+                        new SimpleCondition("stringField", Operator.EQUAL, "bye")));
 
         CompoundCondition second = new CompoundCondition(
                 CompoundCondition.BooleanOperator.OR,
                 Set.of(
-                        new SimpleCondition("stringField", Operator.EQUAL, "good morning", fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("stringField", Operator.EQUAL, "good night", fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleCondition("stringField", Operator.EQUAL, "good morning"),
+                        new SimpleCondition("stringField", Operator.EQUAL, "good night")));
 
         CompoundCondition condition = new CompoundCondition(
                 CompoundCondition.BooleanOperator.OR,
                 Set.of(first, second));
 
-        Set<TestEntity> result = condition.evaluate(
-                Arrays.asList(testEntity0, testEntity1, testEntity2, testEntity3, testEntity4));
+        List<TestEntity> target = Arrays.asList(testEntity0, testEntity1, testEntity2, testEntity3, testEntity4);
+        Set<TestEntity> result = condition.evaluate(target, evaluator, retriever);
 
         assertThat(result)
                 .containsExactlyInAnyOrder(testEntity0, testEntity1, testEntity2, testEntity3);
@@ -175,27 +176,26 @@ class CompoundConditionTest {
         CompoundCondition first = new CompoundCondition(
                 CompoundCondition.BooleanOperator.AND,
                 Set.of(
-                        new SimpleCondition("stringField", Operator.EQUAL, "hello", fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("integerField", Operator.EQUAL, 13, fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleCondition("stringField", Operator.EQUAL, "hello"),
+                        new SimpleCondition("integerField", Operator.EQUAL, 13)));
 
         CompoundCondition second = new CompoundCondition(
                 CompoundCondition.BooleanOperator.AND,
                 Set.of(
-                        new SimpleCondition("booleanField", Operator.EQUAL, true, fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("charField", Operator.EQUAL, 'a', fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleCondition("booleanField", Operator.EQUAL, true),
+                        new SimpleCondition("charField", Operator.EQUAL, 'a')));
 
         CompoundCondition condition = new CompoundCondition(
                 CompoundCondition.BooleanOperator.AND,
                 Set.of(first, second));
 
-        Set<TestEntity> result =
-                condition.evaluate(
-                        Arrays.asList(
-                                testEntity0,
-                                testEntity1,
-                                testEntity2,
-                                testEntity3,
-                                testEntity4));
+        List<TestEntity> target = Arrays.asList(
+                testEntity0,
+                testEntity1,
+                testEntity2,
+                testEntity3,
+                testEntity4);
+        Set<TestEntity> result = condition.evaluate(target, evaluator, retriever);
 
         assertThat(result).containsExactly(testEntity0);
     }
@@ -220,26 +220,26 @@ class CompoundConditionTest {
         CompoundCondition first = new CompoundCondition(
                 CompoundCondition.BooleanOperator.OR,
                 Set.of(
-                        new SimpleCondition("stringField", Operator.EQUAL, "hello", fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("stringField", Operator.EQUAL, "bye", fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleCondition("stringField", Operator.EQUAL, "hello"),
+                        new SimpleCondition("stringField", Operator.EQUAL, "bye")));
 
         CompoundCondition second = new CompoundCondition(
                 CompoundCondition.BooleanOperator.OR,
                 Set.of(
-                        new SimpleCondition("stringField", Operator.EQUAL, "good morning", fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("stringField", Operator.EQUAL, "good night", fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleCondition("stringField", Operator.EQUAL, "good morning"),
+                        new SimpleCondition("stringField", Operator.EQUAL, "good night")));
 
         CompoundCondition condition = new CompoundCondition(
                 CompoundCondition.BooleanOperator.NOT,
                 Set.of(first, second));
 
-        Set<TestEntity> result = condition.evaluate(
-                Arrays.asList(
-                        testEntity0,
-                        testEntity1,
-                        testEntity2,
-                        testEntity3,
-                        testEntity4));
+        List<TestEntity> target = Arrays.asList(
+                testEntity0,
+                testEntity1,
+                testEntity2,
+                testEntity3,
+                testEntity4);
+        Set<TestEntity> result = condition.evaluate(target, evaluator, retriever);
 
         assertThat(result).containsExactlyInAnyOrder(testEntity4);
     }
@@ -260,20 +260,20 @@ class CompoundConditionTest {
         CompoundCondition first = new CompoundCondition(
                 CompoundCondition.BooleanOperator.OR,
                 Set.of(
-                        new SimpleCondition("country", Operator.EQUAL, "UK", fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("country", Operator.EQUAL, "USA", fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleCondition("country", Operator.EQUAL, "UK"),
+                        new SimpleCondition("country", Operator.EQUAL, "USA")));
 
         CompoundCondition second = new CompoundCondition(
                 CompoundCondition.BooleanOperator.OR,
                 Set.of(
-                        new SimpleCondition("numberOfComponents", Operator.EQUAL, 3, fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("numberOfComponents", Operator.EQUAL, 4, fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleCondition("numberOfComponents", Operator.EQUAL, 3),
+                        new SimpleCondition("numberOfComponents", Operator.EQUAL, 4)));
 
         CompoundCondition condition = new CompoundCondition(
                 CompoundCondition.BooleanOperator.AND,
                 Set.of(first, second));
 
-        Set<MusicArtist> result = condition.evaluate(musicArtists);
+        Set<MusicArtist> result = condition.evaluate(musicArtists, evaluator, retriever);
         assertThat(result).containsExactlyInAnyOrder(beatles(), rollingStones(), nirvana());
     }
 
@@ -293,21 +293,21 @@ class CompoundConditionTest {
         CompoundCondition first = new CompoundCondition(
                 CompoundCondition.BooleanOperator.AND,
                 Set.of(
-                        new SimpleCondition("country", Operator.EQUAL, "USA", fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("numberOfComponents", Operator.NOT_EQUAL, 3, fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("numberOfComponents", Operator.NOT_EQUAL, 4, fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleCondition("country", Operator.EQUAL, "USA"),
+                        new SimpleCondition("numberOfComponents", Operator.NOT_EQUAL, 3),
+                        new SimpleCondition("numberOfComponents", Operator.NOT_EQUAL, 4)));
 
         CompoundCondition second = new CompoundCondition(
                 CompoundCondition.BooleanOperator.AND,
                 Set.of(
-                        new SimpleCondition("country", Operator.EQUAL, "UK", fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("genre", Operator.EQUAL, "Pop", fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleCondition("country", Operator.EQUAL, "UK"),
+                        new SimpleCondition("genre", Operator.EQUAL, "Pop")));
 
         CompoundCondition condition = new CompoundCondition(
                 CompoundCondition.BooleanOperator.OR,
                 Set.of(first, second));
 
-        Set<MusicArtist> result = condition.evaluate(musicArtists);
+        Set<MusicArtist> result = condition.evaluate(musicArtists, evaluator, retriever);
         assertThat(result)
                 .containsExactlyInAnyOrder(
                         marvinGaye(),
@@ -332,20 +332,20 @@ class CompoundConditionTest {
         CompoundCondition first = new CompoundCondition(
                 CompoundCondition.BooleanOperator.NOT,
                 Set.of(
-                        new SimpleCondition("country", Operator.EQUAL, "USA", fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("numberOfComponents", Operator.EQUAL, 1, fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleCondition("country", Operator.EQUAL, "USA"),
+                        new SimpleCondition("numberOfComponents", Operator.EQUAL, 1)));
 
         CompoundCondition second = new CompoundCondition(
                 CompoundCondition.BooleanOperator.NOT,
                 Set.of(
-                        new SimpleCondition("country", Operator.EQUAL, "UK", fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("numberOfComponents", Operator.EQUAL, 1, fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleCondition("country", Operator.EQUAL, "UK"),
+                        new SimpleCondition("numberOfComponents", Operator.EQUAL, 1)));
 
         CompoundCondition condition = new CompoundCondition(
                 CompoundCondition.BooleanOperator.OR,
                 Set.of(first, second));
 
-        Set<MusicArtist> result = condition.evaluate(musicArtists);
+        Set<MusicArtist> result = condition.evaluate(musicArtists, evaluator, retriever);
         assertThat(result).containsExactlyInAnyOrder(beatles(), rollingStones(), nirvana());
     }
 
@@ -374,24 +374,23 @@ class CompoundConditionTest {
         CompoundCondition nested = new CompoundCondition(
                 CompoundCondition.BooleanOperator.AND,
                 Set.of(
-                        new SimpleCondition("integerField", Operator.EQUAL, 13, fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("charField", Operator.EQUAL, 'x', fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleCondition("integerField", Operator.EQUAL, 13),
+                        new SimpleCondition("charField", Operator.EQUAL, 'x')));
 
         CompoundCondition condition = new CompoundCondition(
                 CompoundCondition.BooleanOperator.OR,
                 Set.of(
-                        new SimpleCondition("stringField", Operator.EQUAL, "anything", fieldConditionEvaluator, fieldValueRetriever),
+                        new SimpleCondition("stringField", Operator.EQUAL, "anything"),
                         nested));
 
-        Set<TestEntity> result =
-                condition.evaluate(
-                        Arrays.asList(
-                                matchingNestedConditionEntity,
-                                matchingNonNestedConditionEntity,
-                                nonMatchingNonNestedConditionEntity,
-                                nonMatchingNestedConditionEntity0,
-                                nonMatchingNestedConditionEntity1,
-                                nonMatchingNestedConditionEntity2));
+        List<TestEntity> target = Arrays.asList(
+                matchingNestedConditionEntity,
+                matchingNonNestedConditionEntity,
+                nonMatchingNonNestedConditionEntity,
+                nonMatchingNestedConditionEntity0,
+                nonMatchingNestedConditionEntity1,
+                nonMatchingNestedConditionEntity2);
+        Set<TestEntity> result = condition.evaluate(target, evaluator, retriever);
 
         assertThat(result)
                 .containsExactlyInAnyOrder(
@@ -426,105 +425,24 @@ class CompoundConditionTest {
         CompoundCondition nested = new CompoundCondition(
                 CompoundCondition.BooleanOperator.OR,
                 Set.of(
-                        new SimpleCondition("stringField", Operator.EQUAL, "anything", fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("integerField", Operator.EQUAL, 13, fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleCondition("stringField", Operator.EQUAL, "anything"),
+                        new SimpleCondition("integerField", Operator.EQUAL, 13)));
 
         CompoundCondition condition = new CompoundCondition(
                 CompoundCondition.BooleanOperator.AND,
                 Set.of(
-                        new SimpleCondition("charField", Operator.EQUAL, 'x', fieldConditionEvaluator, fieldValueRetriever),
+                        new SimpleCondition("charField", Operator.EQUAL, 'x'),
                         nested));
 
-        Set<TestEntity> result = condition.evaluate(
-                Arrays.asList(
-                        matchingNonNestedConditionEntity,
-                        matchingNestedConditionEntity0,
-                        matchingNestedConditionEntity1,
-                        nonMatchingEntity0,
-                        nonMatchingEntity1,
-                        nonMatchingEntity2));
+        List<TestEntity> target = Arrays.asList(
+                matchingNonNestedConditionEntity,
+                matchingNestedConditionEntity0,
+                matchingNestedConditionEntity1,
+                nonMatchingEntity0,
+                nonMatchingEntity1,
+                nonMatchingEntity2);
+        Set<TestEntity> result = condition.evaluate(target, evaluator, retriever);
 
         assertThat(result).containsExactlyInAnyOrder(matchingNestedConditionEntity0);
-    }
-
-    MusicArtist beatles() {
-        MusicArtist beatles = new MusicArtist();
-        beatles.name = "Beatles";
-        beatles.genre = "Rock";
-        beatles.numberOfComponents = 4;
-        beatles.country = "UK";
-        return beatles;
-    }
-
-    MusicArtist rollingStones() {
-        MusicArtist rollingStones = new MusicArtist();
-        rollingStones.name = "Rolling Stones";
-        rollingStones.genre = "Rock";
-        rollingStones.numberOfComponents = 4;
-        rollingStones.country = "UK";
-        return rollingStones;
-    }
-
-    MusicArtist madonna() {
-        MusicArtist madonna = new MusicArtist();
-        madonna.name = "Madonna";
-        madonna.genre = "Pop";
-        madonna.numberOfComponents = 1;
-        madonna.country = "USA";
-        return madonna;
-    }
-
-    MusicArtist marvinGaye() {
-        MusicArtist marvinGaye = new MusicArtist();
-        marvinGaye.name = "Marvin Gaye";
-        marvinGaye.genre = "R&B";
-        marvinGaye.numberOfComponents = 1;
-        marvinGaye.country = "USA";
-        return marvinGaye;
-    }
-
-    MusicArtist bjork() {
-        MusicArtist bjork = new MusicArtist();
-        bjork.name = "Bjork";
-        bjork.genre = "Art Pop";
-        bjork.numberOfComponents = 1;
-        bjork.country = "Iceland";
-        return bjork;
-    }
-
-    MusicArtist edithPiaf() {
-        MusicArtist edithPiaf = new MusicArtist();
-        edithPiaf.name = "Edith Piaf";
-        edithPiaf.genre = "Cabaret";
-        edithPiaf.numberOfComponents = 1;
-        edithPiaf.country = "France";
-        return edithPiaf;
-    }
-
-    MusicArtist nirvana() {
-        MusicArtist nirvana = new MusicArtist();
-        nirvana.name = "Nirvana";
-        nirvana.genre = "Rock";
-        nirvana.numberOfComponents = 3;
-        nirvana.country = "USA";
-        return nirvana;
-    }
-
-    MusicArtist bruceSpringsteen() {
-        MusicArtist bruceSpringsteen = new MusicArtist();
-        bruceSpringsteen.name = "Bruce Springsteen";
-        bruceSpringsteen.genre = "Rock";
-        bruceSpringsteen.numberOfComponents = 1;
-        bruceSpringsteen.country = "USA";
-        return bruceSpringsteen;
-    }
-
-    MusicArtist eltonJohn() {
-        MusicArtist eltonJohn = new MusicArtist();
-        eltonJohn.name = "Elton John";
-        eltonJohn.genre = "Pop";
-        eltonJohn.numberOfComponents = 1;
-        eltonJohn.country = "UK";
-        return eltonJohn;
     }
 }

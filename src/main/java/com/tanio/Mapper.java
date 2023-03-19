@@ -8,16 +8,13 @@ import java.util.stream.Collectors;
 import static com.tanio.CompoundCondition.BooleanOperator.*;
 import static com.tanio.SimpleCondition.Operator.*;
 
-public class Decorator {
-    private final FieldValueRetriever fieldValueRetriever = new FieldValueRetriever();
-    private final FieldConditionEvaluator fieldConditionEvaluator = new FieldConditionEvaluator();
-
-    Evaluable decorate(ConditionDto condition) {
+class Mapper {
+    Evaluable map(ConditionDto condition) {
         if (condition instanceof CompoundConditionDto compoundConditionDto) {
             return new CompoundCondition(
                     map(compoundConditionDto.getOperator()),
                     compoundConditionDto.getConditions().stream()
-                            .map(this::decorate)
+                            .map(this::map)
                             .collect(Collectors.toSet()));
         }
 
@@ -25,9 +22,7 @@ public class Decorator {
         return new SimpleCondition(
                 simpleConditionDto.getFieldName(),
                 map(simpleConditionDto.getOperator()),
-                simpleConditionDto.getValue(),
-                fieldConditionEvaluator,
-                fieldValueRetriever);
+                simpleConditionDto.getValue());
     }
 
     BooleanOperator map(CompoundConditionDto.BooleanOperator operator) {

@@ -8,18 +8,16 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class DecoratorTest {
-    Decorator decorator = new Decorator();
+class MapperTest {
+    Mapper mapper = new Mapper();
 
     @Test
     void decorateSimpleConditionDto() {
         SimpleConditionDto simpleConditionDto = new SimpleConditionDto("anyFieldName", SimpleConditionDto.Operator.EQUAL, "anyValue");
-        SimpleCondition result = (SimpleCondition) decorator.decorate(simpleConditionDto);
+        SimpleCondition result = (SimpleCondition) mapper.map(simpleConditionDto);
         assertThat(result.getFieldName()).isEqualTo("anyFieldName");
         assertThat(result.getOperator()).isEqualTo(SimpleCondition.Operator.EQUAL);
         assertThat(result.getValue()).isEqualTo("anyValue");
-        assertThat(result.getFieldValueRetriever()).isNotNull();
-        assertThat(result.getFieldConditionEvaluator()).isNotNull();
     }
 
     @Test
@@ -30,7 +28,7 @@ class DecoratorTest {
                 CompoundConditionDto.BooleanOperator.AND,
                 Arrays.asList(simpleConditionDto0, simpleConditionDto1)
         );
-        CompoundCondition result = (CompoundCondition) decorator.decorate(condition);
+        CompoundCondition result = (CompoundCondition) mapper.map(condition);
         assertThat(result.getOperator()).isEqualTo(CompoundCondition.BooleanOperator.AND);
         Map<String, SimpleCondition> map = result.getConditions().stream()
                 .collect(Collectors.toMap(

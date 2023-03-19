@@ -9,36 +9,29 @@ class SimpleCondition implements Evaluable {
     private final Operator operator;
     private final Object value;
 
-    private final FieldConditionEvaluator fieldConditionEvaluator;
-    private final FieldValueRetriever fieldValueRetriever;
-
     SimpleCondition(String fieldName,
                     Operator operator,
-                    Object value,
-                    FieldConditionEvaluator fieldConditionEvaluator,
-                    FieldValueRetriever fieldValueRetriever) {
+                    Object value) {
         this.fieldName = fieldName;
         this.operator = operator;
         this.value = value;
-        this.fieldConditionEvaluator = fieldConditionEvaluator;
-        this.fieldValueRetriever = fieldValueRetriever;
     }
 
     @Override
-    public <T> Set<T> evaluate(List<T> target) {
+    public <T> Set<T> evaluate(List<T> target, FieldConditionEvaluator evaluator, FieldValueRetriever retriever) {
         return target.stream()
-                .filter(this::matchesCondition)
+                .filter(it -> matchesCondition(it, evaluator, retriever))
                 .collect(Collectors.toSet());
     }
 
-    private <T> boolean matchesCondition(T object) {
-        Object fieldValue = fieldValueRetriever.retrieveFieldValue(fieldName, object);
+    private <T> boolean matchesCondition(T object, FieldConditionEvaluator evaluator, FieldValueRetriever retriever) {
+        Object fieldValue = retriever.retrieveFieldValue(fieldName, object);
 
         if (fieldValue == null) {
             return false;
         }
 
-        return fieldConditionEvaluator.evaluateCondition(operator, fieldValue, value);
+        return evaluator.evaluateCondition(operator, fieldValue, value);
     }
 
     public String getFieldName() {
@@ -51,14 +44,6 @@ class SimpleCondition implements Evaluable {
 
     public Object getValue() {
         return value;
-    }
-
-    public FieldConditionEvaluator getFieldConditionEvaluator() {
-        return fieldConditionEvaluator;
-    }
-
-    public FieldValueRetriever getFieldValueRetriever() {
-        return fieldValueRetriever;
     }
 
     enum Operator {

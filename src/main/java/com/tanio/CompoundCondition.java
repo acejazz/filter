@@ -18,9 +18,9 @@ class CompoundCondition implements Evaluable {
     }
 
     @Override
-    public <T> Set<T> evaluate(List<T> target) {
+    public <T> Set<T> evaluate(List<T> target, FieldConditionEvaluator evaluator, FieldValueRetriever retriever) {
         List<Set<T>> results = conditions.stream()
-                .map(it -> it.evaluate(target))
+                .map(it -> it.evaluate(target, evaluator, retriever))
                 .collect(Collectors.toList());
 
         return switch (operator) {

@@ -20,10 +20,9 @@ class SimpleConditionTest {
         TestEntity nonMatching = new TestEntity();
         nonMatching.setStringField("bye");
 
-        SimpleCondition sut =
-                new SimpleCondition("stringField", EQUAL, "hello", evaluator, retriever);
+        SimpleCondition sut = new SimpleCondition("stringField", EQUAL, "hello");
 
-        Set<TestEntity> result = sut.evaluate(List.of(matching, nonMatching));
+        Set<TestEntity> result = sut.evaluate(List.of(matching, nonMatching), evaluator, retriever);
 
         assertThat(result).containsExactly(matching);
     }
@@ -36,10 +35,9 @@ class SimpleConditionTest {
         TestEntity nonMatching = new TestEntity();
         nonMatching.setStringField("bye");
 
-        SimpleCondition sut =
-                new SimpleCondition("stringField", NOT_EQUAL, "bye", evaluator, retriever);
+        SimpleCondition sut = new SimpleCondition("stringField", NOT_EQUAL, "bye");
 
-        Set<TestEntity> result = sut.evaluate(List.of(matching, nonMatching));
+        Set<TestEntity> result = sut.evaluate(List.of(matching, nonMatching), evaluator, retriever);
 
         assertThat(result).containsExactly(matching);
     }
@@ -52,10 +50,9 @@ class SimpleConditionTest {
         TestEntity nonMatching = new TestEntity();
         nonMatching.setIntegerField(3);
 
-        SimpleCondition sut =
-                new SimpleCondition("integerField", GREATER_THAN, 5, evaluator, retriever);
+        SimpleCondition sut = new SimpleCondition("integerField", GREATER_THAN, 5);
 
-        Set<TestEntity> result = sut.evaluate(List.of(matching, nonMatching));
+        Set<TestEntity> result = sut.evaluate(List.of(matching, nonMatching), evaluator, retriever);
 
         assertThat(result).containsExactly(matching);
     }
@@ -68,10 +65,9 @@ class SimpleConditionTest {
         TestEntity nonMatching = new TestEntity();
         nonMatching.setIntegerField(7);
 
-        SimpleCondition sut =
-                new SimpleCondition("integerField", LESS_THAN, 5, evaluator, retriever);
+        SimpleCondition sut = new SimpleCondition("integerField", LESS_THAN, 5);
 
-        Set<TestEntity> result = sut.evaluate(List.of(matching, nonMatching));
+        Set<TestEntity> result = sut.evaluate(List.of(matching, nonMatching), evaluator, retriever);
 
         assertThat(result).containsExactly(matching);
     }
