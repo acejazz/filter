@@ -1,12 +1,12 @@
 package com.tanio;
 
-import java.util.List;
+import java.util.Set;
 
-public class CompoundCondition implements Condition {
+class CompoundCondition implements Condition {
     private final BooleanOperator operator;
-    private final List<Condition> conditions;
+    private final Set<Condition> conditions;
 
-    CompoundCondition(BooleanOperator operator, List<Condition> conditions) {
+    CompoundCondition(BooleanOperator operator, Set<Condition> conditions) {
         this.operator = operator;
         this.conditions = conditions;
     }
@@ -15,7 +15,7 @@ public class CompoundCondition implements Condition {
         return operator;
     }
 
-    public List<Condition> getConditions() {
+    public Set<Condition> getConditions() {
         return conditions;
     }
 

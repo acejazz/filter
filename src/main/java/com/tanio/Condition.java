@@ -1,4 +1,4 @@
 package com.tanio;
 
-public interface Condition {
+interface Condition {
 }

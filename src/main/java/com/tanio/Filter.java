@@ -5,42 +5,38 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 class Filter {
-    private final Mapper mapper = new Mapper();
-    private final FieldValueRetriever fieldValueRetriever = new FieldValueRetriever();
-    private final FieldConditionEvaluator fieldConditionEvaluator = new FieldConditionEvaluator();
+    private final FieldValueRetriever retriever = new FieldValueRetriever();
+    private final FieldConditionEvaluator evaluator = new FieldConditionEvaluator();
     private final SetCombiner setCombiner = new SetCombiner();
 
-    <T> Set<T> apply(Condition condition, List<T> target) {
-        Evaluable evaluable = mapper.map(condition);
-        return evaluate(evaluable, target);
-    }
-
-    <T> Set<T> evaluate(Evaluable condition, List<T> target) {
-        if (condition instanceof EvaluableCompoundCondition compoundCondition) {
-            List<Set<T>> results = compoundCondition.getConditions().stream()
-                    .map(it -> evaluate(it, target))
-                    .collect(Collectors.toList());
-
-            return switch (compoundCondition.getOperator()) {
-                case OR -> setCombiner.or(results);
-                case AND -> setCombiner.and(results);
-                case NOT -> setCombiner.not(target, results);
-            };
+    <T> Set<T> evaluate(Condition condition, List<T> target) {
+        if (condition instanceof CompoundCondition compoundCondition) {
+            return handleCompoundCondition(compoundCondition, target);
         }
 
-        EvaluableSimpleCondition simpleCondition = (EvaluableSimpleCondition) condition;
+        return handleSimpleCondition((SimpleCondition) condition, target);
+    }
+
+    private <T> Set<T> handleSimpleCondition(SimpleCondition condition, List<T> target) {
         return target.stream()
-                .filter(it -> matchesCondition(it, simpleCondition))
+                .filter(it -> fulfillsSimpleCondition(it, condition))
                 .collect(Collectors.toSet());
     }
 
-    private <T> boolean matchesCondition(T object, EvaluableSimpleCondition condition) {
-        Object fieldValue = fieldValueRetriever.retrieveFieldValue(condition.getFieldName(), object);
+    private <T> Set<T> handleCompoundCondition(CompoundCondition compoundCondition, List<T> target) {
+        List<Set<T>> results = compoundCondition.getConditions().stream()
+                .map(it -> evaluate(it, target))
+                .collect(Collectors.toList());
 
-        if (fieldValue == null) {
-            return false;
-        }
+        return switch (compoundCondition.getOperator()) {
+            case OR -> setCombiner.or(results);
+            case AND -> setCombiner.and(results);
+            case NOT -> setCombiner.not(target, results);
+        };
+    }
 
-        return fieldConditionEvaluator.evaluateCondition(condition.getOperator(), fieldValue, condition.getValue());
+    <T> boolean fulfillsSimpleCondition(T object, SimpleCondition condition) {
+        Object fieldValue = retriever.retrieveFieldValue(condition.getFieldName(), object);
+        return evaluator.evaluateCondition(condition.getOperator(), fieldValue, condition.getValue());
     }
 }

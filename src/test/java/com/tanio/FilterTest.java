@@ -15,7 +15,7 @@ class FilterTest {
     Filter sut = new Filter();
 
     @Test
-    void performSimpleCondition() {
+    void performEvaluableSimpleCondition() {
         List<MusicArtist> musicArtists = Arrays.asList(
                 beatles(),
                 rollingStones(),
@@ -27,16 +27,16 @@ class FilterTest {
                 eltonJohn(),
                 bruceSpringsteen());
 
-        Set<MusicArtist> result = sut.apply(new SimpleCondition("country", EQUAL, "UK"), musicArtists);
+        Set<MusicArtist> result = sut.evaluate(new SimpleCondition("country", EQUAL, "UK"), musicArtists);
 
         assertThat(result).containsExactlyInAnyOrder(beatles(), rollingStones(), eltonJohn());
     }
 
     @Test
-    void performCompoundCondition_or() {
+    void performEvaluableCompoundCondition_or() {
         CompoundCondition condition = new CompoundCondition(
                 OR,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("country", EQUAL, "UK"),
                         new SimpleCondition("numberOfComponents", GREATER_THAN, 1)));
 
@@ -51,16 +51,16 @@ class FilterTest {
                 eltonJohn(),
                 bruceSpringsteen());
 
-        Set<MusicArtist> result = sut.apply(condition, musicArtists);
+        Set<MusicArtist> result = sut.evaluate(condition, musicArtists);
 
         assertThat(result).containsExactlyInAnyOrder(beatles(), rollingStones(), eltonJohn(), nirvana());
     }
 
     @Test
-    void performCompoundCondition_and() {
+    void performEvaluableCompoundCondition_and() {
         CompoundCondition condition = new CompoundCondition(
                 AND,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("country", NOT_EQUAL, "UK"),
                         new SimpleCondition("numberOfComponents", LESS_THAN, 3)));
 
@@ -75,16 +75,16 @@ class FilterTest {
                 eltonJohn(),
                 bruceSpringsteen());
 
-        Set<MusicArtist> result = sut.apply(condition, musicArtists);
+        Set<MusicArtist> result = sut.evaluate(condition, musicArtists);
 
         assertThat(result).containsExactlyInAnyOrder(madonna(), marvinGaye(), bjork(), edithPiaf(), bruceSpringsteen());
     }
 
     @Test
-    void performCompoundCondition_not() {
+    void performEvaluableCompoundCondition_not() {
         CompoundCondition condition = new CompoundCondition(
                 NOT,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("genre", EQUAL, "Rock"),
                         new SimpleCondition("country", EQUAL, "USA")));
 
@@ -99,28 +99,28 @@ class FilterTest {
                 eltonJohn(),
                 bruceSpringsteen());
 
-        Set<MusicArtist> result = sut.apply(condition, musicArtists);
+        Set<MusicArtist> result = sut.evaluate(condition, musicArtists);
 
         assertThat(result).containsExactlyInAnyOrder(bjork(), edithPiaf(), eltonJohn());
     }
 
     @Test
-    void performCompoundConditionNested_or() {
+    void performEvaluableCompoundConditionNested_or() {
         CompoundCondition first = new CompoundCondition(
                 OR,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("name", EQUAL, "Rolling Stones"),
                         new SimpleCondition("name", EQUAL, "Madonna")));
 
         CompoundCondition second = new CompoundCondition(
                 OR,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("country", EQUAL, "Iceland"),
                         new SimpleCondition("country", EQUAL, "France")));
 
         CompoundCondition condition = new CompoundCondition(
                 OR,
-                Arrays.asList(first, second));
+                Set.of(first, second));
 
         List<MusicArtist> musicArtists = Arrays.asList(
                 beatles(),
@@ -133,28 +133,28 @@ class FilterTest {
                 eltonJohn(),
                 bruceSpringsteen());
 
-        Set<MusicArtist> result = sut.apply(condition, musicArtists);
+        Set<MusicArtist> result = sut.evaluate(condition, musicArtists);
 
         assertThat(result).containsExactlyInAnyOrder(rollingStones(), madonna(), edithPiaf(), bjork());
     }
 
     @Test
-    void performCompoundConditionNested_and() {
+    void performEvaluableCompoundConditionNested_and() {
         CompoundCondition first = new CompoundCondition(
                 AND,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("country", NOT_EQUAL, "UK"),
                         new SimpleCondition("genre", NOT_EQUAL, "Rock")));
 
         CompoundCondition second = new CompoundCondition(
                 AND,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("name", NOT_EQUAL, "Marvin Gaye"),
                         new SimpleCondition("name", NOT_EQUAL, "Bjork")));
 
         CompoundCondition condition = new CompoundCondition(
                 AND,
-                Arrays.asList(first, second));
+                Set.of(first, second));
 
         List<MusicArtist> musicArtists = Arrays.asList(
                 beatles(),
@@ -167,28 +167,28 @@ class FilterTest {
                 eltonJohn(),
                 bruceSpringsteen());
 
-        Set<MusicArtist> result = sut.apply(condition, musicArtists);
+        Set<MusicArtist> result = sut.evaluate(condition, musicArtists);
 
         assertThat(result).containsExactlyInAnyOrder(edithPiaf(), madonna());
     }
 
     @Test
-    void performCompoundConditionNested_not() {
+    void performEvaluableCompoundConditionNested_not() {
         CompoundCondition first = new CompoundCondition(
                 AND,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("country", EQUAL, "UK"),
                         new SimpleCondition("numberOfComponents", EQUAL, 1)));
 
         CompoundCondition second = new CompoundCondition(
                 OR,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("genre", EQUAL, "Rock"),
                         new SimpleCondition("numberOfComponents", GREATER_THAN, 1)));
 
         CompoundCondition condition = new CompoundCondition(
                 NOT,
-                Arrays.asList(first, second));
+                Set.of(first, second));
 
         List<MusicArtist> musicArtists = Arrays.asList(
                 beatles(),
@@ -201,13 +201,13 @@ class FilterTest {
                 eltonJohn(),
                 bruceSpringsteen());
 
-        Set<MusicArtist> result = sut.apply(condition, musicArtists);
+        Set<MusicArtist> result = sut.evaluate(condition, musicArtists);
 
         assertThat(result).containsExactlyInAnyOrder(marvinGaye(), bjork(), madonna(), edithPiaf());
     }
 
     @Test
-    void performCompoundConditionNested_mixedAndOr() {
+    void performEvaluableCompoundConditionNested_mixedAndOr() {
         List<MusicArtist> musicArtists = Arrays.asList(
                 beatles(),
                 rollingStones(),
@@ -221,43 +221,43 @@ class FilterTest {
 
         CompoundCondition first = new CompoundCondition(
                 OR,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("country", EQUAL, "UK"),
                         new SimpleCondition("country", EQUAL, "USA")));
 
         CompoundCondition second = new CompoundCondition(
                 OR,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("numberOfComponents", EQUAL, 3),
                         new SimpleCondition("numberOfComponents", EQUAL, 4)));
 
         CompoundCondition condition = new CompoundCondition(
                 AND,
-                Arrays.asList(first, second));
+                Set.of(first, second));
 
-        Set<MusicArtist> result = sut.apply(condition, musicArtists);
+        Set<MusicArtist> result = sut.evaluate(condition, musicArtists);
 
         assertThat(result).containsExactlyInAnyOrder(beatles(), rollingStones(), nirvana());
     }
 
     @Test
-    void performCompoundConditionNested_mixedOrAnd() {
+    void performEvaluableCompoundConditionNested_mixedOrAnd() {
         CompoundCondition first = new CompoundCondition(
                 AND,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("country", EQUAL, "USA"),
                         new SimpleCondition("numberOfComponents", NOT_EQUAL, 3),
                         new SimpleCondition("numberOfComponents", NOT_EQUAL, 4)));
 
         CompoundCondition second = new CompoundCondition(
                 AND,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("country", EQUAL, "UK"),
                         new SimpleCondition("genre", EQUAL, "Pop")));
 
         CompoundCondition condition = new CompoundCondition(
                 OR,
-                Arrays.asList(first, second));
+                Set.of(first, second));
 
         List<MusicArtist> musicArtists = Arrays.asList(
                 beatles(),
@@ -270,28 +270,28 @@ class FilterTest {
                 eltonJohn(),
                 bruceSpringsteen());
 
-        Set<MusicArtist> result = sut.apply(condition, musicArtists);
+        Set<MusicArtist> result = sut.evaluate(condition, musicArtists);
 
         assertThat(result).containsExactlyInAnyOrder(marvinGaye(), bruceSpringsteen(), eltonJohn(), madonna());
     }
 
     @Test
-    void performCompoundConditionNested_mixedOrAndNot() {
+    void performEvaluableCompoundConditionNested_mixedOrAndNot() {
         CompoundCondition first = new CompoundCondition(
                 NOT,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("country", EQUAL, "USA"),
                         new SimpleCondition("numberOfComponents", EQUAL, 1)));
 
         CompoundCondition second = new CompoundCondition(
                 NOT,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("country", EQUAL, "UK"),
                         new SimpleCondition("numberOfComponents", EQUAL, 1)));
 
         CompoundCondition condition = new CompoundCondition(
                 OR,
-                Arrays.asList(first, second));
+                Set.of(first, second));
 
         List<MusicArtist> musicArtists = Arrays.asList(
                 beatles(),
@@ -304,7 +304,7 @@ class FilterTest {
                 eltonJohn(),
                 bruceSpringsteen());
 
-        Set<MusicArtist> result = sut.apply(condition, musicArtists);
+        Set<MusicArtist> result = sut.evaluate(condition, musicArtists);
 
         assertThat(result).containsExactlyInAnyOrder(beatles(), rollingStones(), nirvana());
     }
@@ -313,13 +313,13 @@ class FilterTest {
     void performAndOr() {
         CompoundCondition nested = new CompoundCondition(
                 AND,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("country", EQUAL, "UK"),
                         new SimpleCondition("numberOfComponents", LESS_THAN, 4)));
 
         CompoundCondition condition = new CompoundCondition(
                 OR,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("name", EQUAL, "Edith Piaf"),
                         nested));
 
@@ -334,7 +334,7 @@ class FilterTest {
                 eltonJohn(),
                 bruceSpringsteen());
 
-        Set<MusicArtist> result = sut.apply(condition, musicArtists);
+        Set<MusicArtist> result = sut.evaluate(condition, musicArtists);
 
         assertThat(result).containsExactlyInAnyOrder(eltonJohn(), edithPiaf());
     }
@@ -343,13 +343,13 @@ class FilterTest {
     void performOrAnd() {
         CompoundCondition nested = new CompoundCondition(
                 OR,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("country", NOT_EQUAL, "UK"),
                         new SimpleCondition("genre", NOT_EQUAL, "Rock")));
 
         CompoundCondition condition = new CompoundCondition(
                 AND,
-                Arrays.asList(
+                Set.of(
                         new SimpleCondition("numberOfComponents", NOT_EQUAL, 1),
                         nested));
 
@@ -364,7 +364,7 @@ class FilterTest {
                 eltonJohn(),
                 bruceSpringsteen());
 
-        Set<MusicArtist> result = sut.apply(condition, musicArtists);
+        Set<MusicArtist> result = sut.evaluate(condition, musicArtists);
 
         assertThat(result).containsExactlyInAnyOrder(nirvana());
     }

@@ -1,11 +1,13 @@
 package com.tanio;
 
-public class SimpleCondition implements Condition {
+class SimpleCondition implements Condition {
     private final String fieldName;
     private final Operator operator;
     private final Object value;
 
-    SimpleCondition(String fieldName, Operator operator, Object value) {
+    SimpleCondition(String fieldName,
+                    Operator operator,
+                    Object value) {
         this.fieldName = fieldName;
         this.operator = operator;
         this.value = value;

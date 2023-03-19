@@ -1,9 +1,13 @@
 package com.tanio;
 
-import com.tanio.EvaluableSimpleCondition.Operator;
+import com.tanio.SimpleCondition.Operator;
 
 class FieldConditionEvaluator {
     boolean evaluateCondition(Operator operator, Object first, Object second) {
+        if (first == null) {
+            return false;
+        }
+
         // The second object is the actual field value, so it rules the way the condition is evaluated
         Class<?> secondObjectClass = second.getClass();
 
