@@ -51,6 +51,14 @@ class CompoundCondition implements Evaluable {
         return result;
     }
 
+    public BooleanOperator getOperator() {
+        return operator;
+    }
+
+    public List<Evaluable> getConditions() {
+        return conditions;
+    }
+
     enum BooleanOperator {
         OR, AND, NOT
     }

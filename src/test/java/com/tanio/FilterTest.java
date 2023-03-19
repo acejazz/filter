@@ -1,6 +1,5 @@
 package com.tanio;
 
-import com.tanio.SimpleCondition.Operator;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -8,10 +7,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CompoundSimpleConditionTest {
-
-    FieldValueRetriever fieldValueRetriever = new FieldValueRetriever();
-    FieldConditionEvaluator fieldConditionEvaluator = new FieldConditionEvaluator();
+class FilterTest {
+    Filter sut = new Filter();
 
     @Test
     void performCompoundCondition_or() {
@@ -24,13 +21,14 @@ class CompoundSimpleConditionTest {
         TestEntity notMatchingTestEntity = new TestEntity();
         notMatchingTestEntity.setStringField("sup");
 
-        CompoundCondition condition = new CompoundCondition(
-                CompoundCondition.BooleanOperator.OR,
+        CompoundConditionDto condition = new CompoundConditionDto(
+                CompoundConditionDto.BooleanOperator.OR,
                 Arrays.asList(
-                        new SimpleCondition("stringField", Operator.EQUAL, "hello", fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("stringField", Operator.EQUAL, "bye", fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleConditionDto("stringField", SimpleConditionDto.Operator.EQUAL, "hello"),
+                        new SimpleConditionDto("stringField", SimpleConditionDto.Operator.EQUAL, "bye")));
 
-        List<TestEntity> result = condition.evaluate(
+        List<TestEntity> result = sut.apply(
+                condition,
                 Arrays.asList(
                         firstConditionMatchingTestEntity,
                         secondConditionMatchingTestEntity,
@@ -54,13 +52,14 @@ class CompoundSimpleConditionTest {
         TestEntity notMatchingTestEntity1 = new TestEntity();
         notMatchingTestEntity1.setIntegerField(13);
 
-        CompoundCondition condition = new CompoundCondition(
-                CompoundCondition.BooleanOperator.AND,
+        CompoundConditionDto condition = new CompoundConditionDto(
+                CompoundConditionDto.BooleanOperator.AND,
                 Arrays.asList(
-                        new SimpleCondition("stringField", Operator.EQUAL, "hello", fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("integerField", Operator.EQUAL, 13, fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleConditionDto("stringField", SimpleConditionDto.Operator.EQUAL, "hello"),
+                        new SimpleConditionDto("integerField", SimpleConditionDto.Operator.EQUAL, 13)));
 
-        List<TestEntity> result = condition.evaluate(
+        List<TestEntity> result = sut.apply(
+                condition,
                 Arrays.asList(
                         conditionMatchingTestEntity,
                         notMatchingTestEntity0,
@@ -83,13 +82,14 @@ class CompoundSimpleConditionTest {
         notMatchingTestEntity2.setStringField("hello");
         notMatchingTestEntity2.setIntegerField(13);
 
-        CompoundCondition condition = new CompoundCondition(
-                CompoundCondition.BooleanOperator.NOT,
+        CompoundConditionDto condition = new CompoundConditionDto(
+                CompoundConditionDto.BooleanOperator.NOT,
                 Arrays.asList(
-                        new SimpleCondition("stringField", Operator.EQUAL, "hello", fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("integerField", Operator.EQUAL, 13, fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleConditionDto("stringField", SimpleConditionDto.Operator.EQUAL, "hello"),
+                        new SimpleConditionDto("integerField", SimpleConditionDto.Operator.EQUAL, 13)));
 
-        List<TestEntity> result = condition.evaluate(
+        List<TestEntity> result = sut.apply(
+                condition,
                 Arrays.asList(
                         conditionMatchingTestEntity,
                         notMatchingTestEntity0,
@@ -116,23 +116,24 @@ class CompoundSimpleConditionTest {
         TestEntity testEntity4 = new TestEntity();
         testEntity4.setStringField("batman");
 
-        CompoundCondition first = new CompoundCondition(
-                CompoundCondition.BooleanOperator.OR,
+        CompoundConditionDto first = new CompoundConditionDto(
+                CompoundConditionDto.BooleanOperator.OR,
                 Arrays.asList(
-                        new SimpleCondition("stringField", Operator.EQUAL, "hello", fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("stringField", Operator.EQUAL, "bye", fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleConditionDto("stringField", SimpleConditionDto.Operator.EQUAL, "hello"),
+                        new SimpleConditionDto("stringField", SimpleConditionDto.Operator.EQUAL, "bye")));
 
-        CompoundCondition second = new CompoundCondition(
-                CompoundCondition.BooleanOperator.OR,
+        CompoundConditionDto second = new CompoundConditionDto(
+                CompoundConditionDto.BooleanOperator.OR,
                 Arrays.asList(
-                        new SimpleCondition("stringField", Operator.EQUAL, "good morning", fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("stringField", Operator.EQUAL, "good night", fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleConditionDto("stringField", SimpleConditionDto.Operator.EQUAL, "good morning"),
+                        new SimpleConditionDto("stringField", SimpleConditionDto.Operator.EQUAL, "good night")));
 
-        CompoundCondition condition = new CompoundCondition(
-                CompoundCondition.BooleanOperator.OR,
+        CompoundConditionDto condition = new CompoundConditionDto(
+                CompoundConditionDto.BooleanOperator.OR,
                 Arrays.asList(first, second));
 
-        List<TestEntity> result = condition.evaluate(
+        List<TestEntity> result = sut.apply(
+                condition,
                 Arrays.asList(testEntity0, testEntity1, testEntity2, testEntity3, testEntity4));
 
         assertThat(result)
@@ -171,24 +172,25 @@ class CompoundSimpleConditionTest {
         testEntity4.setBooleanField(true);
         testEntity4.setCharField('z');
 
-        CompoundCondition first = new CompoundCondition(
-                CompoundCondition.BooleanOperator.AND,
+        CompoundConditionDto first = new CompoundConditionDto(
+                CompoundConditionDto.BooleanOperator.AND,
                 Arrays.asList(
-                        new SimpleCondition("stringField", Operator.EQUAL, "hello", fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("integerField", Operator.EQUAL, 13, fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleConditionDto("stringField", SimpleConditionDto.Operator.EQUAL, "hello"),
+                        new SimpleConditionDto("integerField", SimpleConditionDto.Operator.EQUAL, 13)));
 
-        CompoundCondition second = new CompoundCondition(
-                CompoundCondition.BooleanOperator.AND,
+        CompoundConditionDto second = new CompoundConditionDto(
+                CompoundConditionDto.BooleanOperator.AND,
                 Arrays.asList(
-                        new SimpleCondition("booleanField", Operator.EQUAL, true, fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("charField", Operator.EQUAL, 'a', fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleConditionDto("booleanField", SimpleConditionDto.Operator.EQUAL, true),
+                        new SimpleConditionDto("charField", SimpleConditionDto.Operator.EQUAL, 'a')));
 
-        CompoundCondition condition = new CompoundCondition(
-                CompoundCondition.BooleanOperator.AND,
+        CompoundConditionDto condition = new CompoundConditionDto(
+                CompoundConditionDto.BooleanOperator.AND,
                 Arrays.asList(first, second));
 
         List<TestEntity> result =
-                condition.evaluate(
+                sut.apply(
+                        condition,
                         Arrays.asList(
                                 testEntity0,
                                 testEntity1,
@@ -216,23 +218,24 @@ class CompoundSimpleConditionTest {
         TestEntity testEntity4 = new TestEntity();
         testEntity4.setStringField("batman");
 
-        CompoundCondition first = new CompoundCondition(
-                CompoundCondition.BooleanOperator.OR,
+        CompoundConditionDto first = new CompoundConditionDto(
+                CompoundConditionDto.BooleanOperator.OR,
                 Arrays.asList(
-                        new SimpleCondition("stringField", Operator.EQUAL, "hello", fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("stringField", Operator.EQUAL, "bye", fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleConditionDto("stringField", SimpleConditionDto.Operator.EQUAL, "hello"),
+                        new SimpleConditionDto("stringField", SimpleConditionDto.Operator.EQUAL, "bye")));
 
-        CompoundCondition second = new CompoundCondition(
-                CompoundCondition.BooleanOperator.OR,
+        CompoundConditionDto second = new CompoundConditionDto(
+                CompoundConditionDto.BooleanOperator.OR,
                 Arrays.asList(
-                        new SimpleCondition("stringField", Operator.EQUAL, "good morning", fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("stringField", Operator.EQUAL, "good night", fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleConditionDto("stringField", SimpleConditionDto.Operator.EQUAL, "good morning"),
+                        new SimpleConditionDto("stringField", SimpleConditionDto.Operator.EQUAL, "good night")));
 
-        CompoundCondition condition = new CompoundCondition(
-                CompoundCondition.BooleanOperator.NOT,
+        CompoundConditionDto condition = new CompoundConditionDto(
+                CompoundConditionDto.BooleanOperator.NOT,
                 Arrays.asList(first, second));
 
-        List<TestEntity> result = condition.evaluate(
+        List<TestEntity> result = sut.apply(
+                condition,
                 Arrays.asList(
                         testEntity0,
                         testEntity1,
@@ -256,23 +259,23 @@ class CompoundSimpleConditionTest {
                 eltonJohn(),
                 bruceSpringsteen());
 
-        CompoundCondition first = new CompoundCondition(
-                CompoundCondition.BooleanOperator.OR,
+        CompoundConditionDto first = new CompoundConditionDto(
+                CompoundConditionDto.BooleanOperator.OR,
                 Arrays.asList(
-                        new SimpleCondition("country", Operator.EQUAL, "UK", fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("country", Operator.EQUAL, "USA", fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleConditionDto("country", SimpleConditionDto.Operator.EQUAL, "UK"),
+                        new SimpleConditionDto("country", SimpleConditionDto.Operator.EQUAL, "USA")));
 
-        CompoundCondition second = new CompoundCondition(
-                CompoundCondition.BooleanOperator.OR,
+        CompoundConditionDto second = new CompoundConditionDto(
+                CompoundConditionDto.BooleanOperator.OR,
                 Arrays.asList(
-                        new SimpleCondition("numberOfComponents", Operator.EQUAL, 3, fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("numberOfComponents", Operator.EQUAL, 4, fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleConditionDto("numberOfComponents", SimpleConditionDto.Operator.EQUAL, 3),
+                        new SimpleConditionDto("numberOfComponents", SimpleConditionDto.Operator.EQUAL, 4)));
 
-        CompoundCondition condition = new CompoundCondition(
-                CompoundCondition.BooleanOperator.AND,
+        CompoundConditionDto condition = new CompoundConditionDto(
+                CompoundConditionDto.BooleanOperator.AND,
                 Arrays.asList(first, second));
 
-        List<MusicArtist> result = condition.evaluate(musicArtists);
+        List<MusicArtist> result = sut.apply(condition, musicArtists);
         assertThat(result).containsExactlyInAnyOrder(beatles(), rollingStones(), nirvana());
     }
 
@@ -289,24 +292,24 @@ class CompoundSimpleConditionTest {
                 eltonJohn(),
                 bruceSpringsteen());
 
-        CompoundCondition first = new CompoundCondition(
-                CompoundCondition.BooleanOperator.AND,
+        CompoundConditionDto first = new CompoundConditionDto(
+                CompoundConditionDto.BooleanOperator.AND,
                 Arrays.asList(
-                        new SimpleCondition("country", Operator.EQUAL, "USA", fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("numberOfComponents", Operator.NOT_EQUAL, 3, fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("numberOfComponents", Operator.NOT_EQUAL, 4, fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleConditionDto("country", SimpleConditionDto.Operator.EQUAL, "USA"),
+                        new SimpleConditionDto("numberOfComponents", SimpleConditionDto.Operator.NOT_EQUAL, 3),
+                        new SimpleConditionDto("numberOfComponents", SimpleConditionDto.Operator.NOT_EQUAL, 4)));
 
-        CompoundCondition second = new CompoundCondition(
-                CompoundCondition.BooleanOperator.AND,
+        CompoundConditionDto second = new CompoundConditionDto(
+                CompoundConditionDto.BooleanOperator.AND,
                 Arrays.asList(
-                        new SimpleCondition("country", Operator.EQUAL, "UK", fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("genre", Operator.EQUAL, "Pop", fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleConditionDto("country", SimpleConditionDto.Operator.EQUAL, "UK"),
+                        new SimpleConditionDto("genre", SimpleConditionDto.Operator.EQUAL, "Pop")));
 
-        CompoundCondition condition = new CompoundCondition(
-                CompoundCondition.BooleanOperator.OR,
+        CompoundConditionDto condition = new CompoundConditionDto(
+                CompoundConditionDto.BooleanOperator.OR,
                 Arrays.asList(first, second));
 
-        List<MusicArtist> result = condition.evaluate(musicArtists);
+        List<MusicArtist> result = sut.apply(condition, musicArtists);
         assertThat(result)
                 .containsExactlyInAnyOrder(
                         marvinGaye(),
@@ -328,23 +331,23 @@ class CompoundSimpleConditionTest {
                 eltonJohn(),
                 bruceSpringsteen());
 
-        CompoundCondition first = new CompoundCondition(
-                CompoundCondition.BooleanOperator.NOT,
+        CompoundConditionDto first = new CompoundConditionDto(
+                CompoundConditionDto.BooleanOperator.NOT,
                 Arrays.asList(
-                        new SimpleCondition("country", Operator.EQUAL, "USA", fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("numberOfComponents", Operator.EQUAL, 1, fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleConditionDto("country", SimpleConditionDto.Operator.EQUAL, "USA"),
+                        new SimpleConditionDto("numberOfComponents", SimpleConditionDto.Operator.EQUAL, 1)));
 
-        CompoundCondition second = new CompoundCondition(
-                CompoundCondition.BooleanOperator.NOT,
+        CompoundConditionDto second = new CompoundConditionDto(
+                CompoundConditionDto.BooleanOperator.NOT,
                 Arrays.asList(
-                        new SimpleCondition("country", Operator.EQUAL, "UK", fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("numberOfComponents", Operator.EQUAL, 1, fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleConditionDto("country", SimpleConditionDto.Operator.EQUAL, "UK"),
+                        new SimpleConditionDto("numberOfComponents", SimpleConditionDto.Operator.EQUAL, 1)));
 
-        CompoundCondition condition = new CompoundCondition(
-                CompoundCondition.BooleanOperator.OR,
+        CompoundConditionDto condition = new CompoundConditionDto(
+                CompoundConditionDto.BooleanOperator.OR,
                 Arrays.asList(first, second));
 
-        List<MusicArtist> result = condition.evaluate(musicArtists);
+        List<MusicArtist> result = sut.apply(condition, musicArtists);
         assertThat(result).containsExactlyInAnyOrder(beatles(), rollingStones(), nirvana());
     }
 
@@ -370,20 +373,21 @@ class CompoundSimpleConditionTest {
         nonMatchingNestedConditionEntity2.setIntegerField(13);
         nonMatchingNestedConditionEntity2.setCharField('a');
 
-        CompoundCondition nested = new CompoundCondition(
-                CompoundCondition.BooleanOperator.AND,
+        CompoundConditionDto nested = new CompoundConditionDto(
+                CompoundConditionDto.BooleanOperator.AND,
                 Arrays.asList(
-                        new SimpleCondition("integerField", Operator.EQUAL, 13, fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("charField", Operator.EQUAL, 'x', fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleConditionDto("integerField", SimpleConditionDto.Operator.EQUAL, 13),
+                        new SimpleConditionDto("charField", SimpleConditionDto.Operator.EQUAL, 'x')));
 
-        CompoundCondition condition = new CompoundCondition(
-                CompoundCondition.BooleanOperator.OR,
+        CompoundConditionDto condition = new CompoundConditionDto(
+                CompoundConditionDto.BooleanOperator.OR,
                 Arrays.asList(
-                        new SimpleCondition("stringField", Operator.EQUAL, "anything", fieldConditionEvaluator, fieldValueRetriever),
+                        new SimpleConditionDto("stringField", SimpleConditionDto.Operator.EQUAL, "anything"),
                         nested));
 
         List<TestEntity> result =
-                condition.evaluate(
+                sut.apply(
+                        condition,
                         Arrays.asList(
                                 matchingNestedConditionEntity,
                                 matchingNonNestedConditionEntity,
@@ -422,19 +426,20 @@ class CompoundSimpleConditionTest {
         nonMatchingEntity2.setStringField("anything");
         nonMatchingEntity2.setCharField('a');
 
-        CompoundCondition nested = new CompoundCondition(
-                CompoundCondition.BooleanOperator.OR,
+        CompoundConditionDto nested = new CompoundConditionDto(
+                CompoundConditionDto.BooleanOperator.OR,
                 Arrays.asList(
-                        new SimpleCondition("stringField", Operator.EQUAL, "anything", fieldConditionEvaluator, fieldValueRetriever),
-                        new SimpleCondition("integerField", Operator.EQUAL, 13, fieldConditionEvaluator, fieldValueRetriever)));
+                        new SimpleConditionDto("stringField", SimpleConditionDto.Operator.EQUAL, "anything"),
+                        new SimpleConditionDto("integerField", SimpleConditionDto.Operator.EQUAL, 13)));
 
-        CompoundCondition condition = new CompoundCondition(
-                CompoundCondition.BooleanOperator.AND,
+        CompoundConditionDto condition = new CompoundConditionDto(
+                CompoundConditionDto.BooleanOperator.AND,
                 Arrays.asList(
-                        new SimpleCondition("charField", Operator.EQUAL, 'x', fieldConditionEvaluator, fieldValueRetriever),
+                        new SimpleConditionDto("charField", SimpleConditionDto.Operator.EQUAL, 'x'),
                         nested));
 
-        List<TestEntity> result = condition.evaluate(
+        List<TestEntity> result = sut.apply(
+                condition,
                 Arrays.asList(
                         matchingNonNestedConditionEntity,
                         matchingNestedConditionEntity0,
