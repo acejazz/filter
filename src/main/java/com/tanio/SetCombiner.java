@@ -30,6 +30,7 @@ class SetCombiner {
         return not.of(or(resultLists));
     }
 
+    // It is possible to define the not operator only against a reference universe
     private static class Not<T> {
         private final List<T> universe;
 

@@ -11,11 +11,11 @@ class CompoundCondition implements Condition {
         this.conditions = conditions;
     }
 
-    public BooleanOperator getOperator() {
+    BooleanOperator getOperator() {
         return operator;
     }
 
-    public Set<Condition> getConditions() {
+    Set<Condition> getConditions() {
         return conditions;
     }
 

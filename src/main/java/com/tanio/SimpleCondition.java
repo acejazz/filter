@@ -13,15 +13,15 @@ class SimpleCondition implements Condition {
         this.value = value;
     }
 
-    public String getFieldName() {
+    String getFieldName() {
         return fieldName;
     }
 
-    public Operator getOperator() {
+    Operator getOperator() {
         return operator;
     }
 
-    public Object getValue() {
+    Object getValue() {
         return value;
     }
 

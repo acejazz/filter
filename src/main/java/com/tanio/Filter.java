@@ -35,7 +35,7 @@ class Filter {
         };
     }
 
-    <T> boolean fulfillsSimpleCondition(T object, SimpleCondition condition) {
+    private <T> boolean fulfillsSimpleCondition(T object, SimpleCondition condition) {
         Object fieldValue = retriever.retrieveFieldValue(condition.getFieldName(), object);
         return evaluator.evaluateCondition(condition.getOperator(), fieldValue, condition.getValue());
     }

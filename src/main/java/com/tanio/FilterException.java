@@ -1,7 +1,7 @@
 package com.tanio;
 
 class FilterException extends RuntimeException {
-    public FilterException(String message) {
+    FilterException(String message) {
         super(message);
     }
 }
