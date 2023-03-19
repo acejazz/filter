@@ -1,5 +1,6 @@
 package com.tanio;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -9,8 +10,14 @@ import static com.tanio.EvaluableSimpleCondition.Operator.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class EvaluableSimpleConditionTest {
-    FieldValueRetriever retriever = new FieldValueRetriever();
-    FieldConditionEvaluator evaluator = new FieldConditionEvaluator();
+    EvaluationInfra infra = new EvaluationInfra();
+
+    @BeforeEach
+    void setUp() {
+        infra.retriever = new FieldValueRetriever();
+        infra.evaluator = new FieldConditionEvaluator();
+        infra.setCombiner = new SetCombiner();
+    }
 
     @Test
     void equal() {
@@ -22,7 +29,7 @@ class EvaluableSimpleConditionTest {
 
         EvaluableSimpleCondition sut = new EvaluableSimpleCondition("stringField", EQUAL, "hello");
 
-        Set<TestEntity> result = sut.evaluate(List.of(matching, nonMatching), evaluator, retriever);
+        Set<TestEntity> result = sut.evaluate(List.of(matching, nonMatching), infra);
 
         assertThat(result).containsExactly(matching);
     }
@@ -37,7 +44,7 @@ class EvaluableSimpleConditionTest {
 
         EvaluableSimpleCondition sut = new EvaluableSimpleCondition("stringField", NOT_EQUAL, "bye");
 
-        Set<TestEntity> result = sut.evaluate(List.of(matching, nonMatching), evaluator, retriever);
+        Set<TestEntity> result = sut.evaluate(List.of(matching, nonMatching), infra);
 
         assertThat(result).containsExactly(matching);
     }
@@ -52,7 +59,7 @@ class EvaluableSimpleConditionTest {
 
         EvaluableSimpleCondition sut = new EvaluableSimpleCondition("integerField", GREATER_THAN, 5);
 
-        Set<TestEntity> result = sut.evaluate(List.of(matching, nonMatching), evaluator, retriever);
+        Set<TestEntity> result = sut.evaluate(List.of(matching, nonMatching), infra);
 
         assertThat(result).containsExactly(matching);
     }
@@ -67,7 +74,7 @@ class EvaluableSimpleConditionTest {
 
         EvaluableSimpleCondition sut = new EvaluableSimpleCondition("integerField", LESS_THAN, 5);
 
-        Set<TestEntity> result = sut.evaluate(List.of(matching, nonMatching), evaluator, retriever);
+        Set<TestEntity> result = sut.evaluate(List.of(matching, nonMatching), infra);
 
         assertThat(result).containsExactly(matching);
     }

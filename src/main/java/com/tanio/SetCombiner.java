@@ -26,10 +26,10 @@ class SetCombiner {
 
     <T> Set<T> not(List<T> target, List<Set<T>> resultLists) {
         // !A and !B and !C = !(A or B or C)
-        return negate(target, or(resultLists));
+        return not(target, or(resultLists));
     }
 
-    private <T> Set<T> negate(List<T> universe, Set<T> set) {
+    private <T> Set<T> not(List<T> universe, Set<T> set) {
         Set<T> result = new HashSet<>(copyOf(universe));
         result.removeAll(set);
         return result;

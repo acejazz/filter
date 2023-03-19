@@ -4,5 +4,5 @@ import java.util.List;
 import java.util.Set;
 
 interface Evaluable {
-    <T> Set<T> evaluate(List<T> target, FieldConditionEvaluator evaluator, FieldValueRetriever retriever);
+    <T> Set<T> evaluate(List<T> target, EvaluationInfra infra);
 }

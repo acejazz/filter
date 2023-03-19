@@ -1,17 +1,12 @@
 package com.tanio;
 
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static java.util.List.copyOf;
-
 class EvaluableCompoundCondition implements Evaluable {
     private final BooleanOperator operator;
     private final Set<Evaluable> conditions;
-    private final SetCombiner setCombiner = new SetCombiner();
 
     EvaluableCompoundCondition(BooleanOperator operator, Set<Evaluable> conditions) {
         this.operator = operator;
@@ -19,11 +14,12 @@ class EvaluableCompoundCondition implements Evaluable {
     }
 
     @Override
-    public <T> Set<T> evaluate(List<T> target, FieldConditionEvaluator evaluator, FieldValueRetriever retriever) {
+    public <T> Set<T> evaluate(List<T> target, EvaluationInfra evaluationInfra) {
         List<Set<T>> results = conditions.stream()
-                .map(it -> it.evaluate(target, evaluator, retriever))
+                .map(it -> it.evaluate(target, evaluationInfra))
                 .collect(Collectors.toList());
 
+        SetCombiner setCombiner = evaluationInfra.setCombiner;
         return switch (operator) {
             case OR -> setCombiner.or(results);
             case AND -> setCombiner.and(results);

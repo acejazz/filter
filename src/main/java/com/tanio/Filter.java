@@ -4,12 +4,18 @@ import java.util.List;
 import java.util.Set;
 
 class Filter {
+    private final EvaluationInfra evaluationInfra;
     private final Mapper mapper = new Mapper();
-    private final FieldValueRetriever fieldValueRetriever = new FieldValueRetriever();
-    private final FieldConditionEvaluator fieldConditionEvaluator = new FieldConditionEvaluator();
+
+    public Filter() {
+        evaluationInfra = new EvaluationInfra();
+        evaluationInfra.retriever = new FieldValueRetriever();
+        evaluationInfra.evaluator = new FieldConditionEvaluator();
+        evaluationInfra.setCombiner = new SetCombiner();
+    }
 
     <T> Set<T> apply(Condition condition, List<T> target) {
         Evaluable evaluable = mapper.map(condition);
-        return evaluable.evaluate(target, fieldConditionEvaluator, fieldValueRetriever);
+        return evaluable.evaluate(target, evaluationInfra);
     }
 }

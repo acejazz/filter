@@ -1,6 +1,7 @@
 package com.tanio;
 
 import com.tanio.EvaluableSimpleCondition.Operator;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -11,8 +12,14 @@ import static com.tanio.TestPlatform.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class EvaluableCompoundConditionTest {
-    FieldValueRetriever retriever = new FieldValueRetriever();
-    FieldConditionEvaluator evaluator = new FieldConditionEvaluator();
+    EvaluationInfra infra = new EvaluationInfra();
+
+    @BeforeEach
+    void setUp() {
+        infra.retriever = new FieldValueRetriever();
+        infra.evaluator = new FieldConditionEvaluator();
+        infra.setCombiner = new SetCombiner();
+    }
 
     @Test
     void performCompoundCondition_or() {
@@ -35,7 +42,7 @@ class EvaluableCompoundConditionTest {
                 firstConditionMatchingTestEntity,
                 secondConditionMatchingTestEntity,
                 notMatchingTestEntity);
-        Set<TestEntity> result = condition.evaluate(target, evaluator, retriever);
+        Set<TestEntity> result = condition.evaluate(target, infra);
 
         assertThat(result)
                 .containsExactlyInAnyOrder(
@@ -65,7 +72,7 @@ class EvaluableCompoundConditionTest {
                 conditionMatchingTestEntity,
                 notMatchingTestEntity0,
                 notMatchingTestEntity1);
-        Set<TestEntity> result = condition.evaluate(target, evaluator, retriever);
+        Set<TestEntity> result = condition.evaluate(target, infra);
 
         assertThat(result).containsExactlyInAnyOrder(conditionMatchingTestEntity);
     }
@@ -95,7 +102,7 @@ class EvaluableCompoundConditionTest {
                 notMatchingTestEntity0,
                 notMatchingTestEntity1,
                 notMatchingTestEntity2);
-        Set<TestEntity> result = condition.evaluate(target, evaluator, retriever);
+        Set<TestEntity> result = condition.evaluate(target, infra);
 
         assertThat(result).containsExactlyInAnyOrder(conditionMatchingTestEntity);
     }
@@ -134,7 +141,7 @@ class EvaluableCompoundConditionTest {
                 Set.of(first, second));
 
         List<TestEntity> target = Arrays.asList(testEntity0, testEntity1, testEntity2, testEntity3, testEntity4);
-        Set<TestEntity> result = condition.evaluate(target, evaluator, retriever);
+        Set<TestEntity> result = condition.evaluate(target, infra);
 
         assertThat(result)
                 .containsExactlyInAnyOrder(testEntity0, testEntity1, testEntity2, testEntity3);
@@ -194,7 +201,7 @@ class EvaluableCompoundConditionTest {
                 testEntity2,
                 testEntity3,
                 testEntity4);
-        Set<TestEntity> result = condition.evaluate(target, evaluator, retriever);
+        Set<TestEntity> result = condition.evaluate(target, infra);
 
         assertThat(result).containsExactly(testEntity0);
     }
@@ -238,7 +245,7 @@ class EvaluableCompoundConditionTest {
                 testEntity2,
                 testEntity3,
                 testEntity4);
-        Set<TestEntity> result = condition.evaluate(target, evaluator, retriever);
+        Set<TestEntity> result = condition.evaluate(target, infra);
 
         assertThat(result).containsExactlyInAnyOrder(testEntity4);
     }
@@ -272,7 +279,7 @@ class EvaluableCompoundConditionTest {
                 EvaluableCompoundCondition.BooleanOperator.AND,
                 Set.of(first, second));
 
-        Set<MusicArtist> result = condition.evaluate(musicArtists, evaluator, retriever);
+        Set<MusicArtist> result = condition.evaluate(musicArtists, infra);
         assertThat(result).containsExactlyInAnyOrder(beatles(), rollingStones(), nirvana());
     }
 
@@ -306,7 +313,7 @@ class EvaluableCompoundConditionTest {
                 EvaluableCompoundCondition.BooleanOperator.OR,
                 Set.of(first, second));
 
-        Set<MusicArtist> result = condition.evaluate(musicArtists, evaluator, retriever);
+        Set<MusicArtist> result = condition.evaluate(musicArtists, infra);
         assertThat(result)
                 .containsExactlyInAnyOrder(
                         marvinGaye(),
@@ -344,7 +351,7 @@ class EvaluableCompoundConditionTest {
                 EvaluableCompoundCondition.BooleanOperator.OR,
                 Set.of(first, second));
 
-        Set<MusicArtist> result = condition.evaluate(musicArtists, evaluator, retriever);
+        Set<MusicArtist> result = condition.evaluate(musicArtists, infra);
         assertThat(result).containsExactlyInAnyOrder(beatles(), rollingStones(), nirvana());
     }
 
@@ -389,7 +396,7 @@ class EvaluableCompoundConditionTest {
                 nonMatchingNestedConditionEntity0,
                 nonMatchingNestedConditionEntity1,
                 nonMatchingNestedConditionEntity2);
-        Set<TestEntity> result = condition.evaluate(target, evaluator, retriever);
+        Set<TestEntity> result = condition.evaluate(target, infra);
 
         assertThat(result)
                 .containsExactlyInAnyOrder(
@@ -440,7 +447,7 @@ class EvaluableCompoundConditionTest {
                 nonMatchingEntity0,
                 nonMatchingEntity1,
                 nonMatchingEntity2);
-        Set<TestEntity> result = condition.evaluate(target, evaluator, retriever);
+        Set<TestEntity> result = condition.evaluate(target, infra);
 
         assertThat(result).containsExactlyInAnyOrder(matchingNestedConditionEntity0);
     }

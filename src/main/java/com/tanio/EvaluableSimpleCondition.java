@@ -18,9 +18,9 @@ class EvaluableSimpleCondition implements Evaluable {
     }
 
     @Override
-    public <T> Set<T> evaluate(List<T> target, FieldConditionEvaluator evaluator, FieldValueRetriever retriever) {
+    public <T> Set<T> evaluate(List<T> target, EvaluationInfra evaluationInfra) {
         return target.stream()
-                .filter(it -> matchesCondition(it, evaluator, retriever))
+                .filter(it -> matchesCondition(it, evaluationInfra.evaluator, evaluationInfra.retriever))
                 .collect(Collectors.toSet());
     }
 
