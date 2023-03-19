@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Set;
 
-import static com.tanio.SimpleCondition.Operator.*;
+import static com.tanio.EvaluableSimpleCondition.Operator.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class SimpleConditionTest {
+class EvaluableSimpleConditionTest {
     FieldValueRetriever retriever = new FieldValueRetriever();
     FieldConditionEvaluator evaluator = new FieldConditionEvaluator();
 
@@ -20,7 +20,7 @@ class SimpleConditionTest {
         TestEntity nonMatching = new TestEntity();
         nonMatching.setStringField("bye");
 
-        SimpleCondition sut = new SimpleCondition("stringField", EQUAL, "hello");
+        EvaluableSimpleCondition sut = new EvaluableSimpleCondition("stringField", EQUAL, "hello");
 
         Set<TestEntity> result = sut.evaluate(List.of(matching, nonMatching), evaluator, retriever);
 
@@ -35,7 +35,7 @@ class SimpleConditionTest {
         TestEntity nonMatching = new TestEntity();
         nonMatching.setStringField("bye");
 
-        SimpleCondition sut = new SimpleCondition("stringField", NOT_EQUAL, "bye");
+        EvaluableSimpleCondition sut = new EvaluableSimpleCondition("stringField", NOT_EQUAL, "bye");
 
         Set<TestEntity> result = sut.evaluate(List.of(matching, nonMatching), evaluator, retriever);
 
@@ -50,7 +50,7 @@ class SimpleConditionTest {
         TestEntity nonMatching = new TestEntity();
         nonMatching.setIntegerField(3);
 
-        SimpleCondition sut = new SimpleCondition("integerField", GREATER_THAN, 5);
+        EvaluableSimpleCondition sut = new EvaluableSimpleCondition("integerField", GREATER_THAN, 5);
 
         Set<TestEntity> result = sut.evaluate(List.of(matching, nonMatching), evaluator, retriever);
 
@@ -65,7 +65,7 @@ class SimpleConditionTest {
         TestEntity nonMatching = new TestEntity();
         nonMatching.setIntegerField(7);
 
-        SimpleCondition sut = new SimpleCondition("integerField", LESS_THAN, 5);
+        EvaluableSimpleCondition sut = new EvaluableSimpleCondition("integerField", LESS_THAN, 5);
 
         Set<TestEntity> result = sut.evaluate(List.of(matching, nonMatching), evaluator, retriever);
 

@@ -6,8 +6,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import static com.tanio.CompoundConditionDto.BooleanOperator.*;
-import static com.tanio.SimpleConditionDto.Operator.*;
+import static com.tanio.CompoundCondition.BooleanOperator.*;
+import static com.tanio.SimpleCondition.Operator.*;
 import static com.tanio.TestPlatform.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -15,12 +15,30 @@ class FilterTest {
     Filter sut = new Filter();
 
     @Test
+    void performSimpleCondition() {
+        List<MusicArtist> musicArtists = Arrays.asList(
+                beatles(),
+                rollingStones(),
+                madonna(),
+                marvinGaye(),
+                bjork(),
+                edithPiaf(),
+                nirvana(),
+                eltonJohn(),
+                bruceSpringsteen());
+
+        Set<MusicArtist> result = sut.apply(new SimpleCondition("country", EQUAL, "UK"), musicArtists);
+
+        assertThat(result).containsExactlyInAnyOrder(beatles(), rollingStones(), eltonJohn());
+    }
+
+    @Test
     void performCompoundCondition_or() {
-        CompoundConditionDto condition = new CompoundConditionDto(
+        CompoundCondition condition = new CompoundCondition(
                 OR,
                 Arrays.asList(
-                        new SimpleConditionDto("country", EQUAL, "UK"),
-                        new SimpleConditionDto("numberOfComponents", GREATER_THAN, 1)));
+                        new SimpleCondition("country", EQUAL, "UK"),
+                        new SimpleCondition("numberOfComponents", GREATER_THAN, 1)));
 
         List<MusicArtist> musicArtists = Arrays.asList(
                 beatles(),
@@ -40,11 +58,11 @@ class FilterTest {
 
     @Test
     void performCompoundCondition_and() {
-        CompoundConditionDto condition = new CompoundConditionDto(
+        CompoundCondition condition = new CompoundCondition(
                 AND,
                 Arrays.asList(
-                        new SimpleConditionDto("country", NOT_EQUAL, "UK"),
-                        new SimpleConditionDto("numberOfComponents", LESS_THAN, 3)));
+                        new SimpleCondition("country", NOT_EQUAL, "UK"),
+                        new SimpleCondition("numberOfComponents", LESS_THAN, 3)));
 
         List<MusicArtist> musicArtists = Arrays.asList(
                 beatles(),
@@ -64,11 +82,11 @@ class FilterTest {
 
     @Test
     void performCompoundCondition_not() {
-        CompoundConditionDto condition = new CompoundConditionDto(
+        CompoundCondition condition = new CompoundCondition(
                 NOT,
                 Arrays.asList(
-                        new SimpleConditionDto("genre", EQUAL, "Rock"),
-                        new SimpleConditionDto("country", EQUAL, "USA")));
+                        new SimpleCondition("genre", EQUAL, "Rock"),
+                        new SimpleCondition("country", EQUAL, "USA")));
 
         List<MusicArtist> musicArtists = Arrays.asList(
                 beatles(),
@@ -88,19 +106,19 @@ class FilterTest {
 
     @Test
     void performCompoundConditionNested_or() {
-        CompoundConditionDto first = new CompoundConditionDto(
+        CompoundCondition first = new CompoundCondition(
                 OR,
                 Arrays.asList(
-                        new SimpleConditionDto("name", EQUAL, "Rolling Stones"),
-                        new SimpleConditionDto("name", EQUAL, "Madonna")));
+                        new SimpleCondition("name", EQUAL, "Rolling Stones"),
+                        new SimpleCondition("name", EQUAL, "Madonna")));
 
-        CompoundConditionDto second = new CompoundConditionDto(
+        CompoundCondition second = new CompoundCondition(
                 OR,
                 Arrays.asList(
-                        new SimpleConditionDto("country", EQUAL, "Iceland"),
-                        new SimpleConditionDto("country", EQUAL, "France")));
+                        new SimpleCondition("country", EQUAL, "Iceland"),
+                        new SimpleCondition("country", EQUAL, "France")));
 
-        CompoundConditionDto condition = new CompoundConditionDto(
+        CompoundCondition condition = new CompoundCondition(
                 OR,
                 Arrays.asList(first, second));
 
@@ -122,19 +140,19 @@ class FilterTest {
 
     @Test
     void performCompoundConditionNested_and() {
-        CompoundConditionDto first = new CompoundConditionDto(
+        CompoundCondition first = new CompoundCondition(
                 AND,
                 Arrays.asList(
-                        new SimpleConditionDto("country", NOT_EQUAL, "UK"),
-                        new SimpleConditionDto("genre", NOT_EQUAL, "Rock")));
+                        new SimpleCondition("country", NOT_EQUAL, "UK"),
+                        new SimpleCondition("genre", NOT_EQUAL, "Rock")));
 
-        CompoundConditionDto second = new CompoundConditionDto(
+        CompoundCondition second = new CompoundCondition(
                 AND,
                 Arrays.asList(
-                        new SimpleConditionDto("name", NOT_EQUAL, "Marvin Gaye"),
-                        new SimpleConditionDto("name", NOT_EQUAL, "Bjork")));
+                        new SimpleCondition("name", NOT_EQUAL, "Marvin Gaye"),
+                        new SimpleCondition("name", NOT_EQUAL, "Bjork")));
 
-        CompoundConditionDto condition = new CompoundConditionDto(
+        CompoundCondition condition = new CompoundCondition(
                 AND,
                 Arrays.asList(first, second));
 
@@ -156,19 +174,19 @@ class FilterTest {
 
     @Test
     void performCompoundConditionNested_not() {
-        CompoundConditionDto first = new CompoundConditionDto(
+        CompoundCondition first = new CompoundCondition(
                 AND,
                 Arrays.asList(
-                        new SimpleConditionDto("country", EQUAL, "UK"),
-                        new SimpleConditionDto("numberOfComponents", EQUAL, 1)));
+                        new SimpleCondition("country", EQUAL, "UK"),
+                        new SimpleCondition("numberOfComponents", EQUAL, 1)));
 
-        CompoundConditionDto second = new CompoundConditionDto(
+        CompoundCondition second = new CompoundCondition(
                 OR,
                 Arrays.asList(
-                        new SimpleConditionDto("genre", EQUAL, "Rock"),
-                        new SimpleConditionDto("numberOfComponents", GREATER_THAN, 1)));
+                        new SimpleCondition("genre", EQUAL, "Rock"),
+                        new SimpleCondition("numberOfComponents", GREATER_THAN, 1)));
 
-        CompoundConditionDto condition = new CompoundConditionDto(
+        CompoundCondition condition = new CompoundCondition(
                 NOT,
                 Arrays.asList(first, second));
 
@@ -201,19 +219,19 @@ class FilterTest {
                 eltonJohn(),
                 bruceSpringsteen());
 
-        CompoundConditionDto first = new CompoundConditionDto(
+        CompoundCondition first = new CompoundCondition(
                 OR,
                 Arrays.asList(
-                        new SimpleConditionDto("country", EQUAL, "UK"),
-                        new SimpleConditionDto("country", EQUAL, "USA")));
+                        new SimpleCondition("country", EQUAL, "UK"),
+                        new SimpleCondition("country", EQUAL, "USA")));
 
-        CompoundConditionDto second = new CompoundConditionDto(
+        CompoundCondition second = new CompoundCondition(
                 OR,
                 Arrays.asList(
-                        new SimpleConditionDto("numberOfComponents", EQUAL, 3),
-                        new SimpleConditionDto("numberOfComponents", EQUAL, 4)));
+                        new SimpleCondition("numberOfComponents", EQUAL, 3),
+                        new SimpleCondition("numberOfComponents", EQUAL, 4)));
 
-        CompoundConditionDto condition = new CompoundConditionDto(
+        CompoundCondition condition = new CompoundCondition(
                 AND,
                 Arrays.asList(first, second));
 
@@ -224,20 +242,20 @@ class FilterTest {
 
     @Test
     void performCompoundConditionNested_mixedOrAnd() {
-        CompoundConditionDto first = new CompoundConditionDto(
+        CompoundCondition first = new CompoundCondition(
                 AND,
                 Arrays.asList(
-                        new SimpleConditionDto("country", EQUAL, "USA"),
-                        new SimpleConditionDto("numberOfComponents", NOT_EQUAL, 3),
-                        new SimpleConditionDto("numberOfComponents", NOT_EQUAL, 4)));
+                        new SimpleCondition("country", EQUAL, "USA"),
+                        new SimpleCondition("numberOfComponents", NOT_EQUAL, 3),
+                        new SimpleCondition("numberOfComponents", NOT_EQUAL, 4)));
 
-        CompoundConditionDto second = new CompoundConditionDto(
+        CompoundCondition second = new CompoundCondition(
                 AND,
                 Arrays.asList(
-                        new SimpleConditionDto("country", EQUAL, "UK"),
-                        new SimpleConditionDto("genre", EQUAL, "Pop")));
+                        new SimpleCondition("country", EQUAL, "UK"),
+                        new SimpleCondition("genre", EQUAL, "Pop")));
 
-        CompoundConditionDto condition = new CompoundConditionDto(
+        CompoundCondition condition = new CompoundCondition(
                 OR,
                 Arrays.asList(first, second));
 
@@ -259,19 +277,19 @@ class FilterTest {
 
     @Test
     void performCompoundConditionNested_mixedOrAndNot() {
-        CompoundConditionDto first = new CompoundConditionDto(
+        CompoundCondition first = new CompoundCondition(
                 NOT,
                 Arrays.asList(
-                        new SimpleConditionDto("country", EQUAL, "USA"),
-                        new SimpleConditionDto("numberOfComponents", EQUAL, 1)));
+                        new SimpleCondition("country", EQUAL, "USA"),
+                        new SimpleCondition("numberOfComponents", EQUAL, 1)));
 
-        CompoundConditionDto second = new CompoundConditionDto(
+        CompoundCondition second = new CompoundCondition(
                 NOT,
                 Arrays.asList(
-                        new SimpleConditionDto("country", EQUAL, "UK"),
-                        new SimpleConditionDto("numberOfComponents", EQUAL, 1)));
+                        new SimpleCondition("country", EQUAL, "UK"),
+                        new SimpleCondition("numberOfComponents", EQUAL, 1)));
 
-        CompoundConditionDto condition = new CompoundConditionDto(
+        CompoundCondition condition = new CompoundCondition(
                 OR,
                 Arrays.asList(first, second));
 
@@ -293,16 +311,16 @@ class FilterTest {
 
     @Test
     void performAndOr() {
-        CompoundConditionDto nested = new CompoundConditionDto(
+        CompoundCondition nested = new CompoundCondition(
                 AND,
                 Arrays.asList(
-                        new SimpleConditionDto("country", EQUAL, "UK"),
-                        new SimpleConditionDto("numberOfComponents", LESS_THAN, 4)));
+                        new SimpleCondition("country", EQUAL, "UK"),
+                        new SimpleCondition("numberOfComponents", LESS_THAN, 4)));
 
-        CompoundConditionDto condition = new CompoundConditionDto(
+        CompoundCondition condition = new CompoundCondition(
                 OR,
                 Arrays.asList(
-                        new SimpleConditionDto("name", EQUAL, "Edith Piaf"),
+                        new SimpleCondition("name", EQUAL, "Edith Piaf"),
                         nested));
 
         List<MusicArtist> musicArtists = Arrays.asList(
@@ -323,16 +341,16 @@ class FilterTest {
 
     @Test
     void performOrAnd() {
-        CompoundConditionDto nested = new CompoundConditionDto(
+        CompoundCondition nested = new CompoundCondition(
                 OR,
                 Arrays.asList(
-                        new SimpleConditionDto("country", NOT_EQUAL, "UK"),
-                        new SimpleConditionDto("genre", NOT_EQUAL, "Rock")));
+                        new SimpleCondition("country", NOT_EQUAL, "UK"),
+                        new SimpleCondition("genre", NOT_EQUAL, "Rock")));
 
-        CompoundConditionDto condition = new CompoundConditionDto(
+        CompoundCondition condition = new CompoundCondition(
                 AND,
                 Arrays.asList(
-                        new SimpleConditionDto("numberOfComponents", NOT_EQUAL, 1),
+                        new SimpleCondition("numberOfComponents", NOT_EQUAL, 1),
                         nested));
 
         List<MusicArtist> musicArtists = Arrays.asList(

@@ -1,6 +1,6 @@
 package com.tanio;
 
-import com.tanio.SimpleCondition.Operator;
+import com.tanio.EvaluableSimpleCondition.Operator;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -8,7 +8,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class FieldSimpleConditionEvaluatorTest {
+class FieldEvaluableSimpleConditionEvaluatorTest {
     FieldConditionEvaluator sut = new FieldConditionEvaluator();
 
     @Nested

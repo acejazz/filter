@@ -13,32 +13,32 @@ class MapperTest {
 
     @Test
     void decorateSimpleConditionDto() {
-        SimpleConditionDto simpleConditionDto = new SimpleConditionDto("anyFieldName", SimpleConditionDto.Operator.EQUAL, "anyValue");
-        SimpleCondition result = (SimpleCondition) mapper.map(simpleConditionDto);
+        SimpleCondition simpleConditionDto = new SimpleCondition("anyFieldName", SimpleCondition.Operator.EQUAL, "anyValue");
+        EvaluableSimpleCondition result = (EvaluableSimpleCondition) mapper.map(simpleConditionDto);
         assertThat(result.getFieldName()).isEqualTo("anyFieldName");
-        assertThat(result.getOperator()).isEqualTo(SimpleCondition.Operator.EQUAL);
+        assertThat(result.getOperator()).isEqualTo(EvaluableSimpleCondition.Operator.EQUAL);
         assertThat(result.getValue()).isEqualTo("anyValue");
     }
 
     @Test
     void decorateCompoundConditionDto() {
-        SimpleConditionDto simpleConditionDto0 = new SimpleConditionDto("anyFieldName0", SimpleConditionDto.Operator.EQUAL, "anyValue0");
-        SimpleConditionDto simpleConditionDto1 = new SimpleConditionDto("anyFieldName1", SimpleConditionDto.Operator.NOT_EQUAL, "anyValue1");
-        CompoundConditionDto condition = new CompoundConditionDto(
-                CompoundConditionDto.BooleanOperator.AND,
+        SimpleCondition simpleConditionDto0 = new SimpleCondition("anyFieldName0", SimpleCondition.Operator.EQUAL, "anyValue0");
+        SimpleCondition simpleConditionDto1 = new SimpleCondition("anyFieldName1", SimpleCondition.Operator.NOT_EQUAL, "anyValue1");
+        CompoundCondition condition = new CompoundCondition(
+                CompoundCondition.BooleanOperator.AND,
                 Arrays.asList(simpleConditionDto0, simpleConditionDto1)
         );
-        CompoundCondition result = (CompoundCondition) mapper.map(condition);
-        assertThat(result.getOperator()).isEqualTo(CompoundCondition.BooleanOperator.AND);
-        Map<String, SimpleCondition> map = result.getConditions().stream()
+        EvaluableCompoundCondition result = (EvaluableCompoundCondition) mapper.map(condition);
+        assertThat(result.getOperator()).isEqualTo(EvaluableCompoundCondition.BooleanOperator.AND);
+        Map<String, EvaluableSimpleCondition> map = result.getConditions().stream()
                 .collect(Collectors.toMap(
-                        it -> ((SimpleCondition) it).getFieldName(),
-                        it -> (SimpleCondition) it
+                        it -> ((EvaluableSimpleCondition) it).getFieldName(),
+                        it -> (EvaluableSimpleCondition) it
                 ));
 
-        assertThat(map.get("anyFieldName0").getOperator()).isEqualTo(SimpleCondition.Operator.EQUAL);
+        assertThat(map.get("anyFieldName0").getOperator()).isEqualTo(EvaluableSimpleCondition.Operator.EQUAL);
         assertThat(map.get("anyFieldName0").getValue()).isEqualTo("anyValue0");
-        assertThat(map.get("anyFieldName1").getOperator()).isEqualTo(SimpleCondition.Operator.NOT_EQUAL);
+        assertThat(map.get("anyFieldName1").getOperator()).isEqualTo(EvaluableSimpleCondition.Operator.NOT_EQUAL);
         assertThat(map.get("anyFieldName1").getValue()).isEqualTo("anyValue1");
     }
 }

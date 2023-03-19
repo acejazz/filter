@@ -1,6 +1,6 @@
 package com.tanio;
 
-import com.tanio.SimpleCondition.Operator;
+import com.tanio.EvaluableSimpleCondition.Operator;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -10,8 +10,7 @@ import java.util.Set;
 import static com.tanio.TestPlatform.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CompoundConditionTest {
-
+class EvaluableCompoundConditionTest {
     FieldValueRetriever retriever = new FieldValueRetriever();
     FieldConditionEvaluator evaluator = new FieldConditionEvaluator();
 
@@ -26,11 +25,11 @@ class CompoundConditionTest {
         TestEntity notMatchingTestEntity = new TestEntity();
         notMatchingTestEntity.setStringField("sup");
 
-        CompoundCondition condition = new CompoundCondition(
-                CompoundCondition.BooleanOperator.OR,
+        EvaluableCompoundCondition condition = new EvaluableCompoundCondition(
+                EvaluableCompoundCondition.BooleanOperator.OR,
                 Set.of(
-                        new SimpleCondition("stringField", Operator.EQUAL, "hello"),
-                        new SimpleCondition("stringField", Operator.EQUAL, "bye")));
+                        new EvaluableSimpleCondition("stringField", Operator.EQUAL, "hello"),
+                        new EvaluableSimpleCondition("stringField", Operator.EQUAL, "bye")));
 
         List<TestEntity> target = Arrays.asList(
                 firstConditionMatchingTestEntity,
@@ -56,11 +55,11 @@ class CompoundConditionTest {
         TestEntity notMatchingTestEntity1 = new TestEntity();
         notMatchingTestEntity1.setIntegerField(13);
 
-        CompoundCondition condition = new CompoundCondition(
-                CompoundCondition.BooleanOperator.AND,
+        EvaluableCompoundCondition condition = new EvaluableCompoundCondition(
+                EvaluableCompoundCondition.BooleanOperator.AND,
                 Set.of(
-                        new SimpleCondition("stringField", Operator.EQUAL, "hello"),
-                        new SimpleCondition("integerField", Operator.EQUAL, 13)));
+                        new EvaluableSimpleCondition("stringField", Operator.EQUAL, "hello"),
+                        new EvaluableSimpleCondition("integerField", Operator.EQUAL, 13)));
 
         List<TestEntity> target = Arrays.asList(
                 conditionMatchingTestEntity,
@@ -85,11 +84,11 @@ class CompoundConditionTest {
         notMatchingTestEntity2.setStringField("hello");
         notMatchingTestEntity2.setIntegerField(13);
 
-        CompoundCondition condition = new CompoundCondition(
-                CompoundCondition.BooleanOperator.NOT,
+        EvaluableCompoundCondition condition = new EvaluableCompoundCondition(
+                EvaluableCompoundCondition.BooleanOperator.NOT,
                 Set.of(
-                        new SimpleCondition("stringField", Operator.EQUAL, "hello"),
-                        new SimpleCondition("integerField", Operator.EQUAL, 13)));
+                        new EvaluableSimpleCondition("stringField", Operator.EQUAL, "hello"),
+                        new EvaluableSimpleCondition("integerField", Operator.EQUAL, 13)));
 
         List<TestEntity> target = Arrays.asList(
                 conditionMatchingTestEntity,
@@ -118,20 +117,20 @@ class CompoundConditionTest {
         TestEntity testEntity4 = new TestEntity();
         testEntity4.setStringField("batman");
 
-        CompoundCondition first = new CompoundCondition(
-                CompoundCondition.BooleanOperator.OR,
+        EvaluableCompoundCondition first = new EvaluableCompoundCondition(
+                EvaluableCompoundCondition.BooleanOperator.OR,
                 Set.of(
-                        new SimpleCondition("stringField", Operator.EQUAL, "hello"),
-                        new SimpleCondition("stringField", Operator.EQUAL, "bye")));
+                        new EvaluableSimpleCondition("stringField", Operator.EQUAL, "hello"),
+                        new EvaluableSimpleCondition("stringField", Operator.EQUAL, "bye")));
 
-        CompoundCondition second = new CompoundCondition(
-                CompoundCondition.BooleanOperator.OR,
+        EvaluableCompoundCondition second = new EvaluableCompoundCondition(
+                EvaluableCompoundCondition.BooleanOperator.OR,
                 Set.of(
-                        new SimpleCondition("stringField", Operator.EQUAL, "good morning"),
-                        new SimpleCondition("stringField", Operator.EQUAL, "good night")));
+                        new EvaluableSimpleCondition("stringField", Operator.EQUAL, "good morning"),
+                        new EvaluableSimpleCondition("stringField", Operator.EQUAL, "good night")));
 
-        CompoundCondition condition = new CompoundCondition(
-                CompoundCondition.BooleanOperator.OR,
+        EvaluableCompoundCondition condition = new EvaluableCompoundCondition(
+                EvaluableCompoundCondition.BooleanOperator.OR,
                 Set.of(first, second));
 
         List<TestEntity> target = Arrays.asList(testEntity0, testEntity1, testEntity2, testEntity3, testEntity4);
@@ -173,20 +172,20 @@ class CompoundConditionTest {
         testEntity4.setBooleanField(true);
         testEntity4.setCharField('z');
 
-        CompoundCondition first = new CompoundCondition(
-                CompoundCondition.BooleanOperator.AND,
+        EvaluableCompoundCondition first = new EvaluableCompoundCondition(
+                EvaluableCompoundCondition.BooleanOperator.AND,
                 Set.of(
-                        new SimpleCondition("stringField", Operator.EQUAL, "hello"),
-                        new SimpleCondition("integerField", Operator.EQUAL, 13)));
+                        new EvaluableSimpleCondition("stringField", Operator.EQUAL, "hello"),
+                        new EvaluableSimpleCondition("integerField", Operator.EQUAL, 13)));
 
-        CompoundCondition second = new CompoundCondition(
-                CompoundCondition.BooleanOperator.AND,
+        EvaluableCompoundCondition second = new EvaluableCompoundCondition(
+                EvaluableCompoundCondition.BooleanOperator.AND,
                 Set.of(
-                        new SimpleCondition("booleanField", Operator.EQUAL, true),
-                        new SimpleCondition("charField", Operator.EQUAL, 'a')));
+                        new EvaluableSimpleCondition("booleanField", Operator.EQUAL, true),
+                        new EvaluableSimpleCondition("charField", Operator.EQUAL, 'a')));
 
-        CompoundCondition condition = new CompoundCondition(
-                CompoundCondition.BooleanOperator.AND,
+        EvaluableCompoundCondition condition = new EvaluableCompoundCondition(
+                EvaluableCompoundCondition.BooleanOperator.AND,
                 Set.of(first, second));
 
         List<TestEntity> target = Arrays.asList(
@@ -217,20 +216,20 @@ class CompoundConditionTest {
         TestEntity testEntity4 = new TestEntity();
         testEntity4.setStringField("batman");
 
-        CompoundCondition first = new CompoundCondition(
-                CompoundCondition.BooleanOperator.OR,
+        EvaluableCompoundCondition first = new EvaluableCompoundCondition(
+                EvaluableCompoundCondition.BooleanOperator.OR,
                 Set.of(
-                        new SimpleCondition("stringField", Operator.EQUAL, "hello"),
-                        new SimpleCondition("stringField", Operator.EQUAL, "bye")));
+                        new EvaluableSimpleCondition("stringField", Operator.EQUAL, "hello"),
+                        new EvaluableSimpleCondition("stringField", Operator.EQUAL, "bye")));
 
-        CompoundCondition second = new CompoundCondition(
-                CompoundCondition.BooleanOperator.OR,
+        EvaluableCompoundCondition second = new EvaluableCompoundCondition(
+                EvaluableCompoundCondition.BooleanOperator.OR,
                 Set.of(
-                        new SimpleCondition("stringField", Operator.EQUAL, "good morning"),
-                        new SimpleCondition("stringField", Operator.EQUAL, "good night")));
+                        new EvaluableSimpleCondition("stringField", Operator.EQUAL, "good morning"),
+                        new EvaluableSimpleCondition("stringField", Operator.EQUAL, "good night")));
 
-        CompoundCondition condition = new CompoundCondition(
-                CompoundCondition.BooleanOperator.NOT,
+        EvaluableCompoundCondition condition = new EvaluableCompoundCondition(
+                EvaluableCompoundCondition.BooleanOperator.NOT,
                 Set.of(first, second));
 
         List<TestEntity> target = Arrays.asList(
@@ -257,20 +256,20 @@ class CompoundConditionTest {
                 eltonJohn(),
                 bruceSpringsteen());
 
-        CompoundCondition first = new CompoundCondition(
-                CompoundCondition.BooleanOperator.OR,
+        EvaluableCompoundCondition first = new EvaluableCompoundCondition(
+                EvaluableCompoundCondition.BooleanOperator.OR,
                 Set.of(
-                        new SimpleCondition("country", Operator.EQUAL, "UK"),
-                        new SimpleCondition("country", Operator.EQUAL, "USA")));
+                        new EvaluableSimpleCondition("country", Operator.EQUAL, "UK"),
+                        new EvaluableSimpleCondition("country", Operator.EQUAL, "USA")));
 
-        CompoundCondition second = new CompoundCondition(
-                CompoundCondition.BooleanOperator.OR,
+        EvaluableCompoundCondition second = new EvaluableCompoundCondition(
+                EvaluableCompoundCondition.BooleanOperator.OR,
                 Set.of(
-                        new SimpleCondition("numberOfComponents", Operator.EQUAL, 3),
-                        new SimpleCondition("numberOfComponents", Operator.EQUAL, 4)));
+                        new EvaluableSimpleCondition("numberOfComponents", Operator.EQUAL, 3),
+                        new EvaluableSimpleCondition("numberOfComponents", Operator.EQUAL, 4)));
 
-        CompoundCondition condition = new CompoundCondition(
-                CompoundCondition.BooleanOperator.AND,
+        EvaluableCompoundCondition condition = new EvaluableCompoundCondition(
+                EvaluableCompoundCondition.BooleanOperator.AND,
                 Set.of(first, second));
 
         Set<MusicArtist> result = condition.evaluate(musicArtists, evaluator, retriever);
@@ -290,21 +289,21 @@ class CompoundConditionTest {
                 eltonJohn(),
                 bruceSpringsteen());
 
-        CompoundCondition first = new CompoundCondition(
-                CompoundCondition.BooleanOperator.AND,
+        EvaluableCompoundCondition first = new EvaluableCompoundCondition(
+                EvaluableCompoundCondition.BooleanOperator.AND,
                 Set.of(
-                        new SimpleCondition("country", Operator.EQUAL, "USA"),
-                        new SimpleCondition("numberOfComponents", Operator.NOT_EQUAL, 3),
-                        new SimpleCondition("numberOfComponents", Operator.NOT_EQUAL, 4)));
+                        new EvaluableSimpleCondition("country", Operator.EQUAL, "USA"),
+                        new EvaluableSimpleCondition("numberOfComponents", Operator.NOT_EQUAL, 3),
+                        new EvaluableSimpleCondition("numberOfComponents", Operator.NOT_EQUAL, 4)));
 
-        CompoundCondition second = new CompoundCondition(
-                CompoundCondition.BooleanOperator.AND,
+        EvaluableCompoundCondition second = new EvaluableCompoundCondition(
+                EvaluableCompoundCondition.BooleanOperator.AND,
                 Set.of(
-                        new SimpleCondition("country", Operator.EQUAL, "UK"),
-                        new SimpleCondition("genre", Operator.EQUAL, "Pop")));
+                        new EvaluableSimpleCondition("country", Operator.EQUAL, "UK"),
+                        new EvaluableSimpleCondition("genre", Operator.EQUAL, "Pop")));
 
-        CompoundCondition condition = new CompoundCondition(
-                CompoundCondition.BooleanOperator.OR,
+        EvaluableCompoundCondition condition = new EvaluableCompoundCondition(
+                EvaluableCompoundCondition.BooleanOperator.OR,
                 Set.of(first, second));
 
         Set<MusicArtist> result = condition.evaluate(musicArtists, evaluator, retriever);
@@ -329,20 +328,20 @@ class CompoundConditionTest {
                 eltonJohn(),
                 bruceSpringsteen());
 
-        CompoundCondition first = new CompoundCondition(
-                CompoundCondition.BooleanOperator.NOT,
+        EvaluableCompoundCondition first = new EvaluableCompoundCondition(
+                EvaluableCompoundCondition.BooleanOperator.NOT,
                 Set.of(
-                        new SimpleCondition("country", Operator.EQUAL, "USA"),
-                        new SimpleCondition("numberOfComponents", Operator.EQUAL, 1)));
+                        new EvaluableSimpleCondition("country", Operator.EQUAL, "USA"),
+                        new EvaluableSimpleCondition("numberOfComponents", Operator.EQUAL, 1)));
 
-        CompoundCondition second = new CompoundCondition(
-                CompoundCondition.BooleanOperator.NOT,
+        EvaluableCompoundCondition second = new EvaluableCompoundCondition(
+                EvaluableCompoundCondition.BooleanOperator.NOT,
                 Set.of(
-                        new SimpleCondition("country", Operator.EQUAL, "UK"),
-                        new SimpleCondition("numberOfComponents", Operator.EQUAL, 1)));
+                        new EvaluableSimpleCondition("country", Operator.EQUAL, "UK"),
+                        new EvaluableSimpleCondition("numberOfComponents", Operator.EQUAL, 1)));
 
-        CompoundCondition condition = new CompoundCondition(
-                CompoundCondition.BooleanOperator.OR,
+        EvaluableCompoundCondition condition = new EvaluableCompoundCondition(
+                EvaluableCompoundCondition.BooleanOperator.OR,
                 Set.of(first, second));
 
         Set<MusicArtist> result = condition.evaluate(musicArtists, evaluator, retriever);
@@ -371,16 +370,16 @@ class CompoundConditionTest {
         nonMatchingNestedConditionEntity2.setIntegerField(13);
         nonMatchingNestedConditionEntity2.setCharField('a');
 
-        CompoundCondition nested = new CompoundCondition(
-                CompoundCondition.BooleanOperator.AND,
+        EvaluableCompoundCondition nested = new EvaluableCompoundCondition(
+                EvaluableCompoundCondition.BooleanOperator.AND,
                 Set.of(
-                        new SimpleCondition("integerField", Operator.EQUAL, 13),
-                        new SimpleCondition("charField", Operator.EQUAL, 'x')));
+                        new EvaluableSimpleCondition("integerField", Operator.EQUAL, 13),
+                        new EvaluableSimpleCondition("charField", Operator.EQUAL, 'x')));
 
-        CompoundCondition condition = new CompoundCondition(
-                CompoundCondition.BooleanOperator.OR,
+        EvaluableCompoundCondition condition = new EvaluableCompoundCondition(
+                EvaluableCompoundCondition.BooleanOperator.OR,
                 Set.of(
-                        new SimpleCondition("stringField", Operator.EQUAL, "anything"),
+                        new EvaluableSimpleCondition("stringField", Operator.EQUAL, "anything"),
                         nested));
 
         List<TestEntity> target = Arrays.asList(
@@ -422,16 +421,16 @@ class CompoundConditionTest {
         nonMatchingEntity2.setStringField("anything");
         nonMatchingEntity2.setCharField('a');
 
-        CompoundCondition nested = new CompoundCondition(
-                CompoundCondition.BooleanOperator.OR,
+        EvaluableCompoundCondition nested = new EvaluableCompoundCondition(
+                EvaluableCompoundCondition.BooleanOperator.OR,
                 Set.of(
-                        new SimpleCondition("stringField", Operator.EQUAL, "anything"),
-                        new SimpleCondition("integerField", Operator.EQUAL, 13)));
+                        new EvaluableSimpleCondition("stringField", Operator.EQUAL, "anything"),
+                        new EvaluableSimpleCondition("integerField", Operator.EQUAL, 13)));
 
-        CompoundCondition condition = new CompoundCondition(
-                CompoundCondition.BooleanOperator.AND,
+        EvaluableCompoundCondition condition = new EvaluableCompoundCondition(
+                EvaluableCompoundCondition.BooleanOperator.AND,
                 Set.of(
-                        new SimpleCondition("charField", Operator.EQUAL, 'x'),
+                        new EvaluableSimpleCondition("charField", Operator.EQUAL, 'x'),
                         nested));
 
         List<TestEntity> target = Arrays.asList(

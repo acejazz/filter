@@ -1,31 +1,31 @@
 package com.tanio;
 
-import com.tanio.CompoundCondition.BooleanOperator;
-import com.tanio.SimpleCondition.Operator;
+import com.tanio.EvaluableCompoundCondition.BooleanOperator;
+import com.tanio.EvaluableSimpleCondition.Operator;
 
 import java.util.stream.Collectors;
 
-import static com.tanio.CompoundCondition.BooleanOperator.*;
-import static com.tanio.SimpleCondition.Operator.*;
+import static com.tanio.EvaluableCompoundCondition.BooleanOperator.*;
+import static com.tanio.EvaluableSimpleCondition.Operator.*;
 
 class Mapper {
-    Evaluable map(ConditionDto condition) {
-        if (condition instanceof CompoundConditionDto compoundConditionDto) {
-            return new CompoundCondition(
-                    map(compoundConditionDto.getOperator()),
-                    compoundConditionDto.getConditions().stream()
+    Evaluable map(Condition condition) {
+        if (condition instanceof CompoundCondition compoundCondition) {
+            return new EvaluableCompoundCondition(
+                    map(compoundCondition.getOperator()),
+                    compoundCondition.getConditions().stream()
                             .map(this::map)
                             .collect(Collectors.toSet()));
         }
 
-        SimpleConditionDto simpleConditionDto = (SimpleConditionDto) condition;
-        return new SimpleCondition(
+        SimpleCondition simpleConditionDto = (SimpleCondition) condition;
+        return new EvaluableSimpleCondition(
                 simpleConditionDto.getFieldName(),
                 map(simpleConditionDto.getOperator()),
                 simpleConditionDto.getValue());
     }
 
-    BooleanOperator map(CompoundConditionDto.BooleanOperator operator) {
+    BooleanOperator map(CompoundCondition.BooleanOperator operator) {
         return switch (operator) {
             case AND -> AND;
             case OR -> OR;
@@ -33,7 +33,7 @@ class Mapper {
         };
     }
 
-    Operator map(SimpleConditionDto.Operator operator) {
+    Operator map(SimpleCondition.Operator operator) {
         return switch (operator) {
             case EQUAL -> EQUAL;
             case NOT_EQUAL -> NOT_EQUAL;

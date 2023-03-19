@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.Set;
 
 class Filter {
-    Mapper mapper = new Mapper();
+    private final Mapper mapper = new Mapper();
     private final FieldValueRetriever fieldValueRetriever = new FieldValueRetriever();
     private final FieldConditionEvaluator fieldConditionEvaluator = new FieldConditionEvaluator();
 
-    <T> Set<T> apply(ConditionDto conditionDto, List<T> target) {
-        CompoundCondition compoundCondition = (CompoundCondition) mapper.map(conditionDto);
-        return compoundCondition.evaluate(target, fieldConditionEvaluator, fieldValueRetriever);
+    <T> Set<T> apply(Condition condition, List<T> target) {
+        Evaluable evaluable = mapper.map(condition);
+        return evaluable.evaluate(target, fieldConditionEvaluator, fieldValueRetriever);
     }
 }
