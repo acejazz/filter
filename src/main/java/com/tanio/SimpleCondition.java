@@ -38,10 +38,7 @@ class SimpleCondition implements Evaluable {
             return false;
         }
 
-        return fieldConditionEvaluator.evaluateCondition(
-                operator,
-                fieldValue,
-                value);
+        return fieldConditionEvaluator.evaluateCondition(operator, fieldValue, value);
     }
 
     public String getFieldName() {
@@ -65,6 +62,6 @@ class SimpleCondition implements Evaluable {
     }
 
     enum Operator {
-        EQUAL, LOWER_THAN, GREATER_THAN, NOT_EQUAL
+        EQUAL, LESS_THAN, GREATER_THAN, NOT_EQUAL
     }
 }

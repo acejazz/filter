@@ -43,7 +43,7 @@ public class Decorator {
             case EQUAL -> EQUAL;
             case NOT_EQUAL -> NOT_EQUAL;
             case GREATER_THAN -> GREATER_THAN;
-            case LOWER_THAN -> LOWER_THAN;
+            case LESS_THAN -> LESS_THAN;
         };
     }
 }

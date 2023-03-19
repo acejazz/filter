@@ -27,9 +27,9 @@ class FieldSimpleConditionEvaluatorTest {
 
         @Test
         void evaluateLowerThan() {
-            assertTrue(sut.evaluateCondition(Operator.LOWER_THAN, 7, 11));
-            assertFalse(sut.evaluateCondition(Operator.LOWER_THAN, 7, 5));
-            assertFalse(sut.evaluateCondition(Operator.LOWER_THAN, 7, 7));
+            assertTrue(sut.evaluateCondition(Operator.LESS_THAN, 7, 11));
+            assertFalse(sut.evaluateCondition(Operator.LESS_THAN, 7, 5));
+            assertFalse(sut.evaluateCondition(Operator.LESS_THAN, 7, 7));
         }
 
         @Test
@@ -56,9 +56,9 @@ class FieldSimpleConditionEvaluatorTest {
 
         @Test
         void evaluateLowerThan() {
-            assertTrue(sut.evaluateCondition(Operator.LOWER_THAN, 7L, 11L));
-            assertFalse(sut.evaluateCondition(Operator.LOWER_THAN, 7L, 5L));
-            assertFalse(sut.evaluateCondition(Operator.LOWER_THAN, 7L, 7L));
+            assertTrue(sut.evaluateCondition(Operator.LESS_THAN, 7L, 11L));
+            assertFalse(sut.evaluateCondition(Operator.LESS_THAN, 7L, 5L));
+            assertFalse(sut.evaluateCondition(Operator.LESS_THAN, 7L, 7L));
         }
 
         @Test
@@ -85,9 +85,9 @@ class FieldSimpleConditionEvaluatorTest {
 
         @Test
         void evaluateLowerThan() {
-            assertTrue(sut.evaluateCondition(Operator.LOWER_THAN, "bye", "hello"));
-            assertFalse(sut.evaluateCondition(Operator.LOWER_THAN, "hello", "bye"));
-            assertFalse(sut.evaluateCondition(Operator.LOWER_THAN, "hello", "hello"));
+            assertTrue(sut.evaluateCondition(Operator.LESS_THAN, "bye", "hello"));
+            assertFalse(sut.evaluateCondition(Operator.LESS_THAN, "hello", "bye"));
+            assertFalse(sut.evaluateCondition(Operator.LESS_THAN, "hello", "hello"));
         }
 
         @Test
@@ -114,7 +114,7 @@ class FieldSimpleConditionEvaluatorTest {
 
         @Test
         void handleLowerThan() {
-            assertThatThrownBy(() -> sut.evaluateCondition(Operator.LOWER_THAN, true, true))
+            assertThatThrownBy(() -> sut.evaluateCondition(Operator.LESS_THAN, true, true))
                     .isInstanceOf(FilterException.class)
                     .hasMessage("'lower than' operator cannot be applied to booleans");
         }
@@ -143,9 +143,9 @@ class FieldSimpleConditionEvaluatorTest {
 
         @Test
         void evaluateLowerThan() {
-            assertTrue(sut.evaluateCondition(Operator.LOWER_THAN, 7.1F, 11.3F));
-            assertFalse(sut.evaluateCondition(Operator.LOWER_THAN, 7.1F, 5.3F));
-            assertFalse(sut.evaluateCondition(Operator.LOWER_THAN, 7.1F, 7.1F));
+            assertTrue(sut.evaluateCondition(Operator.LESS_THAN, 7.1F, 11.3F));
+            assertFalse(sut.evaluateCondition(Operator.LESS_THAN, 7.1F, 5.3F));
+            assertFalse(sut.evaluateCondition(Operator.LESS_THAN, 7.1F, 7.1F));
         }
 
         @Test
@@ -172,9 +172,9 @@ class FieldSimpleConditionEvaluatorTest {
 
         @Test
         void evaluateLowerThan() {
-            assertTrue(sut.evaluateCondition(Operator.LOWER_THAN, 7.1, 11.3));
-            assertFalse(sut.evaluateCondition(Operator.LOWER_THAN, 7.1, 5.3));
-            assertFalse(sut.evaluateCondition(Operator.LOWER_THAN, 7.1, 7.1));
+            assertTrue(sut.evaluateCondition(Operator.LESS_THAN, 7.1, 11.3));
+            assertFalse(sut.evaluateCondition(Operator.LESS_THAN, 7.1, 5.3));
+            assertFalse(sut.evaluateCondition(Operator.LESS_THAN, 7.1, 7.1));
         }
 
         @Test
@@ -201,9 +201,9 @@ class FieldSimpleConditionEvaluatorTest {
 
         @Test
         void evaluateLowerThan() {
-            assertTrue(sut.evaluateCondition(Operator.LOWER_THAN, 'a', 'b'));
-            assertFalse(sut.evaluateCondition(Operator.LOWER_THAN, 'b', 'a'));
-            assertFalse(sut.evaluateCondition(Operator.LOWER_THAN, 'a', 'a'));
+            assertTrue(sut.evaluateCondition(Operator.LESS_THAN, 'a', 'b'));
+            assertFalse(sut.evaluateCondition(Operator.LESS_THAN, 'b', 'a'));
+            assertFalse(sut.evaluateCondition(Operator.LESS_THAN, 'a', 'a'));
         }
 
         @Test
@@ -230,9 +230,9 @@ class FieldSimpleConditionEvaluatorTest {
 
         @Test
         void evaluateLowerThan() {
-            assertTrue(sut.evaluateCondition(Operator.LOWER_THAN, "ENUM_VALUE0", TestEnum.ENUM_VALUE1));
-            assertFalse(sut.evaluateCondition(Operator.LOWER_THAN, "ENUM_VALUE1", TestEnum.ENUM_VALUE0));
-            assertFalse(sut.evaluateCondition(Operator.LOWER_THAN, "ENUM_VALUE1", TestEnum.ENUM_VALUE1));
+            assertTrue(sut.evaluateCondition(Operator.LESS_THAN, "ENUM_VALUE0", TestEnum.ENUM_VALUE1));
+            assertFalse(sut.evaluateCondition(Operator.LESS_THAN, "ENUM_VALUE1", TestEnum.ENUM_VALUE0));
+            assertFalse(sut.evaluateCondition(Operator.LESS_THAN, "ENUM_VALUE1", TestEnum.ENUM_VALUE1));
         }
 
         @Test

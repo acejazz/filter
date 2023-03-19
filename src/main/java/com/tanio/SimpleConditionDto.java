@@ -1,6 +1,6 @@
 package com.tanio;
 
-public class SimpleConditionDto implements ConditionDto{
+public class SimpleConditionDto implements ConditionDto {
     private final String fieldName;
     private final Operator operator;
     private final Object value;
@@ -24,6 +24,6 @@ public class SimpleConditionDto implements ConditionDto{
     }
 
     enum Operator {
-        EQUAL, LOWER_THAN, GREATER_THAN, NOT_EQUAL
+        EQUAL, LESS_THAN, GREATER_THAN, NOT_EQUAL
     }
 }

@@ -2,7 +2,7 @@ package com.tanio;
 
 import java.util.List;
 
-public class CompoundConditionDto implements ConditionDto{
+public class CompoundConditionDto implements ConditionDto {
     private final BooleanOperator operator;
     private final List<ConditionDto> conditions;
 

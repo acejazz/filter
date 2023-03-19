@@ -35,12 +35,7 @@ class FilterTest {
 
         Set<MusicArtist> result = sut.apply(condition, musicArtists);
 
-        assertThat(result)
-                .containsExactlyInAnyOrder(
-                        beatles(),
-                        rollingStones(),
-                        eltonJohn(),
-                        nirvana());
+        assertThat(result).containsExactlyInAnyOrder(beatles(), rollingStones(), eltonJohn(), nirvana());
     }
 
     @Test
@@ -49,7 +44,7 @@ class FilterTest {
                 AND,
                 Arrays.asList(
                         new SimpleConditionDto("country", NOT_EQUAL, "UK"),
-                        new SimpleConditionDto("numberOfComponents", LOWER_THAN, 3)));
+                        new SimpleConditionDto("numberOfComponents", LESS_THAN, 3)));
 
         List<MusicArtist> musicArtists = Arrays.asList(
                 beatles(),
@@ -64,12 +59,7 @@ class FilterTest {
 
         Set<MusicArtist> result = sut.apply(condition, musicArtists);
 
-        assertThat(result).containsExactlyInAnyOrder(
-                madonna(),
-                marvinGaye(),
-                bjork(),
-                edithPiaf(),
-                bruceSpringsteen());
+        assertThat(result).containsExactlyInAnyOrder(madonna(), marvinGaye(), bjork(), edithPiaf(), bruceSpringsteen());
     }
 
     @Test
@@ -127,8 +117,7 @@ class FilterTest {
 
         Set<MusicArtist> result = sut.apply(condition, musicArtists);
 
-        assertThat(result)
-                .containsExactlyInAnyOrder(rollingStones(), madonna(), edithPiaf(), bjork());
+        assertThat(result).containsExactlyInAnyOrder(rollingStones(), madonna(), edithPiaf(), bjork());
     }
 
     @Test
@@ -265,12 +254,7 @@ class FilterTest {
 
         Set<MusicArtist> result = sut.apply(condition, musicArtists);
 
-        assertThat(result)
-                .containsExactlyInAnyOrder(
-                        marvinGaye(),
-                        bruceSpringsteen(),
-                        eltonJohn(),
-                        madonna());
+        assertThat(result).containsExactlyInAnyOrder(marvinGaye(), bruceSpringsteen(), eltonJohn(), madonna());
     }
 
     @Test
@@ -303,6 +287,7 @@ class FilterTest {
                 bruceSpringsteen());
 
         Set<MusicArtist> result = sut.apply(condition, musicArtists);
+
         assertThat(result).containsExactlyInAnyOrder(beatles(), rollingStones(), nirvana());
     }
 
@@ -312,7 +297,7 @@ class FilterTest {
                 AND,
                 Arrays.asList(
                         new SimpleConditionDto("country", EQUAL, "UK"),
-                        new SimpleConditionDto("numberOfComponents", LOWER_THAN, 4)));
+                        new SimpleConditionDto("numberOfComponents", LESS_THAN, 4)));
 
         CompoundConditionDto condition = new CompoundConditionDto(
                 OR,
@@ -362,6 +347,7 @@ class FilterTest {
                 bruceSpringsteen());
 
         Set<MusicArtist> result = sut.apply(condition, musicArtists);
+
         assertThat(result).containsExactlyInAnyOrder(nirvana());
     }
 }

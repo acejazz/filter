@@ -9,7 +9,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CompoundSimpleConditionTest {
+class CompoundConditionTest {
 
     FieldValueRetriever fieldValueRetriever = new FieldValueRetriever();
     FieldConditionEvaluator fieldConditionEvaluator = new FieldConditionEvaluator();

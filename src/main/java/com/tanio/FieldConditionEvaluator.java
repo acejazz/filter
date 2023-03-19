@@ -23,7 +23,7 @@ class FieldConditionEvaluator {
             return switch (operator) {
                 case EQUAL -> first.equals(second);
                 case NOT_EQUAL -> !first.equals(second);
-                case LOWER_THAN -> throw new FilterException("'lower than' operator cannot be applied to booleans");
+                case LESS_THAN -> throw new FilterException("'lower than' operator cannot be applied to booleans");
                 case GREATER_THAN -> throw new FilterException("'greater than' operator cannot be applied to booleans");
             };
         }
@@ -35,7 +35,7 @@ class FieldConditionEvaluator {
             return switch (operator) {
                 case EQUAL -> firstNumberValue.equals(secondNumberValue);
                 case NOT_EQUAL -> !firstNumberValue.equals(secondNumberValue);
-                case LOWER_THAN -> firstNumberValue.compareTo(secondNumberValue) < 0;
+                case LESS_THAN -> firstNumberValue.compareTo(secondNumberValue) < 0;
                 case GREATER_THAN -> firstNumberValue.compareTo(secondNumberValue) > 0;
             };
         }
@@ -52,7 +52,7 @@ class FieldConditionEvaluator {
         return switch (conditionOperator) {
             case EQUAL -> firstString.equals(secondString);
             case NOT_EQUAL -> !firstString.equals(secondString);
-            case LOWER_THAN -> firstString.compareTo(secondString) < 0;
+            case LESS_THAN -> firstString.compareTo(secondString) < 0;
             case GREATER_THAN -> firstString.compareTo(secondString) > 0;
         };
     }
