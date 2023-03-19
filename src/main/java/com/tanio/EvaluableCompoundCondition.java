@@ -11,6 +11,7 @@ import static java.util.List.copyOf;
 class EvaluableCompoundCondition implements Evaluable {
     private final BooleanOperator operator;
     private final Set<Evaluable> conditions;
+    private final SetCombiner setCombiner = new SetCombiner();
 
     EvaluableCompoundCondition(BooleanOperator operator, Set<Evaluable> conditions) {
         this.operator = operator;
@@ -24,32 +25,10 @@ class EvaluableCompoundCondition implements Evaluable {
                 .collect(Collectors.toList());
 
         return switch (operator) {
-            case OR -> or(results);
-            case AND -> and(results);
-            // !A and !B and !C = !(A or B or C)
-            case NOT -> not(target, or(results));
+            case OR -> setCombiner.or(results);
+            case AND -> setCombiner.and(results);
+            case NOT -> setCombiner.not(target, results);
         };
-    }
-
-    private static <T> Set<T> or(List<Set<T>> resultLists) {
-        return resultLists.stream()
-                .flatMap(Set::stream)
-                .collect(Collectors.toSet());
-    }
-
-    private static <T> Set<T> and(List<Set<T>> resultLists) {
-        Iterator<Set<T>> iterator = resultLists.iterator();
-        Set<T> result = new HashSet<>(iterator.next());
-        while (iterator.hasNext()) {
-            result.retainAll(iterator.next());
-        }
-        return result;
-    }
-
-    private static <T> Set<T> not(List<T> universe, Set<T> set) {
-        Set<T> result = new HashSet<>(copyOf(universe));
-        result.removeAll(set);
-        return result;
     }
 
     public BooleanOperator getOperator() {
