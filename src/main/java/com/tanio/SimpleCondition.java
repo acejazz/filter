@@ -1,9 +1,12 @@
 package com.tanio;
 
 class SimpleCondition implements Condition {
-    private final String fieldName;
-    private final Operator operator;
-    private final Object value;
+    private String fieldName;
+    private Operator operator;
+    private Object value;
+
+    public SimpleCondition() {
+    }
 
     SimpleCondition(String fieldName,
                     Operator operator,
@@ -23,6 +26,18 @@ class SimpleCondition implements Condition {
 
     Object getValue() {
         return value;
+    }
+
+    public void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
+    }
+
+    public void setOperator(Operator operator) {
+        this.operator = operator;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
     }
 
     enum Operator {
