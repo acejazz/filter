@@ -1,5 +1,7 @@
 package com.tanio;
 
+import java.util.Objects;
+
 class SimpleCondition implements Condition {
     private String fieldName;
     private Operator operator;
@@ -38,6 +40,19 @@ class SimpleCondition implements Condition {
 
     public void setValue(Object value) {
         this.value = value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SimpleCondition that = (SimpleCondition) o;
+        return Objects.equals(fieldName, that.fieldName) && operator == that.operator && Objects.equals(value, that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(fieldName, operator, value);
     }
 
     enum Operator {
