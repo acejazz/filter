@@ -1,5 +1,6 @@
 package com.tanio;
 
+import java.util.Objects;
 import java.util.Set;
 
 class CompoundCondition implements Condition {
@@ -17,6 +18,19 @@ class CompoundCondition implements Condition {
 
     Set<Condition> getConditions() {
         return conditions;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CompoundCondition condition = (CompoundCondition) o;
+        return operator == condition.operator && conditions.equals(condition.conditions);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(operator, conditions);
     }
 
     enum BooleanOperator {
