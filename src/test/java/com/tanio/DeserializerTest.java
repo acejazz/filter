@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import static com.tanio.CompoundCondition.BooleanOperator.AND;
+import static com.tanio.CompoundCondition.BooleanOperator.*;
 import static com.tanio.SimpleCondition.Operator.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,7 +18,7 @@ class DeserializerTest {
     Deserializer sut = new Deserializer();
 
     @Test
-    void deserializeAndCompoundCondition() throws JsonProcessingException {
+    void deserializeCompoundAndCondition() throws JsonProcessingException {
         String json = """
                 {
                     "and":
@@ -41,6 +41,64 @@ class DeserializerTest {
         assertThat(result).isEqualTo(
                 new CompoundCondition(
                         AND,
+                        Set.of(
+                                new SimpleCondition("anyFieldName0", EQUAL, "anyValue0"),
+                                new SimpleCondition("anyFieldName1", NOT_EQUAL, "anyValue1"))));
+    }
+
+    @Test
+    void deserializeCompoundOrCondition() throws JsonProcessingException {
+        String json = """
+                {
+                    "or":
+                        [
+                            {
+                                "fieldName":"anyFieldName0",
+                                "operator":"EQUAL",
+                                "value":"anyValue0"
+                            },
+                            {
+                                "fieldName":"anyFieldName1",
+                                "operator":"NOT_EQUAL",
+                                "value":"anyValue1"
+                            }
+                        ]
+                }
+                """;
+
+        CompoundCondition result = (CompoundCondition) sut.deserialize(json);
+        assertThat(result).isEqualTo(
+                new CompoundCondition(
+                        OR,
+                        Set.of(
+                                new SimpleCondition("anyFieldName0", EQUAL, "anyValue0"),
+                                new SimpleCondition("anyFieldName1", NOT_EQUAL, "anyValue1"))));
+    }
+
+    @Test
+    void deserializeCompoundNotCondition() throws JsonProcessingException {
+        String json = """
+                {
+                    "not":
+                        [
+                            {
+                                "fieldName":"anyFieldName0",
+                                "operator":"EQUAL",
+                                "value":"anyValue0"
+                            },
+                            {
+                                "fieldName":"anyFieldName1",
+                                "operator":"NOT_EQUAL",
+                                "value":"anyValue1"
+                            }
+                        ]
+                }
+                """;
+
+        CompoundCondition result = (CompoundCondition) sut.deserialize(json);
+        assertThat(result).isEqualTo(
+                new CompoundCondition(
+                        NOT,
                         Set.of(
                                 new SimpleCondition("anyFieldName0", EQUAL, "anyValue0"),
                                 new SimpleCondition("anyFieldName1", NOT_EQUAL, "anyValue1"))));
@@ -221,7 +279,7 @@ class Deserializer {
             return new CompoundCondition(AND, conditions);
         }
 
-        if (jsonNode.has("and")) {
+        if (jsonNode.has("and") || jsonNode.has("or") || jsonNode.has("not")) {
             return toCompoundCondition(jsonNode);
         }
 
@@ -229,14 +287,52 @@ class Deserializer {
     }
 
     private CompoundCondition toCompoundCondition(JsonNode jsonNode) {
-        JsonNode and = jsonNode.get("and");
+        if (jsonNode.has("and")) {
+            JsonNode and = jsonNode.get("and");
+            Set<Condition> conditions = new HashSet<>();
+            if (and.getNodeType().equals(JsonNodeType.ARRAY)) {
+                Iterator<JsonNode> elements = and.elements();
+
+                while (elements.hasNext()) {
+                    JsonNode next = elements.next();
+                    if (next.has("and")) {
+                        conditions.add(toCompoundCondition(next));
+                    } else {
+                        conditions.add(toSimpleCondition(next));
+                    }
+                }
+            }
+
+            return new CompoundCondition(AND, conditions);
+        }
+
+        if (jsonNode.has("or")) {
+            JsonNode or = jsonNode.get("or");
+            Set<Condition> conditions = new HashSet<>();
+            if (or.getNodeType().equals(JsonNodeType.ARRAY)) {
+                Iterator<JsonNode> elements = or.elements();
+
+                while (elements.hasNext()) {
+                    JsonNode next = elements.next();
+                    if (next.has("and") || next.has("or")) {
+                        conditions.add(toCompoundCondition(next));
+                    } else {
+                        conditions.add(toSimpleCondition(next));
+                    }
+                }
+            }
+
+            return new CompoundCondition(OR, conditions);
+        }
+
+        JsonNode not = jsonNode.get("not");
         Set<Condition> conditions = new HashSet<>();
-        if (and.getNodeType().equals(JsonNodeType.ARRAY)) {
-            Iterator<JsonNode> elements = and.elements();
+        if (not.getNodeType().equals(JsonNodeType.ARRAY)) {
+            Iterator<JsonNode> elements = not.elements();
 
             while (elements.hasNext()) {
                 JsonNode next = elements.next();
-                if (next.has("and")) {
+                if (next.has("and") || next.has("or") || next.has("not")) {
                     conditions.add(toCompoundCondition(next));
                 } else {
                     conditions.add(toSimpleCondition(next));
@@ -244,7 +340,7 @@ class Deserializer {
             }
         }
 
-        return new CompoundCondition(AND, conditions);
+        return new CompoundCondition(NOT, conditions);
     }
 
     private SimpleCondition deserializeSimpleCondition(JsonNode jsonNode) {
