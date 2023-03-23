@@ -82,6 +82,43 @@ class DeserializerTest {
     }
 
     @Test
+    void deserializeMixedNestedLevelCondition() throws JsonProcessingException {
+        String json = """
+                [
+                    {
+                        "fieldName": "anyFieldName0",
+                        "operator": "EQUAL",
+                        "value": "anyValue0"
+                    },
+                    {
+                        "and": [
+                        {
+                            "fieldName": "anyFieldName1",
+                            "operator": "NOT_EQUAL",
+                            "value": "anyValue1"
+                        },
+                        {
+                            "fieldName": "anyFieldName2",
+                            "operator": "GREATER_THAN",
+                            "value": "anyValue2"
+                         }
+                       ]
+                    }
+                ]
+                """;
+
+        CompoundCondition result = (CompoundCondition) sut.deserialize(json);
+        assertThat(result.getOperator()).isEqualTo(CompoundCondition.BooleanOperator.AND);
+        assertThat(result.getConditions()).containsExactlyInAnyOrder(
+                new SimpleCondition("anyFieldName0", SimpleCondition.Operator.EQUAL, "anyValue0"),
+                new CompoundCondition(
+                        CompoundCondition.BooleanOperator.AND,
+                        Set.of(
+                                new SimpleCondition("anyFieldName1", SimpleCondition.Operator.NOT_EQUAL, "anyValue1"),
+                                new SimpleCondition("anyFieldName2", SimpleCondition.Operator.GREATER_THAN, "anyValue2"))));
+    }
+
+    @Test
     void deserializeSimpleCondition() throws JsonProcessingException {
         String json = """
                 {
@@ -104,13 +141,30 @@ class Deserializer {
 
     Condition deserialize(String json) throws JsonProcessingException {
         JsonNode jsonNode = objectMapper.readTree(json);
+
+        if (jsonNode.isArray()) {
+            Set<Condition> conditions = new HashSet<>();
+            Iterator<JsonNode> elements = jsonNode.elements();
+            while(elements.hasNext()) {
+                JsonNode next = elements.next();
+                if (next.has("and")) {
+                    conditions.add(toCompoundCondition(next));
+                }
+                else {
+                    conditions.add(toSimpleCondition(next));
+                }
+            }
+            return new CompoundCondition(CompoundCondition.BooleanOperator.AND, conditions);
+        }
+
         if (jsonNode.has("and")) {
             return toCompoundCondition(jsonNode);
         }
+
         return deserializeSimpleCondition(jsonNode);
     }
 
-    private CompoundCondition toCompoundCondition(JsonNode jsonNode) throws JsonProcessingException {
+    private CompoundCondition toCompoundCondition(JsonNode jsonNode) {
         JsonNode and = jsonNode.get("and");
         Set<Condition> conditions = new HashSet<>();
         if (and.getNodeType().equals(JsonNodeType.ARRAY)) {
