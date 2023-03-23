@@ -3,7 +3,7 @@ package com.tanio;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeType;
+import com.tanio.CompoundCondition.BooleanOperator;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
@@ -261,90 +261,53 @@ class DeserializerTest {
 class Deserializer {
     ObjectMapper objectMapper = new ObjectMapper();
     OperatorMapper operatorMapper = new OperatorMapper();
+    BooleanOperatorMapper booleanOperatorMapper = new BooleanOperatorMapper();
+
+    public static final BooleanOperator DEFAULT_BOOLEAN_OPERATOR = AND;
 
     Condition deserialize(String json) throws JsonProcessingException {
         JsonNode jsonNode = objectMapper.readTree(json);
 
         if (jsonNode.isArray()) {
-            Set<Condition> conditions = new HashSet<>();
-            Iterator<JsonNode> elements = jsonNode.elements();
-            while (elements.hasNext()) {
-                JsonNode next = elements.next();
-                if (next.has("and")) {
-                    conditions.add(toCompoundCondition(next));
-                } else {
-                    conditions.add(toSimpleCondition(next));
-                }
-            }
-            return new CompoundCondition(AND, conditions);
+            return toCompoundConditionWithDefaultOperator(jsonNode);
         }
 
-        if (jsonNode.has("and") || jsonNode.has("or") || jsonNode.has("not")) {
+        if (isCompoundCondition(jsonNode)) {
             return toCompoundCondition(jsonNode);
         }
 
-        return deserializeSimpleCondition(jsonNode);
+        return toSimpleCondition(jsonNode);
+    }
+
+    private CompoundCondition toCompoundConditionWithDefaultOperator(JsonNode jsonNode) {
+        Set<Condition> conditions = toConditionSet(jsonNode);
+        return new CompoundCondition(DEFAULT_BOOLEAN_OPERATOR, conditions);
     }
 
     private CompoundCondition toCompoundCondition(JsonNode jsonNode) {
-        if (jsonNode.has("and")) {
-            JsonNode and = jsonNode.get("and");
-            Set<Condition> conditions = new HashSet<>();
-            if (and.getNodeType().equals(JsonNodeType.ARRAY)) {
-                Iterator<JsonNode> elements = and.elements();
+        String fieldName = jsonNode.fieldNames().next();
+        JsonNode operatorJsonNode = jsonNode.get(fieldName);
 
-                while (elements.hasNext()) {
-                    JsonNode next = elements.next();
-                    if (next.has("and")) {
-                        conditions.add(toCompoundCondition(next));
-                    } else {
-                        conditions.add(toSimpleCondition(next));
-                    }
-                }
-            }
-
-            return new CompoundCondition(AND, conditions);
-        }
-
-        if (jsonNode.has("or")) {
-            JsonNode or = jsonNode.get("or");
-            Set<Condition> conditions = new HashSet<>();
-            if (or.getNodeType().equals(JsonNodeType.ARRAY)) {
-                Iterator<JsonNode> elements = or.elements();
-
-                while (elements.hasNext()) {
-                    JsonNode next = elements.next();
-                    if (next.has("and") || next.has("or")) {
-                        conditions.add(toCompoundCondition(next));
-                    } else {
-                        conditions.add(toSimpleCondition(next));
-                    }
-                }
-            }
-
-            return new CompoundCondition(OR, conditions);
-        }
-
-        JsonNode not = jsonNode.get("not");
-        Set<Condition> conditions = new HashSet<>();
-        if (not.getNodeType().equals(JsonNodeType.ARRAY)) {
-            Iterator<JsonNode> elements = not.elements();
-
-            while (elements.hasNext()) {
-                JsonNode next = elements.next();
-                if (next.has("and") || next.has("or") || next.has("not")) {
-                    conditions.add(toCompoundCondition(next));
-                } else {
-                    conditions.add(toSimpleCondition(next));
-                }
-            }
-        }
-
-        return new CompoundCondition(NOT, conditions);
+        Set<Condition> conditions = toConditionSet(operatorJsonNode);
+        return new CompoundCondition(booleanOperatorMapper.mapToOperator(fieldName), conditions);
     }
 
-    private SimpleCondition deserializeSimpleCondition(JsonNode jsonNode) {
-        return toSimpleCondition(jsonNode);
+    private Set<Condition> toConditionSet(JsonNode node) {
+        Set<Condition> conditions = new HashSet<>();
+        Iterator<JsonNode> children = node.elements();
+        while (children.hasNext()) {
+            JsonNode child = children.next();
+            if (isCompoundCondition(child)) {
+                conditions.add(toCompoundCondition(child));
+            } else {
+                conditions.add(toSimpleCondition(child));
+            }
+        }
+        return conditions;
+    }
+
+    private boolean isCompoundCondition(JsonNode node) {
+        return node.has("and") || node.has("or") || node.has("not");
     }
 
     private SimpleCondition toSimpleCondition(JsonNode jsonNode) {
@@ -352,6 +315,17 @@ class Deserializer {
         String operator = jsonNode.get("operator").asText();
         String value = jsonNode.get("value").asText();
         return new SimpleCondition(fieldName, operatorMapper.map(operator), value);
+    }
+}
+
+class BooleanOperatorMapper {
+    BooleanOperator mapToOperator(String fieldName) {
+        return switch (fieldName) {
+            case "and" -> AND;
+            case "or" -> OR;
+            case "not" -> NOT;
+            default -> throw new RuntimeException();
+        };
     }
 }
 
