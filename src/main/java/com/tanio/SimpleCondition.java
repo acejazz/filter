@@ -55,6 +55,15 @@ class SimpleCondition implements Condition {
         return Objects.hash(fieldName, operator, value);
     }
 
+    @Override
+    public String toString() {
+        return "SimpleCondition{" +
+                "fieldName='" + fieldName + '\'' +
+                ", operator=" + operator +
+                ", value=" + value +
+                '}';
+    }
+
     enum Operator {
         EQUAL, LESS_THAN, GREATER_THAN, NOT_EQUAL
     }
