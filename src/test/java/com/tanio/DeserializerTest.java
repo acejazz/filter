@@ -258,7 +258,7 @@ class DeserializerTest {
     }
 
     @Test
-    void deserializeSimpleConditionWithNumber() throws JsonProcessingException {
+    void deserializeSimpleConditionWithIntegerNumber() throws JsonProcessingException {
         String json = """
                 {
                     "fieldName": "anyFieldName",
@@ -269,6 +269,20 @@ class DeserializerTest {
 
         SimpleCondition result = (SimpleCondition) sut.deserialize(json);
         assertThat(result).isEqualTo(new SimpleCondition("anyFieldName", EQUAL, 11));
+    }
+
+    @Test
+    void deserializeSimpleConditionWithDecimalNumber() throws JsonProcessingException {
+        String json = """
+                {
+                    "fieldName": "anyFieldName",
+                    "operator": "equal",
+                    "value": 11.1
+                }
+                """;
+
+        SimpleCondition result = (SimpleCondition) sut.deserialize(json);
+        assertThat(result).isEqualTo(new SimpleCondition("anyFieldName", EQUAL, 11.1));
     }
 }
 
@@ -329,8 +343,10 @@ class Deserializer {
         String operator = jsonNode.get("operator").asText();
 
         Object value;
-        if (jsonNode.get("value").isNumber()) {
+        if (jsonNode.get("value").isInt()) {
             value = jsonNode.get("value").asInt();
+        } else if (jsonNode.get("value").isDouble()){
+            value = jsonNode.get("value").asDouble();
         } else {
             value = jsonNode.get("value").asText();
         }
