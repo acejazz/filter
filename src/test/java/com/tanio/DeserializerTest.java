@@ -24,14 +24,14 @@ class DeserializerTest {
                     "and":
                         [
                             {
-                                "fieldName":"anyFieldName0",
-                                "operator":"equal",
-                                "value":"anyValue0"
+                                "fieldName": "anyFieldName0",
+                                "operator": "equal",
+                                "value": true
                             },
                             {
-                                "fieldName":"anyFieldName1",
-                                "operator":"not_equal",
-                                "value":"anyValue1"
+                                "fieldName": "anyFieldName1",
+                                "operator": "not_equal",
+                                "value": 5
                             }
                         ]
                 }
@@ -42,8 +42,8 @@ class DeserializerTest {
                 new CompoundCondition(
                         AND,
                         Set.of(
-                                new SimpleCondition("anyFieldName0", EQUAL, "anyValue0"),
-                                new SimpleCondition("anyFieldName1", NOT_EQUAL, "anyValue1"))));
+                                new SimpleCondition("anyFieldName0", EQUAL, true),
+                                new SimpleCondition("anyFieldName1", NOT_EQUAL, 5))));
     }
 
     @Test
@@ -53,14 +53,14 @@ class DeserializerTest {
                     "or":
                         [
                             {
-                                "fieldName":"anyFieldName0",
-                                "operator":"equal",
-                                "value":"anyValue0"
+                                "fieldName": "anyFieldName0",
+                                "operator": "equal",
+                                "value": "anyString"
                             },
                             {
-                                "fieldName":"anyFieldName1",
-                                "operator":"not_equal",
-                                "value":"anyValue1"
+                                "fieldName": "anyFieldName1",
+                                "operator": "not_equal",
+                                "value": "z"
                             }
                         ]
                 }
@@ -71,8 +71,8 @@ class DeserializerTest {
                 new CompoundCondition(
                         OR,
                         Set.of(
-                                new SimpleCondition("anyFieldName0", EQUAL, "anyValue0"),
-                                new SimpleCondition("anyFieldName1", NOT_EQUAL, "anyValue1"))));
+                                new SimpleCondition("anyFieldName0", EQUAL, "anyString"),
+                                new SimpleCondition("anyFieldName1", NOT_EQUAL, 'z'))));
     }
 
     @Test
@@ -82,14 +82,14 @@ class DeserializerTest {
                     "not":
                         [
                             {
-                                "fieldName":"anyFieldName0",
-                                "operator":"equal",
-                                "value":"anyValue0"
+                                "fieldName": "anyFieldName0",
+                                "operator": "equal",
+                                "value": false
                             },
                             {
-                                "fieldName":"anyFieldName1",
-                                "operator":"not_equal",
-                                "value":"anyValue1"
+                                "fieldName": "anyFieldName1",
+                                "operator": "not_equal",
+                                "value": 11.3
                             }
                         ]
                 }
@@ -100,8 +100,8 @@ class DeserializerTest {
                 new CompoundCondition(
                         NOT,
                         Set.of(
-                                new SimpleCondition("anyFieldName0", EQUAL, "anyValue0"),
-                                new SimpleCondition("anyFieldName1", NOT_EQUAL, "anyValue1"))));
+                                new SimpleCondition("anyFieldName0", EQUAL, false),
+                                new SimpleCondition("anyFieldName1", NOT_EQUAL, 11.3))));
     }
 
     @Test
@@ -112,19 +112,19 @@ class DeserializerTest {
                      {
                        "fieldName": "anyFieldName0",
                        "operator": "equal",
-                       "value": "anyValue0"
+                       "value": 12
                      },
                      {
                        "or": [
                          {
                            "fieldName": "anyFieldName1",
                            "operator": "not_equal",
-                           "value": "anyValue1"
+                           "value": true
                          },
                          {
                            "fieldName": "anyFieldName2",
                            "operator": "greater_than",
-                           "value": "anyValue2"
+                           "value": 12.3
                          }
                        ]
                      }
@@ -137,12 +137,12 @@ class DeserializerTest {
                 new CompoundCondition(
                         AND,
                         Set.of(
-                                new SimpleCondition("anyFieldName0", EQUAL, "anyValue0"),
+                                new SimpleCondition("anyFieldName0", EQUAL, 12),
                                 new CompoundCondition(
                                         OR,
                                         Set.of(
-                                                new SimpleCondition("anyFieldName1", NOT_EQUAL, "anyValue1"),
-                                                new SimpleCondition("anyFieldName2", GREATER_THAN, "anyValue2"))))));
+                                                new SimpleCondition("anyFieldName1", NOT_EQUAL, true),
+                                                new SimpleCondition("anyFieldName2", GREATER_THAN, 12.3))))));
     }
 
     @Test
@@ -152,19 +152,19 @@ class DeserializerTest {
                     {
                         "fieldName": "anyFieldName0",
                         "operator": "equal",
-                        "value": "anyValue0"
+                        "value": "anyString"
                     },
                     {
                         "not": [
                         {
                             "fieldName": "anyFieldName1",
                             "operator": "not_equal",
-                            "value": "anyValue1"
+                            "value": "f"
                         },
                         {
                             "fieldName": "anyFieldName2",
                             "operator": "greater_than",
-                            "value": "anyValue2"
+                            "value": true
                          }
                        ]
                     }
@@ -175,12 +175,12 @@ class DeserializerTest {
         assertThat(result).isEqualTo(
                 new CompoundCondition(
                         AND,
-                        Set.of(new SimpleCondition("anyFieldName0", EQUAL, "anyValue0"),
+                        Set.of(new SimpleCondition("anyFieldName0", EQUAL, "anyString"),
                                 new CompoundCondition(
                                         NOT,
                                         Set.of(
-                                                new SimpleCondition("anyFieldName1", NOT_EQUAL, "anyValue1"),
-                                                new SimpleCondition("anyFieldName2", GREATER_THAN, "anyValue2"))))));
+                                                new SimpleCondition("anyFieldName1", NOT_EQUAL, 'f'),
+                                                new SimpleCondition("anyFieldName2", GREATER_THAN, true))))));
     }
 
     @Test
@@ -191,7 +191,7 @@ class DeserializerTest {
                       {
                         "fieldName": "anyFieldName0",
                         "operator": "equal",
-                        "value": "anyValue0"
+                        "value": "anyString0"
                       },
                       {
                         "or": [
@@ -200,24 +200,24 @@ class DeserializerTest {
                               {
                                 "fieldName": "anyFieldName1",
                                 "operator": "not_equal",
-                                "value": "anyValue1"
+                                "value": 11
                               },
                               {
                                 "fieldName": "anyFieldName2",
                                 "operator": "greater_than",
-                                "value": "anyValue2"
+                                "value": -3
                               }
                             ]
                           },
                           {
                             "fieldName": "anyFieldName3",
                             "operator": "equal",
-                            "value": "anyValue3"
+                            "value": false
                           },
                           {
                             "fieldName": "anyFieldName4",
                             "operator": "not_equal",
-                            "value": "anyValue4"
+                            "value": true
                           }
                         ]
                       }
@@ -229,88 +229,32 @@ class DeserializerTest {
         assertThat(result).isEqualTo(new CompoundCondition(
                 AND,
                 Set.of(
-                        new SimpleCondition("anyFieldName0", EQUAL, "anyValue0"),
+                        new SimpleCondition("anyFieldName0", EQUAL, "anyString0"),
                         new CompoundCondition(
                                 OR,
                                 Set.of(
                                         new CompoundCondition(
                                                 NOT,
                                                 Set.of(
-                                                        new SimpleCondition("anyFieldName1", NOT_EQUAL, "anyValue1"),
-                                                        new SimpleCondition("anyFieldName2", GREATER_THAN, "anyValue2")
+                                                        new SimpleCondition("anyFieldName1", NOT_EQUAL, 11),
+                                                        new SimpleCondition("anyFieldName2", GREATER_THAN, -3)
                                                 )),
-                                        new SimpleCondition("anyFieldName3", EQUAL, "anyValue3"),
-                                        new SimpleCondition("anyFieldName4", NOT_EQUAL, "anyValue4"))))));
+                                        new SimpleCondition("anyFieldName3", EQUAL, false),
+                                        new SimpleCondition("anyFieldName4", NOT_EQUAL, true))))));
     }
 
     @Test
-    void deserializeSimpleConditionWithString() throws JsonProcessingException {
+    void deserializeSimpleCondition() throws JsonProcessingException {
         String json = """
                 {
-                    "fieldName":"anyFieldName",
-                    "operator":"equal",
-                    "value":"anyValue"
+                    "fieldName": "anyFieldName",
+                    "operator": "equal",
+                    "value": "anyValue"
                 }
                 """;
 
         SimpleCondition result = (SimpleCondition) sut.deserialize(json);
         assertThat(result).isEqualTo(new SimpleCondition("anyFieldName", EQUAL, "anyValue"));
-    }
-
-    @Test
-    void deserializeSimpleConditionWithInteger() throws JsonProcessingException {
-        String json = """
-                {
-                    "fieldName": "anyFieldName",
-                    "operator": "equal",
-                    "value": 11
-                }
-                """;
-
-        SimpleCondition result = (SimpleCondition) sut.deserialize(json);
-        assertThat(result).isEqualTo(new SimpleCondition("anyFieldName", EQUAL, 11));
-    }
-
-    @Test
-    void deserializeSimpleConditionWithDecimal() throws JsonProcessingException {
-        String json = """
-                {
-                    "fieldName": "anyFieldName",
-                    "operator": "equal",
-                    "value": 11.1
-                }
-                """;
-
-        SimpleCondition result = (SimpleCondition) sut.deserialize(json);
-        assertThat(result).isEqualTo(new SimpleCondition("anyFieldName", EQUAL, 11.1));
-    }
-
-    @Test
-    void deserializeSimpleConditionWithBoolean() throws JsonProcessingException {
-        String json = """
-                {
-                    "fieldName": "anyFieldName",
-                    "operator": "equal",
-                    "value": true
-                }
-                """;
-
-        SimpleCondition result = (SimpleCondition) sut.deserialize(json);
-        assertThat(result).isEqualTo(new SimpleCondition("anyFieldName", EQUAL, true));
-    }
-
-    @Test
-    void deserializeSimpleConditionWithChar() throws JsonProcessingException {
-        String json = """
-                {
-                    "fieldName": "anyFieldName",
-                    "operator": "equal",
-                    "value": "a"
-                }
-                """;
-
-        SimpleCondition result = (SimpleCondition) sut.deserialize(json);
-        assertThat(result).isEqualTo(new SimpleCondition("anyFieldName", EQUAL, 'a'));
     }
 }
 
@@ -318,6 +262,7 @@ class Deserializer {
     ObjectMapper objectMapper = new ObjectMapper();
     OperatorMapper operatorMapper = new OperatorMapper();
     BooleanOperatorMapper booleanOperatorMapper = new BooleanOperatorMapper();
+    ConditionValueSerializer conditionValueSerializer = new ConditionValueSerializer();
 
     public static final BooleanOperator DEFAULT_BOOLEAN_OPERATOR = AND;
 
@@ -369,21 +314,26 @@ class Deserializer {
     private SimpleCondition toSimpleCondition(JsonNode jsonNode) {
         String fieldName = jsonNode.get("fieldName").asText();
         String operator = jsonNode.get("operator").asText();
-
-        Object value;
-        if (jsonNode.get("value").isInt()) {
-            value = jsonNode.get("value").asInt();
-        } else if (jsonNode.get("value").isDouble()) {
-            value = jsonNode.get("value").asDouble();
-        } else if (jsonNode.get("value").isBoolean()) {
-            value = jsonNode.get("value").asBoolean();
-        } else {
-            value = jsonNode.get("value").asText();
-            if (((String) value).length() == 1) {
-                value = ((String) value).charAt(0);
-            }
-        }
+        Object value = conditionValueSerializer.serializeConditionValue(jsonNode.get("value"));
         return new SimpleCondition(fieldName, operatorMapper.map(operator), value);
+    }
+}
+
+class ConditionValueSerializer {
+    Object serializeConditionValue(JsonNode jsonNode) {
+        if (jsonNode.isInt()) {
+            return jsonNode.asInt();
+        } else if (jsonNode.isDouble()) {
+            return jsonNode.asDouble();
+        } else if (jsonNode.isBoolean()) {
+            return jsonNode.asBoolean();
+        } else {
+            String value = jsonNode.asText();
+            if (value.length() == 1) {
+                return value.charAt(0);
+            }
+            return value;
+        }
     }
 }
 
