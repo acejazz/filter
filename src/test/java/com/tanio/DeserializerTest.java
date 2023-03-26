@@ -284,6 +284,20 @@ class DeserializerTest {
         SimpleCondition result = (SimpleCondition) sut.deserialize(json);
         assertThat(result).isEqualTo(new SimpleCondition("anyFieldName", EQUAL, 11.1));
     }
+
+    @Test
+    void deserializeSimpleConditionWithBoolean() throws JsonProcessingException {
+        String json = """
+                {
+                    "fieldName": "anyFieldName",
+                    "operator": "equal",
+                    "value": true
+                }
+                """;
+
+        SimpleCondition result = (SimpleCondition) sut.deserialize(json);
+        assertThat(result).isEqualTo(new SimpleCondition("anyFieldName", EQUAL, true));
+    }
 }
 
 class Deserializer {
@@ -345,8 +359,10 @@ class Deserializer {
         Object value;
         if (jsonNode.get("value").isInt()) {
             value = jsonNode.get("value").asInt();
-        } else if (jsonNode.get("value").isDouble()){
+        } else if (jsonNode.get("value").isDouble()) {
             value = jsonNode.get("value").asDouble();
+        } else if (jsonNode.get("value").isBoolean()) {
+            value = jsonNode.get("value").asBoolean();
         } else {
             value = jsonNode.get("value").asText();
         }
