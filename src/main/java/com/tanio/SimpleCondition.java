@@ -10,9 +10,7 @@ class SimpleCondition implements Condition {
     public SimpleCondition() {
     }
 
-    SimpleCondition(String fieldName,
-                    Operator operator,
-                    Object value) {
+    SimpleCondition(String fieldName, Operator operator, Object value) {
         this.fieldName = fieldName;
         this.operator = operator;
         this.value = value;
@@ -62,6 +60,22 @@ class SimpleCondition implements Condition {
                 ", operator=" + operator +
                 ", value=" + value +
                 '}';
+    }
+
+    public static SimpleCondition equal(String fieldName, Object value) {
+        return new SimpleCondition(fieldName, Operator.EQUAL, value);
+    }
+
+    public static SimpleCondition notEqual(String fieldName, Object value) {
+        return new SimpleCondition(fieldName, Operator.NOT_EQUAL, value);
+    }
+
+    public static SimpleCondition greaterThan(String fieldName, Object value) {
+        return new SimpleCondition(fieldName, Operator.GREATER_THAN, value);
+    }
+
+    public static SimpleCondition lessThan(String fieldName, Object value) {
+        return new SimpleCondition(fieldName, Operator.LESS_THAN, value);
     }
 
     enum Operator {

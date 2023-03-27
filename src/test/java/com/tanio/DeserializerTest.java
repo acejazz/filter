@@ -3,10 +3,8 @@ package com.tanio;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 
-import java.util.Set;
-
-import static com.tanio.CompoundCondition.BooleanOperator.*;
-import static com.tanio.SimpleCondition.Operator.*;
+import static com.tanio.CompoundCondition.*;
+import static com.tanio.SimpleCondition.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class DeserializerTest {
@@ -25,7 +23,7 @@ class DeserializerTest {
                             },
                             {
                                 "fieldName": "anyFieldName1",
-                                "operator": "not_equal",
+                                "operator": "less_than",
                                 "value": 5
                             }
                         ]
@@ -34,11 +32,9 @@ class DeserializerTest {
 
         CompoundCondition result = (CompoundCondition) sut.deserialize(json);
         assertThat(result).isEqualTo(
-                new CompoundCondition(
-                        AND,
-                        Set.of(
-                                new SimpleCondition("anyFieldName0", EQUAL, true),
-                                new SimpleCondition("anyFieldName1", NOT_EQUAL, 5))));
+                and(
+                        equal("anyFieldName0", true),
+                        lessThan("anyFieldName1", 5)));
     }
 
     @Test
@@ -63,11 +59,9 @@ class DeserializerTest {
 
         CompoundCondition result = (CompoundCondition) sut.deserialize(json);
         assertThat(result).isEqualTo(
-                new CompoundCondition(
-                        OR,
-                        Set.of(
-                                new SimpleCondition("anyFieldName0", EQUAL, "anyString"),
-                                new SimpleCondition("anyFieldName1", NOT_EQUAL, 'z'))));
+                or(
+                        equal("anyFieldName0", "anyString"),
+                        notEqual("anyFieldName1", 'z')));
     }
 
     @Test
@@ -92,11 +86,9 @@ class DeserializerTest {
 
         CompoundCondition result = (CompoundCondition) sut.deserialize(json);
         assertThat(result).isEqualTo(
-                new CompoundCondition(
-                        NOT,
-                        Set.of(
-                                new SimpleCondition("anyFieldName0", EQUAL, false),
-                                new SimpleCondition("anyFieldName1", NOT_EQUAL, 11.3))));
+                not(
+                        equal("anyFieldName0", false),
+                        notEqual("anyFieldName1", 11.3)));
     }
 
     @Test
@@ -106,7 +98,7 @@ class DeserializerTest {
                    "and": [
                      {
                        "fieldName": "anyFieldName0",
-                       "operator": "equal",
+                       "operator": "less_than",
                        "value": 12
                      },
                      {
@@ -129,15 +121,11 @@ class DeserializerTest {
 
         CompoundCondition result = (CompoundCondition) sut.deserialize(json);
         assertThat(result).isEqualTo(
-                new CompoundCondition(
-                        AND,
-                        Set.of(
-                                new SimpleCondition("anyFieldName0", EQUAL, 12),
-                                new CompoundCondition(
-                                        OR,
-                                        Set.of(
-                                                new SimpleCondition("anyFieldName1", NOT_EQUAL, true),
-                                                new SimpleCondition("anyFieldName2", GREATER_THAN, 12.3))))));
+                and(
+                        lessThan("anyFieldName0", 12),
+                        or(
+                                notEqual("anyFieldName1", true),
+                                greaterThan("anyFieldName2", 12.3))));
     }
 
     @Test
@@ -168,14 +156,11 @@ class DeserializerTest {
 
         CompoundCondition result = (CompoundCondition) sut.deserialize(json);
         assertThat(result).isEqualTo(
-                new CompoundCondition(
-                        AND,
-                        Set.of(new SimpleCondition("anyFieldName0", EQUAL, "anyString"),
-                                new CompoundCondition(
-                                        NOT,
-                                        Set.of(
-                                                new SimpleCondition("anyFieldName1", NOT_EQUAL, 'f'),
-                                                new SimpleCondition("anyFieldName2", GREATER_THAN, true))))));
+                and(
+                        equal("anyFieldName0", "anyString"),
+                        not(
+                                notEqual("anyFieldName1", 'f'),
+                                greaterThan("anyFieldName2", true))));
     }
 
     @Test
@@ -211,8 +196,8 @@ class DeserializerTest {
                           },
                           {
                             "fieldName": "anyFieldName4",
-                            "operator": "not_equal",
-                            "value": true
+                            "operator": "less_than",
+                            "value": -3
                           }
                         ]
                       }
@@ -221,21 +206,15 @@ class DeserializerTest {
                 """;
 
         CompoundCondition result = (CompoundCondition) sut.deserialize(json);
-        assertThat(result).isEqualTo(new CompoundCondition(
-                AND,
-                Set.of(
-                        new SimpleCondition("anyFieldName0", EQUAL, "anyString0"),
-                        new CompoundCondition(
-                                OR,
-                                Set.of(
-                                        new CompoundCondition(
-                                                NOT,
-                                                Set.of(
-                                                        new SimpleCondition("anyFieldName1", NOT_EQUAL, 11),
-                                                        new SimpleCondition("anyFieldName2", GREATER_THAN, -3)
-                                                )),
-                                        new SimpleCondition("anyFieldName3", EQUAL, false),
-                                        new SimpleCondition("anyFieldName4", NOT_EQUAL, true))))));
+        assertThat(result).isEqualTo(
+                and(
+                        equal("anyFieldName0", "anyString0"),
+                        or(
+                                not(
+                                        notEqual("anyFieldName1", 11),
+                                        greaterThan("anyFieldName2", -3)),
+                                equal("anyFieldName3", false),
+                                lessThan("anyFieldName4", -3))));
     }
 
     @Test
@@ -249,6 +228,6 @@ class DeserializerTest {
                 """;
 
         SimpleCondition result = (SimpleCondition) sut.deserialize(json);
-        assertThat(result).isEqualTo(new SimpleCondition("anyFieldName", EQUAL, "anyValue"));
+        assertThat(result).isEqualTo(equal("anyFieldName", "anyValue"));
     }
 }

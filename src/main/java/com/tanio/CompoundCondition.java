@@ -33,6 +33,18 @@ class CompoundCondition implements Condition {
         return Objects.hash(operator, conditions);
     }
 
+    public static CompoundCondition or(Condition... conditions) {
+        return new CompoundCondition(BooleanOperator.OR, Set.of(conditions));
+    }
+
+    public static CompoundCondition and(Condition... conditions) {
+        return new CompoundCondition(BooleanOperator.AND, Set.of(conditions));
+    }
+
+    public static CompoundCondition not(Condition... conditions) {
+        return new CompoundCondition(BooleanOperator.NOT, Set.of(conditions));
+    }
+
     enum BooleanOperator {
         OR, AND, NOT
     }
