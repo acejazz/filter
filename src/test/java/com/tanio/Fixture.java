@@ -6,7 +6,7 @@ class Fixture {
         beatles.name = "Beatles";
         beatles.genre = "Rock";
         beatles.numberOfComponents = 4;
-        beatles.country = "UK";
+        beatles.country = "UK - United Kingdom";
         return beatles;
     }
 

@@ -78,7 +78,11 @@ class SimpleCondition implements Condition {
         return new SimpleCondition(fieldName, Operator.LESS_THAN, value);
     }
 
+    public static SimpleCondition contains(String fieldName, Object value) {
+        return new SimpleCondition(fieldName, Operator.CONTAINS, value);
+    }
+
     enum Operator {
-        EQUAL, LESS_THAN, GREATER_THAN, NOT_EQUAL
+        EQUAL, LESS_THAN, GREATER_THAN, NOT_EQUAL, CONTAINS
     }
 }

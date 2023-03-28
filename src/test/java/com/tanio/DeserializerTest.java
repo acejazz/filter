@@ -45,7 +45,7 @@ class DeserializerTest {
                         [
                             {
                                 "fieldName": "anyFieldName0",
-                                "operator": "equal",
+                                "operator": "contains",
                                 "value": "anyString"
                             },
                             {
@@ -60,7 +60,7 @@ class DeserializerTest {
         CompoundCondition result = (CompoundCondition) sut.deserialize(json);
         assertThat(result).isEqualTo(
                 or(
-                        equal("anyFieldName0", "anyString"),
+                        contains("anyFieldName0", "anyString"),
                         notEqual("anyFieldName1", 'z')));
     }
 
@@ -170,7 +170,7 @@ class DeserializerTest {
                     "and": [
                       {
                         "fieldName": "anyFieldName0",
-                        "operator": "equal",
+                        "operator": "contains",
                         "value": "anyString0"
                       },
                       {
@@ -208,7 +208,7 @@ class DeserializerTest {
         CompoundCondition result = (CompoundCondition) sut.deserialize(json);
         assertThat(result).isEqualTo(
                 and(
-                        equal("anyFieldName0", "anyString0"),
+                        contains("anyFieldName0", "anyString0"),
                         or(
                                 not(
                                         notEqual("anyFieldName1", 11),

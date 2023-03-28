@@ -4,11 +4,13 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static com.tanio.SimpleCondition.Operator.*;
+import static com.tanio.TestEnum.ENUM_VALUE0;
+import static com.tanio.TestEnum.ENUM_VALUE1;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class FieldSimpleConditionEvaluatorTest {
+class FieldConditionEvaluatorTest {
     FieldConditionEvaluator sut = new FieldConditionEvaluator();
 
     @Nested
@@ -37,6 +39,13 @@ class FieldSimpleConditionEvaluatorTest {
             assertTrue(sut.evaluateCondition(GREATER_THAN, 7, 5));
             assertFalse(sut.evaluateCondition(GREATER_THAN, 7, 11));
             assertFalse(sut.evaluateCondition(GREATER_THAN, 7, 7));
+        }
+
+        @Test
+        void evaluateContains() {
+            assertThatThrownBy(() -> sut.evaluateCondition(CONTAINS, 7, 7))
+                    .isInstanceOf(FilterException.class)
+                    .hasMessage("'contains' operator cannot be applied to numbers");
         }
 
         @Test
@@ -74,6 +83,13 @@ class FieldSimpleConditionEvaluatorTest {
             assertTrue(sut.evaluateCondition(GREATER_THAN, 7L, 5L));
             assertFalse(sut.evaluateCondition(GREATER_THAN, 7L, 11L));
             assertFalse(sut.evaluateCondition(GREATER_THAN, 7L, 7L));
+        }
+
+        @Test
+        void evaluateContains() {
+            assertThatThrownBy(() -> sut.evaluateCondition(CONTAINS, 7L, 7L))
+                    .isInstanceOf(FilterException.class)
+                    .hasMessage("'contains' operator cannot be applied to numbers");
         }
 
         @Test
@@ -120,6 +136,15 @@ class FieldSimpleConditionEvaluatorTest {
             assertFalse(sut.evaluateCondition(GREATER_THAN, null, "anyString"));
             assertFalse(sut.evaluateCondition(LESS_THAN, null, "anyString"));
         }
+
+        @Test
+        void evaluateContains() {
+            assertTrue(sut.evaluateCondition(CONTAINS, "Xanything", "anything"));
+            assertTrue(sut.evaluateCondition(CONTAINS, "anythingX", "anything"));
+            assertTrue(sut.evaluateCondition(CONTAINS, "XanythingX", "anything"));
+            assertFalse(sut.evaluateCondition(CONTAINS, "anything", "Xanything"));
+            assertFalse(sut.evaluateCondition(CONTAINS, "anything", "ANYTHING"));
+        }
     }
 
     @Nested
@@ -148,6 +173,13 @@ class FieldSimpleConditionEvaluatorTest {
             assertThatThrownBy(() -> sut.evaluateCondition(GREATER_THAN, true, true))
                     .isInstanceOf(FilterException.class)
                     .hasMessage("'greater than' operator cannot be applied to booleans");
+        }
+
+        @Test
+        void evaluateContains() {
+            assertThatThrownBy(() -> sut.evaluateCondition(CONTAINS, true, true))
+                    .isInstanceOf(FilterException.class)
+                    .hasMessage("'contains' operator cannot be applied to booleans");
         }
 
         @Test
@@ -183,6 +215,13 @@ class FieldSimpleConditionEvaluatorTest {
             assertTrue(sut.evaluateCondition(GREATER_THAN, 11.3F, 7.1F));
             assertFalse(sut.evaluateCondition(GREATER_THAN, 5.3F, 7.1F));
             assertFalse(sut.evaluateCondition(GREATER_THAN, 7.1F, 7.1F));
+        }
+
+        @Test
+        void evaluateContains() {
+            assertThatThrownBy(() -> sut.evaluateCondition(CONTAINS, 11.3F, 7.1F))
+                    .isInstanceOf(FilterException.class)
+                    .hasMessage("'contains' operator cannot be applied to numbers");
         }
 
         @Test
@@ -223,6 +262,13 @@ class FieldSimpleConditionEvaluatorTest {
         }
 
         @Test
+        void evaluateContains() {
+            assertThatThrownBy(() -> sut.evaluateCondition(CONTAINS, 11.3, 7.1))
+                    .isInstanceOf(FilterException.class)
+                    .hasMessage("'contains' operator cannot be applied to numbers");
+        }
+
+        @Test
         void evaluateNull() {
             assertFalse(sut.evaluateCondition(EQUAL, null, 7.1));
             assertFalse(sut.evaluateCondition(NOT_EQUAL, null, 7.1));
@@ -260,6 +306,13 @@ class FieldSimpleConditionEvaluatorTest {
         }
 
         @Test
+        void evaluateContains() {
+            assertTrue(sut.evaluateCondition(CONTAINS, 'x', 'x'));
+            assertFalse(sut.evaluateCondition(CONTAINS, 'x', 'a'));
+            assertFalse(sut.evaluateCondition(CONTAINS, 'x', 'X'));
+        }
+
+        @Test
         void evaluateNull() {
             assertFalse(sut.evaluateCondition(EQUAL, null, 'a'));
             assertFalse(sut.evaluateCondition(NOT_EQUAL, null, 'a'));
@@ -272,36 +325,47 @@ class FieldSimpleConditionEvaluatorTest {
     class EnumTests {
         @Test
         void evaluateEqual() {
-            assertTrue(sut.evaluateCondition(EQUAL, "ENUM_VALUE0", TestEnum.ENUM_VALUE0));
-            assertFalse(sut.evaluateCondition(EQUAL, "ENUM_VALUE1", TestEnum.ENUM_VALUE0));
+            assertTrue(sut.evaluateCondition(EQUAL, "ENUM_VALUE0", ENUM_VALUE0));
+            assertFalse(sut.evaluateCondition(EQUAL, "ENUM_VALUE1", ENUM_VALUE0));
         }
 
         @Test
         void evaluateNotEqual() {
-            assertTrue(sut.evaluateCondition(NOT_EQUAL, "ENUM_VALUE0", TestEnum.ENUM_VALUE1));
-            assertFalse(sut.evaluateCondition(NOT_EQUAL, "ENUM_VALUE1", TestEnum.ENUM_VALUE1));
+            assertTrue(sut.evaluateCondition(NOT_EQUAL, "ENUM_VALUE0", ENUM_VALUE1));
+            assertFalse(sut.evaluateCondition(NOT_EQUAL, "ENUM_VALUE1", ENUM_VALUE1));
         }
 
         @Test
         void evaluateLowerThan() {
-            assertTrue(sut.evaluateCondition(LESS_THAN, "ENUM_VALUE0", TestEnum.ENUM_VALUE1));
-            assertFalse(sut.evaluateCondition(LESS_THAN, "ENUM_VALUE1", TestEnum.ENUM_VALUE0));
-            assertFalse(sut.evaluateCondition(LESS_THAN, "ENUM_VALUE1", TestEnum.ENUM_VALUE1));
+            assertTrue(sut.evaluateCondition(LESS_THAN, "ENUM_VALUE0", ENUM_VALUE1));
+            assertFalse(sut.evaluateCondition(LESS_THAN, "ENUM_VALUE1", ENUM_VALUE0));
+            assertFalse(sut.evaluateCondition(LESS_THAN, "ENUM_VALUE1", ENUM_VALUE1));
         }
 
         @Test
         void evaluateGreaterThan() {
-            assertTrue(sut.evaluateCondition(GREATER_THAN, "ENUM_VALUE1", TestEnum.ENUM_VALUE0));
-            assertFalse(sut.evaluateCondition(GREATER_THAN, "ENUM_VALUE0", TestEnum.ENUM_VALUE1));
-            assertFalse(sut.evaluateCondition(GREATER_THAN, "ENUM_VALUE1", TestEnum.ENUM_VALUE1));
+            assertTrue(sut.evaluateCondition(GREATER_THAN, "ENUM_VALUE1", ENUM_VALUE0));
+            assertFalse(sut.evaluateCondition(GREATER_THAN, "ENUM_VALUE0", ENUM_VALUE1));
+            assertFalse(sut.evaluateCondition(GREATER_THAN, "ENUM_VALUE1", ENUM_VALUE1));
+        }
+
+        @Test
+        void evaluateContains() {
+            assertTrue(sut.evaluateCondition(CONTAINS, "ENUM_VALUE1", ENUM_VALUE1));
+            assertTrue(sut.evaluateCondition(CONTAINS, "xENUM_VALUE1", ENUM_VALUE1));
+            assertTrue(sut.evaluateCondition(CONTAINS, "ENUM_VALUE1x", ENUM_VALUE1));
+            assertTrue(sut.evaluateCondition(CONTAINS, "xENUM_VALUE1x", ENUM_VALUE1));
+            assertFalse(sut.evaluateCondition(CONTAINS, "ENUM_VALUE0", ENUM_VALUE1));
+            assertFalse(sut.evaluateCondition(CONTAINS, "enum_value1", ENUM_VALUE1));
+            assertFalse(sut.evaluateCondition(CONTAINS, "Xenum_value1", ENUM_VALUE1));
         }
 
         @Test
         void evaluateNull() {
-            assertFalse(sut.evaluateCondition(EQUAL, null, TestEnum.ENUM_VALUE0));
-            assertFalse(sut.evaluateCondition(NOT_EQUAL, null, TestEnum.ENUM_VALUE0));
-            assertFalse(sut.evaluateCondition(GREATER_THAN, null, TestEnum.ENUM_VALUE0));
-            assertFalse(sut.evaluateCondition(LESS_THAN, null, TestEnum.ENUM_VALUE0));
+            assertFalse(sut.evaluateCondition(EQUAL, null, ENUM_VALUE0));
+            assertFalse(sut.evaluateCondition(NOT_EQUAL, null, ENUM_VALUE0));
+            assertFalse(sut.evaluateCondition(GREATER_THAN, null, ENUM_VALUE0));
+            assertFalse(sut.evaluateCondition(LESS_THAN, null, ENUM_VALUE0));
         }
     }
 

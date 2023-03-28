@@ -27,15 +27,15 @@ class FilterTest {
                 eltonJohn(),
                 bruceSpringsteen());
 
-        Set<MusicArtist> result = sut.evaluate(equal("country", "UK"), musicArtists);
+        Set<MusicArtist> result = sut.evaluate(contains("country", "UK"), musicArtists);
 
-        assertThat(result).containsExactlyInAnyOrder(beatles(), rollingStones(), eltonJohn());
+        assertThat(result).containsExactlyInAnyOrder(rollingStones(), eltonJohn(), beatles());
     }
 
     @Test
     void performEvaluableCompoundCondition_or() {
         CompoundCondition condition = or(
-                equal("country", "UK"),
+                contains("country", "UK"),
                 greaterThan("numberOfComponents", 1));
 
         List<MusicArtist> musicArtists = Arrays.asList(
@@ -155,7 +155,7 @@ class FilterTest {
     void performEvaluableCompoundConditionNested_not() {
         CompoundCondition condition = not(
                 and(
-                        equal("country", "UK"),
+                        contains("country", "UK"),
                         equal("numberOfComponents", 1)),
                 or(
                         equal("genre", "Rock"),
@@ -192,7 +192,7 @@ class FilterTest {
 
         CompoundCondition condition = and(
                 or(
-                        equal("country", "UK"),
+                        contains("country", "UK"),
                         equal("country", "USA")),
                 or(
                         equal("numberOfComponents", 3),
@@ -212,7 +212,7 @@ class FilterTest {
                         notEqual("numberOfComponents", 3),
                         notEqual("numberOfComponents", 4)),
                 and(
-                        equal("country", "UK"),
+                        contains("country", "UK"),
                         equal("genre", "Pop")));
 
         List<MusicArtist> musicArtists = Arrays.asList(
@@ -238,7 +238,7 @@ class FilterTest {
                         equal("country", "USA"),
                         equal("numberOfComponents", 1)),
                 not(
-                        equal("country", "UK"),
+                        contains("country", "UK"),
                         equal("numberOfComponents", 1)));
 
         List<MusicArtist> musicArtists = Arrays.asList(
@@ -262,7 +262,7 @@ class FilterTest {
         CompoundCondition condition = or(
                 equal("name", "Edith Piaf"),
                 and(
-                        equal("country", "UK"),
+                        contains("country", "UK"),
                         lessThan("numberOfComponents", 4)));
 
         List<MusicArtist> musicArtists = Arrays.asList(
@@ -302,6 +302,6 @@ class FilterTest {
 
         Set<MusicArtist> result = sut.evaluate(condition, musicArtists);
 
-        assertThat(result).containsExactlyInAnyOrder(nirvana());
+        assertThat(result).containsExactlyInAnyOrder(nirvana(), beatles());
     }
 }
