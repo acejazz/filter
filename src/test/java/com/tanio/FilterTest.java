@@ -6,9 +6,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import static com.tanio.CompoundCondition.BooleanOperator.*;
+import static com.tanio.CompoundCondition.*;
 import static com.tanio.Fixture.*;
-import static com.tanio.SimpleCondition.Operator.*;
+import static com.tanio.SimpleCondition.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class FilterTest {
@@ -27,18 +27,16 @@ class FilterTest {
                 eltonJohn(),
                 bruceSpringsteen());
 
-        Set<MusicArtist> result = sut.evaluate(new SimpleCondition("country", EQUAL, "UK"), musicArtists);
+        Set<MusicArtist> result = sut.evaluate(equal("country", "UK"), musicArtists);
 
         assertThat(result).containsExactlyInAnyOrder(beatles(), rollingStones(), eltonJohn());
     }
 
     @Test
     void performEvaluableCompoundCondition_or() {
-        CompoundCondition condition = new CompoundCondition(
-                OR,
-                Set.of(
-                        new SimpleCondition("country", EQUAL, "UK"),
-                        new SimpleCondition("numberOfComponents", GREATER_THAN, 1)));
+        CompoundCondition condition = or(
+                equal("country", "UK"),
+                greaterThan("numberOfComponents", 1));
 
         List<MusicArtist> musicArtists = Arrays.asList(
                 beatles(),
@@ -58,11 +56,9 @@ class FilterTest {
 
     @Test
     void performEvaluableCompoundCondition_and() {
-        CompoundCondition condition = new CompoundCondition(
-                AND,
-                Set.of(
-                        new SimpleCondition("country", NOT_EQUAL, "UK"),
-                        new SimpleCondition("numberOfComponents", LESS_THAN, 3)));
+        CompoundCondition condition = and(
+                notEqual("country", "UK"),
+                lessThan("numberOfComponents", 3));
 
         List<MusicArtist> musicArtists = Arrays.asList(
                 beatles(),
@@ -82,11 +78,9 @@ class FilterTest {
 
     @Test
     void performEvaluableCompoundCondition_not() {
-        CompoundCondition condition = new CompoundCondition(
-                NOT,
-                Set.of(
-                        new SimpleCondition("genre", EQUAL, "Rock"),
-                        new SimpleCondition("country", EQUAL, "USA")));
+        CompoundCondition condition = not(
+                equal("genre", "Rock"),
+                equal("country", "USA"));
 
         List<MusicArtist> musicArtists = Arrays.asList(
                 beatles(),
@@ -106,21 +100,14 @@ class FilterTest {
 
     @Test
     void performEvaluableCompoundConditionNested_or() {
-        CompoundCondition first = new CompoundCondition(
-                OR,
-                Set.of(
-                        new SimpleCondition("name", EQUAL, "Rolling Stones"),
-                        new SimpleCondition("name", EQUAL, "Madonna")));
-
-        CompoundCondition second = new CompoundCondition(
-                OR,
-                Set.of(
-                        new SimpleCondition("country", EQUAL, "Iceland"),
-                        new SimpleCondition("country", EQUAL, "France")));
-
-        CompoundCondition condition = new CompoundCondition(
-                OR,
-                Set.of(first, second));
+        CompoundCondition condition =
+                or(
+                        or(
+                                equal("name", "Rolling Stones"),
+                                equal("name", "Madonna")),
+                        or(
+                                equal("country", "Iceland"),
+                                equal("country", "France")));
 
         List<MusicArtist> musicArtists = Arrays.asList(
                 beatles(),
@@ -140,21 +127,13 @@ class FilterTest {
 
     @Test
     void performEvaluableCompoundConditionNested_and() {
-        CompoundCondition first = new CompoundCondition(
-                AND,
-                Set.of(
-                        new SimpleCondition("country", NOT_EQUAL, "UK"),
-                        new SimpleCondition("genre", NOT_EQUAL, "Rock")));
-
-        CompoundCondition second = new CompoundCondition(
-                AND,
-                Set.of(
-                        new SimpleCondition("name", NOT_EQUAL, "Marvin Gaye"),
-                        new SimpleCondition("name", NOT_EQUAL, "Bjork")));
-
-        CompoundCondition condition = new CompoundCondition(
-                AND,
-                Set.of(first, second));
+        CompoundCondition condition = and(
+                and(
+                        notEqual("country", "UK"),
+                        notEqual("genre", "Rock")),
+                and(
+                        notEqual("name", "Marvin Gaye"),
+                        notEqual("name", "Bjork")));
 
         List<MusicArtist> musicArtists = Arrays.asList(
                 beatles(),
@@ -174,21 +153,13 @@ class FilterTest {
 
     @Test
     void performEvaluableCompoundConditionNested_not() {
-        CompoundCondition first = new CompoundCondition(
-                AND,
-                Set.of(
-                        new SimpleCondition("country", EQUAL, "UK"),
-                        new SimpleCondition("numberOfComponents", EQUAL, 1)));
-
-        CompoundCondition second = new CompoundCondition(
-                OR,
-                Set.of(
-                        new SimpleCondition("genre", EQUAL, "Rock"),
-                        new SimpleCondition("numberOfComponents", GREATER_THAN, 1)));
-
-        CompoundCondition condition = new CompoundCondition(
-                NOT,
-                Set.of(first, second));
+        CompoundCondition condition = not(
+                and(
+                        equal("country", "UK"),
+                        equal("numberOfComponents", 1)),
+                or(
+                        equal("genre", "Rock"),
+                        greaterThan("numberOfComponents", 1)));
 
         List<MusicArtist> musicArtists = Arrays.asList(
                 beatles(),
@@ -219,21 +190,13 @@ class FilterTest {
                 eltonJohn(),
                 bruceSpringsteen());
 
-        CompoundCondition first = new CompoundCondition(
-                OR,
-                Set.of(
-                        new SimpleCondition("country", EQUAL, "UK"),
-                        new SimpleCondition("country", EQUAL, "USA")));
-
-        CompoundCondition second = new CompoundCondition(
-                OR,
-                Set.of(
-                        new SimpleCondition("numberOfComponents", EQUAL, 3),
-                        new SimpleCondition("numberOfComponents", EQUAL, 4)));
-
-        CompoundCondition condition = new CompoundCondition(
-                AND,
-                Set.of(first, second));
+        CompoundCondition condition = and(
+                or(
+                        equal("country", "UK"),
+                        equal("country", "USA")),
+                or(
+                        equal("numberOfComponents", 3),
+                        equal("numberOfComponents", 4)));
 
         Set<MusicArtist> result = sut.evaluate(condition, musicArtists);
 
@@ -242,22 +205,15 @@ class FilterTest {
 
     @Test
     void performEvaluableCompoundConditionNested_mixedOrAnd() {
-        CompoundCondition first = new CompoundCondition(
-                AND,
-                Set.of(
-                        new SimpleCondition("country", EQUAL, "USA"),
-                        new SimpleCondition("numberOfComponents", NOT_EQUAL, 3),
-                        new SimpleCondition("numberOfComponents", NOT_EQUAL, 4)));
 
-        CompoundCondition second = new CompoundCondition(
-                AND,
-                Set.of(
-                        new SimpleCondition("country", EQUAL, "UK"),
-                        new SimpleCondition("genre", EQUAL, "Pop")));
-
-        CompoundCondition condition = new CompoundCondition(
-                OR,
-                Set.of(first, second));
+        CompoundCondition condition = or(
+                and(
+                        equal("country", "USA"),
+                        notEqual("numberOfComponents", 3),
+                        notEqual("numberOfComponents", 4)),
+                and(
+                        equal("country", "UK"),
+                        equal("genre", "Pop")));
 
         List<MusicArtist> musicArtists = Arrays.asList(
                 beatles(),
@@ -277,21 +233,13 @@ class FilterTest {
 
     @Test
     void performEvaluableCompoundConditionNested_mixedOrAndNot() {
-        CompoundCondition first = new CompoundCondition(
-                NOT,
-                Set.of(
-                        new SimpleCondition("country", EQUAL, "USA"),
-                        new SimpleCondition("numberOfComponents", EQUAL, 1)));
-
-        CompoundCondition second = new CompoundCondition(
-                NOT,
-                Set.of(
-                        new SimpleCondition("country", EQUAL, "UK"),
-                        new SimpleCondition("numberOfComponents", EQUAL, 1)));
-
-        CompoundCondition condition = new CompoundCondition(
-                OR,
-                Set.of(first, second));
+        CompoundCondition condition = or(
+                not(
+                        equal("country", "USA"),
+                        equal("numberOfComponents", 1)),
+                not(
+                        equal("country", "UK"),
+                        equal("numberOfComponents", 1)));
 
         List<MusicArtist> musicArtists = Arrays.asList(
                 beatles(),
@@ -311,17 +259,11 @@ class FilterTest {
 
     @Test
     void performAndOr() {
-        CompoundCondition nested = new CompoundCondition(
-                AND,
-                Set.of(
-                        new SimpleCondition("country", EQUAL, "UK"),
-                        new SimpleCondition("numberOfComponents", LESS_THAN, 4)));
-
-        CompoundCondition condition = new CompoundCondition(
-                OR,
-                Set.of(
-                        new SimpleCondition("name", EQUAL, "Edith Piaf"),
-                        nested));
+        CompoundCondition condition = or(
+                equal("name", "Edith Piaf"),
+                and(
+                        equal("country", "UK"),
+                        lessThan("numberOfComponents", 4)));
 
         List<MusicArtist> musicArtists = Arrays.asList(
                 beatles(),
@@ -341,17 +283,11 @@ class FilterTest {
 
     @Test
     void performOrAnd() {
-        CompoundCondition nested = new CompoundCondition(
-                OR,
-                Set.of(
-                        new SimpleCondition("country", NOT_EQUAL, "UK"),
-                        new SimpleCondition("genre", NOT_EQUAL, "Rock")));
-
-        CompoundCondition condition = new CompoundCondition(
-                AND,
-                Set.of(
-                        new SimpleCondition("numberOfComponents", NOT_EQUAL, 1),
-                        nested));
+        CompoundCondition condition = and(
+                notEqual("numberOfComponents", 1),
+                or(
+                        notEqual("country", "UK"),
+                        notEqual("genre", "Rock")));
 
         List<MusicArtist> musicArtists = Arrays.asList(
                 beatles(),
