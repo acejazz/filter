@@ -9,7 +9,9 @@ import java.util.Set;
 import static com.tanio.CompoundCondition.*;
 import static com.tanio.Fixture.*;
 import static com.tanio.SimpleCondition.*;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class FilterTest {
     Filter sut = new Filter();
@@ -303,5 +305,14 @@ class FilterTest {
         Set<MusicArtist> result = sut.evaluate(condition, musicArtists);
 
         assertThat(result).containsExactlyInAnyOrder(nirvana(), beatles());
+    }
+
+    @Test
+    void filterNonExistingField() {
+        SimpleCondition condition = equal("nonExistingField", "anything");
+
+        assertThatThrownBy(() -> sut.evaluate(condition, singletonList(new Object())))
+                .isInstanceOf(FilterException.class)
+                .hasMessage("Method [getNonExistingField] does not exist in class [java.lang.Object]");
     }
 }

@@ -8,11 +8,7 @@ class FieldValueRetriever {
 
     Object retrieveFieldValue(String fieldName, Object object) {
         if (isNestedFieldName(fieldName)) {
-            String topLevelFieldName = extractTopLevelFieldName(fieldName);
-            String getterMethodName = transformToGetterMethodName(topLevelFieldName);
-            Object topLevelFieldValue = invokeMethod(getterMethodName, object);
-            String remainingLevelFieldNames = extractRemainingLevelFieldNames(fieldName);
-            return retrieveFieldValue(remainingLevelFieldNames, topLevelFieldValue);
+            return retrieveNestedFieldValue(fieldName, object);
         }
 
         if (isFieldNameReferringToBoolean(fieldName)) {
@@ -27,44 +23,66 @@ class FieldValueRetriever {
         return invokeMethod(methodName, object);
     }
 
-    boolean isNestedFieldName(String fieldName) {
+    private Object retrieveNestedFieldValue(String fieldName, Object object) {
+        // object1.object2.object3 => object1
+        String topLevelFieldName = extractTopLevelFieldName(fieldName);
+
+        // object1 => getObject1
+        String getterMethodName = transformToGetterMethodName(topLevelFieldName);
+
+        // Get the value for the first level object: {object1}
+        Object topLevelFieldValue = invokeMethod(getterMethodName, object);
+
+        // object1.object2.object3 => object2.object3
+        String remainingLevelFieldNames = extractRemainingLevelFieldNames(fieldName);
+
+        // determines the value for field object2.object3 on {object1}
+        return retrieveFieldValue(remainingLevelFieldNames, topLevelFieldValue);
+    }
+
+    private boolean isNestedFieldName(String fieldName) {
         int separatorIndex = fieldName.indexOf(SEPARATOR);
         return separatorIndex != -1;
     }
 
-    private static boolean isReturnTypeBoolean(Method method) {
+    private boolean isReturnTypeBoolean(Method method) {
         return method.getReturnType().equals(boolean.class)
                 || method.getReturnType().equals(Boolean.class);
     }
 
-    private static boolean isFieldNameReferringToBoolean(String fieldName) {
+    private boolean isFieldNameReferringToBoolean(String fieldName) {
         return fieldName.startsWith("is")
                 && Character.isUpperCase(fieldName.charAt(2));
     }
 
-    private static String transformToGetterMethodName(String fieldName) {
+    private String transformToGetterMethodName(String fieldName) {
         return "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
     }
 
-    private static String extractTopLevelFieldName(String fieldName) {
+    private String extractTopLevelFieldName(String fieldName) {
         int separatorIndex = fieldName.indexOf(SEPARATOR);
         return fieldName.substring(0, separatorIndex);
     }
 
-    private static Object invokeMethod(String methodName, Object object) {
+    private Object invokeMethod(String methodName, Object object) {
         Method method = getMethod(methodName, object);
         return invokeMethod(method, object);
     }
 
-    private static Method getMethod(String methodName, Object object) {
+    private Method getMethod(String methodName, Object object) {
         try {
             return object.getClass().getMethod(methodName);
         } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
+            String exceptionMessage =
+                    String.format(
+                            "Method [%s] does not exist in class [%s]",
+                            methodName,
+                            object.getClass().getName());
+            throw new FilterException(exceptionMessage);
         }
     }
 
-    private static Object invokeMethod(Method method, Object object) {
+    private Object invokeMethod(Method method, Object object) {
         try {
             return method.invoke(object);
         } catch (Exception e) {
@@ -72,7 +90,7 @@ class FieldValueRetriever {
         }
     }
 
-    private static String extractRemainingLevelFieldNames(String fieldName) {
+    private String extractRemainingLevelFieldNames(String fieldName) {
         int separatorIndex = fieldName.indexOf(SEPARATOR);
         return fieldName.substring(separatorIndex + 1);
     }

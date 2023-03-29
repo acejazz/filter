@@ -3,6 +3,7 @@ package com.tanio;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class FieldValueRetrieverTest {
     FieldValueRetriever sut = new FieldValueRetriever();
@@ -140,5 +141,12 @@ class FieldValueRetrieverTest {
         TestEntity testEntity = new TestEntity();
         testEntity.setNestedEntity(nestedEntity);
         assertThat(sut.retrieveFieldValue("nestedEntity.nestedNestedEntity", testEntity)).isEqualTo(nestedNestedEntity);
+    }
+
+    @Test
+    void handleNonExistingMethodName() {
+        assertThatThrownBy(() ->sut.retrieveFieldValue("anyNonExistingFieldName", new Object()))
+                .isInstanceOf(FilterException.class)
+                .hasMessage("Method [getAnyNonExistingFieldName] does not exist in class [java.lang.Object]");
     }
 }
