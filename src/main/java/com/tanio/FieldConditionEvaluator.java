@@ -30,6 +30,7 @@ class FieldConditionEvaluator {
                 case LESS_THAN -> throw new FilterException("'lower than' operator cannot be applied to booleans");
                 case GREATER_THAN -> throw new FilterException("'greater than' operator cannot be applied to booleans");
                 case CONTAINS -> throw new FilterException("'contains' operator cannot be applied to booleans");
+                case NOT_CONTAINS -> throw new FilterException("'not contains' operator cannot be applied to booleans");
             };
         }
 
@@ -43,6 +44,7 @@ class FieldConditionEvaluator {
                 case LESS_THAN -> firstNumberValue.compareTo(secondNumberValue) < 0;
                 case GREATER_THAN -> firstNumberValue.compareTo(secondNumberValue) > 0;
                 case CONTAINS -> throw new FilterException("'contains' operator cannot be applied to numbers");
+                case NOT_CONTAINS -> throw new FilterException("'not contains' operator cannot be applied to numbers");
             };
         }
 
@@ -61,6 +63,7 @@ class FieldConditionEvaluator {
             case LESS_THAN -> firstString.compareTo(secondString) < 0;
             case GREATER_THAN -> firstString.compareTo(secondString) > 0;
             case CONTAINS -> firstString.contains(secondString);
+            case NOT_CONTAINS -> !firstString.contains(secondString);
         };
     }
 }

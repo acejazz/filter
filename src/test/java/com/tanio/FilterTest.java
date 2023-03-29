@@ -57,7 +57,7 @@ class FilterTest {
     @Test
     void performEvaluableCompoundCondition_and() {
         CompoundCondition condition = and(
-                notEqual("country", "UK"),
+                notContains("country", "UK"),
                 lessThan("numberOfComponents", 3));
 
         List<MusicArtist> musicArtists = Arrays.asList(

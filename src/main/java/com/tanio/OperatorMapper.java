@@ -10,6 +10,7 @@ class OperatorMapper {
             case "greater_than" -> GREATER_THAN;
             case "less_than" -> LESS_THAN;
             case "contains" -> CONTAINS;
+            case "not_contains" -> NOT_CONTAINS;
             default -> throw new FilterException("Invalid operator");
         };
     }

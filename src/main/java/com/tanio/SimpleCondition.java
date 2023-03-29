@@ -2,6 +2,8 @@ package com.tanio;
 
 import java.util.Objects;
 
+import static com.tanio.SimpleCondition.Operator.*;
+
 class SimpleCondition implements Condition {
     private String fieldName;
     private Operator operator;
@@ -63,26 +65,35 @@ class SimpleCondition implements Condition {
     }
 
     public static SimpleCondition equal(String fieldName, Object value) {
-        return new SimpleCondition(fieldName, Operator.EQUAL, value);
+        return new SimpleCondition(fieldName, EQUAL, value);
     }
 
     public static SimpleCondition notEqual(String fieldName, Object value) {
-        return new SimpleCondition(fieldName, Operator.NOT_EQUAL, value);
+        return new SimpleCondition(fieldName, NOT_EQUAL, value);
     }
 
     public static SimpleCondition greaterThan(String fieldName, Object value) {
-        return new SimpleCondition(fieldName, Operator.GREATER_THAN, value);
+        return new SimpleCondition(fieldName, GREATER_THAN, value);
     }
 
     public static SimpleCondition lessThan(String fieldName, Object value) {
-        return new SimpleCondition(fieldName, Operator.LESS_THAN, value);
+        return new SimpleCondition(fieldName, LESS_THAN, value);
     }
 
     public static SimpleCondition contains(String fieldName, Object value) {
-        return new SimpleCondition(fieldName, Operator.CONTAINS, value);
+        return new SimpleCondition(fieldName, CONTAINS, value);
+    }
+
+    public static SimpleCondition notContains(String fieldName, Object value) {
+        return new SimpleCondition(fieldName, NOT_CONTAINS, value);
     }
 
     enum Operator {
-        EQUAL, LESS_THAN, GREATER_THAN, NOT_EQUAL, CONTAINS
+        EQUAL,
+        NOT_EQUAL,
+        LESS_THAN,
+        GREATER_THAN,
+        CONTAINS,
+        NOT_CONTAINS
     }
 }

@@ -191,8 +191,8 @@ class DeserializerTest {
                           },
                           {
                             "fieldName": "anyFieldName3",
-                            "operator": "equal",
-                            "value": false
+                            "operator": "not_contains",
+                            "value": "anyString1"
                           },
                           {
                             "fieldName": "anyFieldName4",
@@ -213,7 +213,7 @@ class DeserializerTest {
                                 not(
                                         notEqual("anyFieldName1", 11),
                                         greaterThan("anyFieldName2", -3)),
-                                equal("anyFieldName3", false),
+                                notContains("anyFieldName3", "anyString1"),
                                 lessThan("anyFieldName4", -3))));
     }
 

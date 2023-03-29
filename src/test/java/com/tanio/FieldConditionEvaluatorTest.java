@@ -49,6 +49,13 @@ class FieldConditionEvaluatorTest {
         }
 
         @Test
+        void evaluateNotContains() {
+            assertThatThrownBy(() -> sut.evaluateCondition(NOT_CONTAINS, 7, 7))
+                    .isInstanceOf(FilterException.class)
+                    .hasMessage("'not contains' operator cannot be applied to numbers");
+        }
+
+        @Test
         void evaluateNull() {
             assertFalse(sut.evaluateCondition(EQUAL, null, 7));
             assertFalse(sut.evaluateCondition(NOT_EQUAL, null, 7));
@@ -90,6 +97,13 @@ class FieldConditionEvaluatorTest {
             assertThatThrownBy(() -> sut.evaluateCondition(CONTAINS, 7L, 7L))
                     .isInstanceOf(FilterException.class)
                     .hasMessage("'contains' operator cannot be applied to numbers");
+        }
+
+        @Test
+        void evaluateNotContains() {
+            assertThatThrownBy(() -> sut.evaluateCondition(NOT_CONTAINS, 7L, 7L))
+                    .isInstanceOf(FilterException.class)
+                    .hasMessage("'not contains' operator cannot be applied to numbers");
         }
 
         @Test
@@ -144,6 +158,17 @@ class FieldConditionEvaluatorTest {
             assertTrue(sut.evaluateCondition(CONTAINS, "XanythingX", "anything"));
             assertFalse(sut.evaluateCondition(CONTAINS, "anything", "Xanything"));
             assertFalse(sut.evaluateCondition(CONTAINS, "anything", "ANYTHING"));
+            assertFalse(sut.evaluateCondition(CONTAINS, "anything", "something"));
+        }
+
+        @Test
+        void evaluateNotContains() {
+            assertTrue(sut.evaluateCondition(NOT_CONTAINS, "anything", "something"));
+            assertTrue(sut.evaluateCondition(NOT_CONTAINS, "anything", "Xanything"));
+            assertTrue(sut.evaluateCondition(NOT_CONTAINS, "anything", "ANYTHING"));
+            assertFalse(sut.evaluateCondition(NOT_CONTAINS, "Xanything", "anything"));
+            assertFalse(sut.evaluateCondition(NOT_CONTAINS, "anythingX", "anything"));
+            assertFalse(sut.evaluateCondition(NOT_CONTAINS, "XanythingX", "anything"));
         }
     }
 
@@ -180,6 +205,13 @@ class FieldConditionEvaluatorTest {
             assertThatThrownBy(() -> sut.evaluateCondition(CONTAINS, true, true))
                     .isInstanceOf(FilterException.class)
                     .hasMessage("'contains' operator cannot be applied to booleans");
+        }
+
+        @Test
+        void evaluateNotContains() {
+            assertThatThrownBy(() -> sut.evaluateCondition(NOT_CONTAINS, true, true))
+                    .isInstanceOf(FilterException.class)
+                    .hasMessage("'not contains' operator cannot be applied to booleans");
         }
 
         @Test
@@ -222,6 +254,13 @@ class FieldConditionEvaluatorTest {
             assertThatThrownBy(() -> sut.evaluateCondition(CONTAINS, 11.3F, 7.1F))
                     .isInstanceOf(FilterException.class)
                     .hasMessage("'contains' operator cannot be applied to numbers");
+        }
+
+        @Test
+        void evaluateNotContains() {
+            assertThatThrownBy(() -> sut.evaluateCondition(NOT_CONTAINS, 11.3F, 7.1F))
+                    .isInstanceOf(FilterException.class)
+                    .hasMessage("'not contains' operator cannot be applied to numbers");
         }
 
         @Test
@@ -269,6 +308,13 @@ class FieldConditionEvaluatorTest {
         }
 
         @Test
+        void evaluateNotContains() {
+            assertThatThrownBy(() -> sut.evaluateCondition(NOT_CONTAINS, 11.3, 7.1))
+                    .isInstanceOf(FilterException.class)
+                    .hasMessage("'not contains' operator cannot be applied to numbers");
+        }
+
+        @Test
         void evaluateNull() {
             assertFalse(sut.evaluateCondition(EQUAL, null, 7.1));
             assertFalse(sut.evaluateCondition(NOT_EQUAL, null, 7.1));
@@ -310,6 +356,13 @@ class FieldConditionEvaluatorTest {
             assertTrue(sut.evaluateCondition(CONTAINS, 'x', 'x'));
             assertFalse(sut.evaluateCondition(CONTAINS, 'x', 'a'));
             assertFalse(sut.evaluateCondition(CONTAINS, 'x', 'X'));
+        }
+
+        @Test
+        void evaluateNotContains() {
+            assertTrue(sut.evaluateCondition(NOT_CONTAINS, 'x', 'a'));
+            assertTrue(sut.evaluateCondition(NOT_CONTAINS, 'x', 'X'));
+            assertFalse(sut.evaluateCondition(NOT_CONTAINS, 'x', 'x'));
         }
 
         @Test
@@ -358,6 +411,17 @@ class FieldConditionEvaluatorTest {
             assertFalse(sut.evaluateCondition(CONTAINS, "ENUM_VALUE0", ENUM_VALUE1));
             assertFalse(sut.evaluateCondition(CONTAINS, "enum_value1", ENUM_VALUE1));
             assertFalse(sut.evaluateCondition(CONTAINS, "Xenum_value1", ENUM_VALUE1));
+        }
+
+        @Test
+        void evaluateNotContains() {
+            assertTrue(sut.evaluateCondition(NOT_CONTAINS, "ENUM_VALUE0", ENUM_VALUE1));
+            assertTrue(sut.evaluateCondition(NOT_CONTAINS, "enum_value1", ENUM_VALUE1));
+            assertTrue(sut.evaluateCondition(NOT_CONTAINS, "Xenum_value1", ENUM_VALUE1));
+            assertFalse(sut.evaluateCondition(NOT_CONTAINS, "ENUM_VALUE1", ENUM_VALUE1));
+            assertFalse(sut.evaluateCondition(NOT_CONTAINS, "xENUM_VALUE1", ENUM_VALUE1));
+            assertFalse(sut.evaluateCondition(NOT_CONTAINS, "ENUM_VALUE1x", ENUM_VALUE1));
+            assertFalse(sut.evaluateCondition(NOT_CONTAINS, "xENUM_VALUE1x", ENUM_VALUE1));
         }
 
         @Test
