@@ -4,10 +4,25 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.tanio.Filter.FieldCase.CAMEL_CASE;
+
 class Filter {
-    private final FieldValueRetriever retriever = new FieldValueRetriever();
+    private final FieldValueRetriever retriever;
     private final FieldConditionEvaluator evaluator = new FieldConditionEvaluator();
     private final SetCombiner setCombiner = new SetCombiner();
+
+    public Filter() {
+        this(CAMEL_CASE);
+    }
+
+    public Filter(FieldCase fieldCase) {
+        GetterMethodNameBuilder getterMethodNameBuilder = null;
+        switch (fieldCase) {
+            case CAMEL_CASE -> getterMethodNameBuilder = new GetterMethodNameBuilderFromCamelCase();
+            case SNAKE_CASE -> getterMethodNameBuilder = new GetterMethodNameBuilderFromSnakeCase();
+        }
+        retriever = new FieldValueRetriever(getterMethodNameBuilder);
+    }
 
     <T> Set<T> evaluate(Condition condition, List<T> target) {
         if (condition instanceof CompoundCondition compoundCondition) {
@@ -38,5 +53,9 @@ class Filter {
     private <T> boolean fulfillsSimpleCondition(T object, SimpleCondition condition) {
         Object fieldValue = retriever.retrieveFieldValue(condition.getFieldName(), object);
         return evaluator.evaluateCondition(condition.getOperator(), fieldValue, condition.getValue());
+    }
+
+    enum FieldCase {
+        SNAKE_CASE, CAMEL_CASE;
     }
 }

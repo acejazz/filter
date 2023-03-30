@@ -12,7 +12,7 @@ import static com.tanio.CompoundCondition.BooleanOperator.AND;
 
 class Deserializer {
     ObjectMapper objectMapper = new ObjectMapper();
-    OperatorMapper operatorMapper = new OperatorMapper();
+    ComparisonOperatorMapper comparisonOperatorMapper = new ComparisonOperatorMapper();
     BooleanOperatorMapper booleanOperatorMapper = new BooleanOperatorMapper();
     ConditionValueSerializer conditionValueSerializer = new ConditionValueSerializer();
 
@@ -67,6 +67,6 @@ class Deserializer {
         String fieldName = jsonNode.get("fieldName").asText();
         String operator = jsonNode.get("operator").asText();
         Object value = conditionValueSerializer.serializeConditionValue(jsonNode.get("value"));
-        return new SimpleCondition(fieldName, operatorMapper.map(operator), value);
+        return new SimpleCondition(fieldName, comparisonOperatorMapper.map(operator), value);
     }
 }

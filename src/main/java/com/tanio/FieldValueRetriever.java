@@ -5,6 +5,11 @@ import java.lang.reflect.Method;
 class FieldValueRetriever {
 
     private static final String SEPARATOR = ".";
+    private final GetterMethodNameBuilder getterMethodNameBuilder;
+
+    public FieldValueRetriever(GetterMethodNameBuilder getterMethodNameBuilder) {
+        this.getterMethodNameBuilder = getterMethodNameBuilder;
+    }
 
     Object retrieveFieldValue(String fieldName, Object object) {
         if (isNestedFieldName(fieldName)) {
@@ -19,7 +24,7 @@ class FieldValueRetriever {
             }
         }
 
-        String methodName = transformToGetterMethodName(fieldName);
+        String methodName = getterMethodNameBuilder.buildGetterName(fieldName);
         return invokeMethod(methodName, object);
     }
 
@@ -28,7 +33,7 @@ class FieldValueRetriever {
         String topLevelFieldName = extractTopLevelFieldName(fieldName);
 
         // object1 => getObject1
-        String getterMethodName = transformToGetterMethodName(topLevelFieldName);
+        String getterMethodName = getterMethodNameBuilder.buildGetterName(topLevelFieldName);
 
         // Get the value for the first level object: {object1}
         Object topLevelFieldValue = invokeMethod(getterMethodName, object);
@@ -53,10 +58,6 @@ class FieldValueRetriever {
     private boolean isFieldNameReferringToBoolean(String fieldName) {
         return fieldName.startsWith("is")
                 && Character.isUpperCase(fieldName.charAt(2));
-    }
-
-    private String transformToGetterMethodName(String fieldName) {
-        return "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
     }
 
     private String extractTopLevelFieldName(String fieldName) {

@@ -1,10 +1,12 @@
 package com.tanio;
 
-import static com.tanio.SimpleCondition.Operator.*;
+import com.tanio.SimpleCondition.ComparisonOperator;
 
-class OperatorMapper {
-    SimpleCondition.Operator map(String operator) {
-        return switch (operator) {
+import static com.tanio.SimpleCondition.ComparisonOperator.*;
+
+class ComparisonOperatorMapper {
+    ComparisonOperator map(String text) {
+        return switch (text) {
             case "equal" -> EQUAL;
             case "not_equal" -> NOT_EQUAL;
             case "greater_than" -> GREATER_THAN;

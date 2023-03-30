@@ -3,7 +3,7 @@ package com.tanio;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static com.tanio.SimpleCondition.Operator.*;
+import static com.tanio.SimpleCondition.ComparisonOperator.*;
 import static com.tanio.TestEnum.ENUM_VALUE0;
 import static com.tanio.TestEnum.ENUM_VALUE1;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;

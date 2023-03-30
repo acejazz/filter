@@ -1,12 +1,13 @@
 package com.tanio;
 
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class FieldValueRetrieverTest {
-    FieldValueRetriever sut = new FieldValueRetriever();
+    FieldValueRetriever sut = new FieldValueRetriever(new GetterMethodNameBuilderFromCamelCase());
 
     @Test
     void retrieveIntegerFieldValue() {
@@ -140,13 +141,39 @@ class FieldValueRetrieverTest {
         nestedEntity.setNestedNestedEntity(nestedNestedEntity);
         TestEntity testEntity = new TestEntity();
         testEntity.setNestedEntity(nestedEntity);
-        assertThat(sut.retrieveFieldValue("nestedEntity.nestedNestedEntity", testEntity)).isEqualTo(nestedNestedEntity);
+        assertThat(sut.retrieveFieldValue("nestedEntity.nestedNestedEntity", testEntity))
+                .isEqualTo(nestedNestedEntity);
     }
 
     @Test
     void handleNonExistingMethodName() {
-        assertThatThrownBy(() ->sut.retrieveFieldValue("anyNonExistingFieldName", new Object()))
+        assertThatThrownBy(() -> sut.retrieveFieldValue("anyNonExistingFieldName", new Object()))
                 .isInstanceOf(FilterException.class)
                 .hasMessage("Method [getAnyNonExistingFieldName] does not exist in class [java.lang.Object]");
+    }
+
+    @Nested
+    class WithGetterMethodNameBuilderFromSnakeCase {
+        FieldValueRetriever sut =
+                new FieldValueRetriever(new GetterMethodNameBuilderFromSnakeCase());
+
+        @Test
+        void useGetterMethodNameBuilderFromSnakeCase() {
+            TestEntity testEntity = new TestEntity();
+            testEntity.setIntegerField(17);
+            assertThat(sut.retrieveFieldValue("integer_field", testEntity)).isEqualTo(17);
+        }
+
+        @Test
+        void retrieveNestedInstance_twoLevels() {
+            NestedNestedEntity nestedNestedEntity = new NestedNestedEntity();
+            NestedEntity nestedEntity = new NestedEntity();
+            nestedEntity.setNestedNestedEntity(nestedNestedEntity);
+            TestEntity testEntity = new TestEntity();
+            testEntity.setNestedEntity(nestedEntity);
+            assertThat(sut.retrieveFieldValue("nested_entity.nested_nested_entity", testEntity))
+                    .isEqualTo(nestedNestedEntity);
+        }
+
     }
 }

@@ -1,9 +1,9 @@
 package com.tanio;
 
-import com.tanio.SimpleCondition.Operator;
+import com.tanio.SimpleCondition.ComparisonOperator;
 
 class FieldConditionEvaluator {
-    boolean evaluateCondition(Operator operator, Object first, Object second) {
+    boolean evaluateCondition(ComparisonOperator operator, Object first, Object second) {
         if (first == null) {
             return false;
         }
@@ -51,13 +51,13 @@ class FieldConditionEvaluator {
         throw new FilterException("Filter applicable only to primitives, primitive wrappers and strings");
     }
 
-    private static boolean evaluateConditionOnStringifiedObjects(Operator conditionOperator,
+    private static boolean evaluateConditionOnStringifiedObjects(ComparisonOperator operator,
                                                                  Object first,
                                                                  Object second) {
         String firstString = String.valueOf(first);
         String secondString = String.valueOf(second);
 
-        return switch (conditionOperator) {
+        return switch (operator) {
             case EQUAL -> firstString.equals(secondString);
             case NOT_EQUAL -> !firstString.equals(secondString);
             case LESS_THAN -> firstString.compareTo(secondString) < 0;

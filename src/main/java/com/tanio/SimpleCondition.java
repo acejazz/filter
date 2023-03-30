@@ -2,17 +2,17 @@ package com.tanio;
 
 import java.util.Objects;
 
-import static com.tanio.SimpleCondition.Operator.*;
+import static com.tanio.SimpleCondition.ComparisonOperator.*;
 
 class SimpleCondition implements Condition {
     private String fieldName;
-    private Operator operator;
+    private ComparisonOperator operator;
     private Object value;
 
     public SimpleCondition() {
     }
 
-    SimpleCondition(String fieldName, Operator operator, Object value) {
+    SimpleCondition(String fieldName, ComparisonOperator operator, Object value) {
         this.fieldName = fieldName;
         this.operator = operator;
         this.value = value;
@@ -22,7 +22,7 @@ class SimpleCondition implements Condition {
         return fieldName;
     }
 
-    Operator getOperator() {
+    ComparisonOperator getOperator() {
         return operator;
     }
 
@@ -34,7 +34,7 @@ class SimpleCondition implements Condition {
         this.fieldName = fieldName;
     }
 
-    public void setOperator(Operator operator) {
+    public void setOperator(ComparisonOperator operator) {
         this.operator = operator;
     }
 
@@ -88,7 +88,7 @@ class SimpleCondition implements Condition {
         return new SimpleCondition(fieldName, NOT_CONTAINS, value);
     }
 
-    enum Operator {
+    enum ComparisonOperator {
         EQUAL,
         NOT_EQUAL,
         LESS_THAN,
