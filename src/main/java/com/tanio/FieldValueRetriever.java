@@ -5,14 +5,11 @@ import java.lang.reflect.Method;
 class FieldValueRetriever {
 
     private final GetterMethodNameBuilder getterMethodNameBuilder;
+    private final BooleanHandling booleanHandling;
     private static final String NESTING_SEPARATOR = ".";
-    private BooleanHandling booleanHandling = BooleanHandling.IS;
 
-    public FieldValueRetriever(GetterMethodNameBuilder getterMethodNameBuilder) {
+    public FieldValueRetriever(GetterMethodNameBuilder getterMethodNameBuilder, BooleanHandling booleanHandling) {
         this.getterMethodNameBuilder = getterMethodNameBuilder;
-    }
-
-    public void setBooleanHandling(BooleanHandling booleanHandling) {
         this.booleanHandling = booleanHandling;
     }
 

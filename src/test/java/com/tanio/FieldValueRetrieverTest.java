@@ -1,15 +1,16 @@
 package com.tanio;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static com.tanio.FieldValueRetriever.BooleanHandling.GETTER;
 import static com.tanio.FieldValueRetriever.BooleanHandling.IS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class FieldValueRetrieverTest {
-    FieldValueRetriever sut = new FieldValueRetriever(new GetterMethodNameBuilderFromCamelCase());
+    FieldValueRetriever sut =
+            new FieldValueRetriever(new GetterMethodNameBuilderFromCamelCase(), GETTER);
 
     @Test
     void retrieveIntegerFieldValue() {
@@ -138,7 +139,7 @@ class FieldValueRetrieverTest {
     @Nested
     class WithGetterMethodNameBuilderFromSnakeCase {
         FieldValueRetriever sut =
-                new FieldValueRetriever(new GetterMethodNameBuilderFromSnakeCase());
+                new FieldValueRetriever(new GetterMethodNameBuilderFromSnakeCase(), IS);
 
         @Test
         void useGetterMethodNameBuilderFromSnakeCase() {
@@ -163,12 +164,7 @@ class FieldValueRetrieverTest {
     @Nested
     class BooleanHandlingFlag {
 
-        FieldValueRetriever sut = new FieldValueRetriever(new GetterMethodNameBuilderFromCamelCase());
-
-        @BeforeEach
-        void setUp() {
-            sut.setBooleanHandling(IS);
-        }
+        FieldValueRetriever sut = new FieldValueRetriever(new GetterMethodNameBuilderFromCamelCase(), GETTER);
 
         @Test
         void retrieveBooleanFieldValue() {

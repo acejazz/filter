@@ -21,7 +21,7 @@ class Filter {
             case CAMEL_CASE -> getterMethodNameBuilder = new GetterMethodNameBuilderFromCamelCase();
             case SNAKE_CASE -> getterMethodNameBuilder = new GetterMethodNameBuilderFromSnakeCase();
         }
-        retriever = new FieldValueRetriever(getterMethodNameBuilder);
+        retriever = new FieldValueRetriever(getterMethodNameBuilder, FieldValueRetriever.BooleanHandling.IS);
     }
 
     <T> Set<T> evaluate(Condition condition, List<T> target) {
