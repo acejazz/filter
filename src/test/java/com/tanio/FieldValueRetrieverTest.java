@@ -1,8 +1,10 @@
 package com.tanio;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static com.tanio.FieldValueRetriever.BooleanHandling.IS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -56,25 +58,6 @@ class FieldValueRetrieverTest {
         TestEntity testEntity = new TestEntity();
         testEntity.setBooleanField(true);
         assertThat(sut.retrieveFieldValue("booleanField", testEntity)).isEqualTo(true);
-    }
-
-    @Test
-    void retrieveBooleanFieldValue_is() {
-        BooleanTestEntity testEntity = new BooleanTestEntity();
-        assertThat(sut.retrieveFieldValue("isValid", testEntity)).isEqualTo(true);
-    }
-
-    @Test
-    void retrieveBooleanFieldValue_is_withWrapper() {
-        BooleanTestEntity testEntity = new BooleanTestEntity();
-        assertThat(sut.retrieveFieldValue("isValidWithWrapper", testEntity)).isEqualTo(true);
-    }
-
-    @Test
-    void retrieveBooleanPrimitiveFieldValue() {
-        TestEntity testEntity = new TestEntity();
-        testEntity.setBooleanPrimitiveField(true);
-        assertThat(sut.retrieveFieldValue("booleanPrimitiveField", testEntity)).isEqualTo(true);
     }
 
     @Test
@@ -175,5 +158,28 @@ class FieldValueRetrieverTest {
                     .isEqualTo(nestedNestedEntity);
         }
 
+    }
+
+    @Nested
+    class BooleanHandlingFlag {
+
+        FieldValueRetriever sut = new FieldValueRetriever(new GetterMethodNameBuilderFromCamelCase());
+
+        @BeforeEach
+        void setUp() {
+            sut.setBooleanHandling(IS);
+        }
+
+        @Test
+        void retrieveBooleanFieldValue() {
+            BooleanTestEntityGet testEntity = new BooleanTestEntityGet();
+            assertThat(sut.retrieveFieldValue("valid", testEntity)).isEqualTo(true);
+        }
+
+        @Test
+        void retrieveBooleanFieldValueWithWrapper() {
+            BooleanTestEntityGet testEntity = new BooleanTestEntityGet();
+            assertThat(sut.retrieveFieldValue("validWithWrapper", testEntity)).isEqualTo(true);
+        }
     }
 }

@@ -2,8 +2,8 @@ package com.tanio;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-class ConditionValueSerializer {
-    Object serializeConditionValue(JsonNode jsonNode) {
+class ConditionValueDeserializer {
+    Object deserializeConditionValue(JsonNode jsonNode) {
         if (jsonNode.isInt()) {
             return jsonNode.asInt();
         } else if (jsonNode.isDouble()) {

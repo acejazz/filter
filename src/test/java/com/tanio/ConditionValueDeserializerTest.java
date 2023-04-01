@@ -8,36 +8,36 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ConditionValueSerializerTest {
-    ConditionValueSerializer sut = new ConditionValueSerializer();
+class ConditionValueDeserializerTest {
+    ConditionValueDeserializer sut = new ConditionValueDeserializer();
 
     @Test
     void serializeInteger() {
-        Object result = sut.serializeConditionValue(new IntNode(3));
+        Object result = sut.deserializeConditionValue(new IntNode(3));
         assertThat(result).isEqualTo(3);
     }
 
     @Test
     void serializeDouble() {
-        Object result = sut.serializeConditionValue(new DoubleNode(11.3));
+        Object result = sut.deserializeConditionValue(new DoubleNode(11.3));
         assertThat(result).isEqualTo(11.3);
     }
 
     @Test
     void serializeString() {
-        Object result = sut.serializeConditionValue(new TextNode("anyString"));
+        Object result = sut.deserializeConditionValue(new TextNode("anyString"));
         assertThat(result).isEqualTo("anyString");
     }
 
     @Test
     void serializeChar() {
-        Object result = sut.serializeConditionValue(new TextNode("a"));
+        Object result = sut.deserializeConditionValue(new TextNode("a"));
         assertThat(result).isEqualTo('a');
     }
 
     @Test
     void serializeBoolean() {
-        Object result = sut.serializeConditionValue(BooleanNode.TRUE);
+        Object result = sut.deserializeConditionValue(BooleanNode.TRUE);
         assertThat(result).isEqualTo(true);
     }
 }

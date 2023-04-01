@@ -9,12 +9,13 @@ import java.util.Iterator;
 import java.util.Set;
 
 import static com.tanio.CompoundCondition.BooleanOperator.AND;
-
+// TODO: merge the two mappers
+// TODO: pass the object mapper and the default operator from the constructor
 class Deserializer {
-    ObjectMapper objectMapper = new ObjectMapper();
-    ComparisonOperatorMapper comparisonOperatorMapper = new ComparisonOperatorMapper();
-    BooleanOperatorMapper booleanOperatorMapper = new BooleanOperatorMapper();
-    ConditionValueSerializer conditionValueSerializer = new ConditionValueSerializer();
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ComparisonOperatorMapper comparisonOperatorMapper = new ComparisonOperatorMapper();
+    private final BooleanOperatorMapper booleanOperatorMapper = new BooleanOperatorMapper();
+    private final ConditionValueDeserializer conditionValueDeserializer = new ConditionValueDeserializer();
 
     public static final CompoundCondition.BooleanOperator DEFAULT_BOOLEAN_OPERATOR = AND;
 
@@ -66,7 +67,7 @@ class Deserializer {
     private SimpleCondition toSimpleCondition(JsonNode jsonNode) {
         String fieldName = jsonNode.get("fieldName").asText();
         String operator = jsonNode.get("operator").asText();
-        Object value = conditionValueSerializer.serializeConditionValue(jsonNode.get("value"));
+        Object value = conditionValueDeserializer.deserializeConditionValue(jsonNode.get("value"));
         return new SimpleCondition(fieldName, comparisonOperatorMapper.map(operator), value);
     }
 }
