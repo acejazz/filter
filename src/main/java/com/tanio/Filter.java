@@ -1,13 +1,13 @@
 package com.tanio;
 
-import com.tanio.FieldValueRetriever.BooleanHandling;
+import com.tanio.FieldValueRetriever.BooleanFieldNameHandling;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.tanio.FieldValueRetriever.BooleanHandling.IS;
-import static com.tanio.Filter.FieldCase.CAMEL_CASE;
+import static com.tanio.FieldValueRetriever.BooleanFieldNameHandling.IS;
+import static com.tanio.Filter.FieldNameCase.CAMEL_CASE;
 
 class Filter {
     private final FieldValueRetriever retriever;
@@ -15,20 +15,26 @@ class Filter {
     private final SetCombiner setCombiner = new SetCombiner();
 
     public Filter() {
-        this(CAMEL_CASE, IS);
+        this(CAMEL_CASE, IS, ".");
     }
 
-    public Filter(FieldCase fieldCase, BooleanHandling booleanHandling) {
+    public Filter(FieldNameCase fieldNameCase,
+                  BooleanFieldNameHandling booleanFieldNameHandling,
+                  String nestingSeparator) {
         GetterMethodNameBuilder getterMethodNameBuilder = null;
-        switch (fieldCase) {
+        switch (fieldNameCase) {
             case CAMEL_CASE -> getterMethodNameBuilder = new GetterMethodNameBuilderFromCamelCase();
             case SNAKE_CASE -> getterMethodNameBuilder = new GetterMethodNameBuilderFromSnakeCase();
         }
 
-        retriever = new FieldValueRetriever(getterMethodNameBuilder, booleanHandling);
+        retriever =
+                new FieldValueRetriever(
+                        getterMethodNameBuilder,
+                        booleanFieldNameHandling,
+                        nestingSeparator);
     }
 
-    <T> Set<T> evaluate(Condition condition, List<T> target) {
+    public <T> Set<T> evaluate(Condition condition, List<T> target) {
         if (condition instanceof CompoundCondition compoundCondition) {
             return handleCompoundCondition(compoundCondition, target);
         }
@@ -59,7 +65,7 @@ class Filter {
         return evaluator.evaluateCondition(condition.getOperator(), fieldValue, condition.getValue());
     }
 
-    enum FieldCase {
+    enum FieldNameCase {
         SNAKE_CASE, CAMEL_CASE;
     }
 }

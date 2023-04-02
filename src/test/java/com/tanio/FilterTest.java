@@ -8,9 +8,10 @@ import java.util.List;
 import java.util.Set;
 
 import static com.tanio.CompoundCondition.*;
-import static com.tanio.FieldValueRetriever.BooleanHandling.GETTER;
-import static com.tanio.Filter.FieldCase.CAMEL_CASE;
-import static com.tanio.Filter.FieldCase.SNAKE_CASE;
+import static com.tanio.FieldValueRetriever.BooleanFieldNameHandling.GETTER;
+import static com.tanio.FieldValueRetriever.BooleanFieldNameHandling.IS;
+import static com.tanio.Filter.FieldNameCase.CAMEL_CASE;
+import static com.tanio.Filter.FieldNameCase.SNAKE_CASE;
 import static com.tanio.Fixture.*;
 import static com.tanio.SimpleCondition.*;
 import static java.util.Collections.singletonList;
@@ -20,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FilterTest {
-    Filter sut = new Filter(CAMEL_CASE, FieldValueRetriever.BooleanHandling.IS);
+    Filter sut = new Filter(CAMEL_CASE, IS, ".");
 
     @Test
     void performEvaluableSimpleCondition() {
@@ -331,7 +332,7 @@ class FilterTest {
 
     @Nested
     class WithSnakeCaseFieldName {
-        Filter sut = new Filter(SNAKE_CASE, FieldValueRetriever.BooleanHandling.IS);
+        Filter sut = new Filter(SNAKE_CASE, IS, ".");
 
         @Test
         void useSnakeCaseForSimpleCondition() {
@@ -376,10 +377,10 @@ class FilterTest {
 
     @Nested
     class WithGetterBooleanFieldHandling {
-        Filter sut = new Filter(SNAKE_CASE, GETTER);
+        Filter sut = new Filter(SNAKE_CASE, GETTER, ".");
 
         @Test
-        void useGetterBooleanFieldNameWithSimpleCondition()  {
+        void useGetterBooleanFieldNameWithSimpleCondition() {
             assertTrue(methodExists(MusicArtist.class, "getStillPlaying"));
             assertFalse(methodExists(MusicArtist.class, "isStillPlaying"));
 
@@ -431,6 +432,35 @@ class FilterTest {
                 return false;
             }
             return true;
+        }
+    }
+
+    @Nested
+    class WithDifferentNestingSeparator {
+        @Test
+        void filterWithDifferentNestingSeparator() {
+            NestedNestedEntity matchingNestedNestedEntity = new NestedNestedEntity();
+            matchingNestedNestedEntity.setStringField("anything");
+            NestedEntity matchingNestedEntity = new NestedEntity();
+            matchingNestedEntity.setNestedNestedEntity(matchingNestedNestedEntity);
+            TestEntity matchingTestEntity = new TestEntity();
+            matchingTestEntity.setNestedEntity(matchingNestedEntity);
+
+            NestedNestedEntity nonMatchingNestedNestedEntity = new NestedNestedEntity();
+            nonMatchingNestedNestedEntity.setStringField("notAnything");
+            NestedEntity nonMatchingNestedEntity = new NestedEntity();
+            nonMatchingNestedEntity.setNestedNestedEntity(nonMatchingNestedNestedEntity);
+            TestEntity nonMatchingTestEntity = new TestEntity();
+            nonMatchingTestEntity.setNestedEntity(nonMatchingNestedEntity);
+
+            Filter sut = new Filter(SNAKE_CASE, GETTER, "/");
+
+            Set<TestEntity> result =
+                    sut.evaluate(
+                            equal("nestedEntity/nestedNestedEntity/stringField", "anything"),
+                            Arrays.asList(matchingTestEntity, nonMatchingTestEntity));
+
+            assertThat(result).containsExactly(matchingTestEntity);
         }
     }
 }

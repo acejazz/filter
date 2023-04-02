@@ -3,14 +3,14 @@ package com.tanio;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static com.tanio.FieldValueRetriever.BooleanHandling.GETTER;
-import static com.tanio.FieldValueRetriever.BooleanHandling.IS;
+import static com.tanio.FieldValueRetriever.BooleanFieldNameHandling.GETTER;
+import static com.tanio.FieldValueRetriever.BooleanFieldNameHandling.IS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class FieldValueRetrieverTest {
     FieldValueRetriever sut =
-            new FieldValueRetriever(new GetterMethodNameBuilderFromCamelCase(), GETTER);
+            new FieldValueRetriever(new GetterMethodNameBuilderFromCamelCase(), GETTER, ".");
 
     @Test
     void retrieveIntegerFieldValue() {
@@ -137,9 +137,9 @@ class FieldValueRetrieverTest {
     }
 
     @Nested
-    class WithGetterMethodNameBuilderFromSnakeCase {
+    class WithSnakeCaseFieldNames {
         FieldValueRetriever sut =
-                new FieldValueRetriever(new GetterMethodNameBuilderFromSnakeCase(), IS);
+                new FieldValueRetriever(new GetterMethodNameBuilderFromSnakeCase(), IS, ".");
 
         @Test
         void useGetterMethodNameBuilderFromSnakeCase() {
@@ -162,9 +162,9 @@ class FieldValueRetrieverTest {
     }
 
     @Nested
-    class BooleanHandlingFlag {
+    class WithGetterBooleanFieldNameHandling {
 
-        FieldValueRetriever sut = new FieldValueRetriever(new GetterMethodNameBuilderFromCamelCase(), GETTER);
+        FieldValueRetriever sut = new FieldValueRetriever(new GetterMethodNameBuilderFromCamelCase(), GETTER, ".");
 
         @Test
         void retrieveBooleanFieldValue() {
@@ -176,6 +176,23 @@ class FieldValueRetrieverTest {
         void retrieveBooleanFieldValueWithWrapper() {
             BooleanTestEntityGet testEntity = new BooleanTestEntityGet();
             assertThat(sut.retrieveFieldValue("validWithWrapper", testEntity)).isEqualTo(true);
+        }
+    }
+
+    @Nested
+    class WithDifferentNestingSeparator {
+        FieldValueRetriever sut =
+                new FieldValueRetriever(new GetterMethodNameBuilderFromCamelCase(), GETTER, "/");
+
+        @Test
+        void retrieveNestedInstance_twoLevels() {
+            NestedNestedEntity nestedNestedEntity = new NestedNestedEntity();
+            NestedEntity nestedEntity = new NestedEntity();
+            nestedEntity.setNestedNestedEntity(nestedNestedEntity);
+            TestEntity testEntity = new TestEntity();
+            testEntity.setNestedEntity(nestedEntity);
+            assertThat(sut.retrieveFieldValue("nestedEntity/nestedNestedEntity", testEntity))
+                    .isEqualTo(nestedNestedEntity);
         }
     }
 }

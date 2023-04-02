@@ -2,15 +2,20 @@ package com.tanio;
 
 import java.lang.reflect.Method;
 
+import static com.tanio.FieldValueRetriever.BooleanFieldNameHandling.IS;
+
 class FieldValueRetriever {
 
     private final GetterMethodNameBuilder getterMethodNameBuilder;
-    private final BooleanHandling booleanHandling;
-    private static final String NESTING_SEPARATOR = ".";
+    private final BooleanFieldNameHandling booleanFieldNameHandling;
+    private final String nestingSeparator;
 
-    public FieldValueRetriever(GetterMethodNameBuilder getterMethodNameBuilder, BooleanHandling booleanHandling) {
+    FieldValueRetriever(GetterMethodNameBuilder getterMethodNameBuilder,
+                        BooleanFieldNameHandling booleanFieldNameHandling,
+                        String nestingSeparator) {
         this.getterMethodNameBuilder = getterMethodNameBuilder;
-        this.booleanHandling = booleanHandling;
+        this.booleanFieldNameHandling = booleanFieldNameHandling;
+        this.nestingSeparator = nestingSeparator;
     }
 
     Object retrieveFieldValue(String fieldName, Object object) {
@@ -18,11 +23,11 @@ class FieldValueRetriever {
             return retrieveNestedFieldValue(fieldName, object);
         }
 
-        if (booleanHandling.equals(BooleanHandling.IS)) {
+        if (booleanFieldNameHandling.equals(IS)) {
             if (isFieldNameReferringToBoolean(fieldName)) {
                 Method method = getMethod(fieldName, object);
                 if (isReturnTypeBoolean(method)) {
-                    // Does not use the transformation to getter name
+                    // Does not use the transformation to getter name, uses the field name as it is
                     return invokeMethod(fieldName, object);
                 }
             }
@@ -50,7 +55,7 @@ class FieldValueRetriever {
     }
 
     private boolean isNestedFieldName(String fieldName) {
-        int separatorIndex = fieldName.indexOf(NESTING_SEPARATOR);
+        int separatorIndex = fieldName.indexOf(nestingSeparator);
         return separatorIndex != -1;
     }
 
@@ -65,7 +70,7 @@ class FieldValueRetriever {
     }
 
     private String extractTopLevelFieldName(String fieldName) {
-        int separatorIndex = fieldName.indexOf(NESTING_SEPARATOR);
+        int separatorIndex = fieldName.indexOf(nestingSeparator);
         return fieldName.substring(0, separatorIndex);
     }
 
@@ -96,11 +101,11 @@ class FieldValueRetriever {
     }
 
     private String extractRemainingLevelFieldNames(String fieldName) {
-        int separatorIndex = fieldName.indexOf(NESTING_SEPARATOR);
+        int separatorIndex = fieldName.indexOf(nestingSeparator);
         return fieldName.substring(separatorIndex + 1);
     }
 
-    public enum BooleanHandling {
+    public enum BooleanFieldNameHandling {
         IS, GETTER
     }
 }
