@@ -2,10 +2,20 @@ package com.tanio;
 
 import com.tanio.SimpleCondition.ComparisonOperator;
 
+import static com.tanio.CompoundCondition.BooleanOperator.*;
 import static com.tanio.SimpleCondition.ComparisonOperator.*;
 
-class ComparisonOperatorMapper {
-    ComparisonOperator map(String text) {
+class StringToOperatorMapper {
+    CompoundCondition.BooleanOperator mapToBooleanOperator(String text) {
+        return switch (text) {
+            case "and" -> AND;
+            case "or" -> OR;
+            case "not" -> NOT;
+            default -> throw new RuntimeException();
+        };
+    }
+
+    ComparisonOperator mapToComparisonOperator(String text) {
         return switch (text) {
             case "equal" -> EQUAL;
             case "not_equal" -> NOT_EQUAL;
