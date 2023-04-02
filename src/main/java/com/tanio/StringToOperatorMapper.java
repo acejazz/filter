@@ -1,16 +1,24 @@
 package com.tanio;
 
+import com.tanio.CompoundCondition.BooleanOperator;
 import com.tanio.SimpleCondition.ComparisonOperator;
 
 import static com.tanio.CompoundCondition.BooleanOperator.*;
 import static com.tanio.SimpleCondition.ComparisonOperator.*;
 
 class StringToOperatorMapper {
-    CompoundCondition.BooleanOperator mapToBooleanOperator(String text) {
+    static final String STRING_AND = "and";
+    static final String STRING_OR = "or";
+    static final String STRING_NOT = "not";
+    static final String STRING_FIELD_NAME = "fieldName";
+    static final String STRING_OPERATOR = "operator";
+    static final String STRING_VALUE = "value";
+
+    BooleanOperator mapToBooleanOperator(String text) {
         return switch (text) {
-            case "and" -> AND;
-            case "or" -> OR;
-            case "not" -> NOT;
+            case STRING_AND -> AND;
+            case STRING_OR -> OR;
+            case STRING_NOT -> NOT;
             default -> throw new RuntimeException();
         };
     }

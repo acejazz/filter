@@ -9,6 +9,8 @@ import java.util.Iterator;
 import java.util.Set;
 
 import static com.tanio.CompoundCondition.BooleanOperator.AND;
+import static com.tanio.StringToOperatorMapper.*;
+
 // TODO: pass the object mapper and the default operator from the constructor
 class Deserializer {
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -43,6 +45,13 @@ class Deserializer {
         return new CompoundCondition(stringToOperatorMapper.mapToBooleanOperator(fieldName), conditions);
     }
 
+    private SimpleCondition toSimpleCondition(JsonNode jsonNode) {
+        String fieldName = jsonNode.get(STRING_FIELD_NAME).asText();
+        String operator = jsonNode.get(STRING_OPERATOR).asText();
+        Object value = conditionValueDeserializer.deserializeConditionValue(jsonNode.get(STRING_VALUE));
+        return new SimpleCondition(fieldName, stringToOperatorMapper.mapToComparisonOperator(operator), value);
+    }
+
     private Set<Condition> toConditionSet(JsonNode node) {
         Iterator<JsonNode> children = node.elements();
 
@@ -59,13 +68,6 @@ class Deserializer {
     }
 
     private boolean isCompoundCondition(JsonNode node) {
-        return node.has("and") || node.has("or") || node.has("not");
-    }
-
-    private SimpleCondition toSimpleCondition(JsonNode jsonNode) {
-        String fieldName = jsonNode.get("fieldName").asText();
-        String operator = jsonNode.get("operator").asText();
-        Object value = conditionValueDeserializer.deserializeConditionValue(jsonNode.get("value"));
-        return new SimpleCondition(fieldName, stringToOperatorMapper.mapToComparisonOperator(operator), value);
+        return node.has(STRING_AND) || node.has(STRING_OR) || node.has(STRING_NOT);
     }
 }
