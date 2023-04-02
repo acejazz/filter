@@ -1,5 +1,6 @@
 package com.tanio;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -9,8 +10,6 @@ import java.util.Set;
 
 import static com.tanio.CompoundCondition.*;
 import static com.tanio.FieldValueRetriever.BooleanFieldNameHandling.GETTER;
-import static com.tanio.FieldValueRetriever.BooleanFieldNameHandling.IS;
-import static com.tanio.Filter.FieldNameCase.CAMEL_CASE;
 import static com.tanio.Filter.FieldNameCase.SNAKE_CASE;
 import static com.tanio.Fixture.*;
 import static com.tanio.SimpleCondition.*;
@@ -21,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FilterTest {
-    Filter sut = new Filter(CAMEL_CASE, IS, ".");
+    Filter sut = new Filter();
 
     @Test
     void performEvaluableSimpleCondition() {
@@ -332,7 +331,14 @@ class FilterTest {
 
     @Nested
     class WithSnakeCaseFieldName {
-        Filter sut = new Filter(SNAKE_CASE, IS, ".");
+        Filter sut;
+
+        @BeforeEach
+        void setUp() {
+            Filter.Settings settings = new Filter.Settings();
+            settings.fieldNameCase = SNAKE_CASE;
+            sut = new Filter(settings);
+        }
 
         @Test
         void useSnakeCaseForSimpleCondition() {
@@ -377,7 +383,14 @@ class FilterTest {
 
     @Nested
     class WithGetterBooleanFieldHandling {
-        Filter sut = new Filter(SNAKE_CASE, GETTER, ".");
+        Filter sut = new Filter();
+
+        @BeforeEach
+        void setUp() {
+            Filter.Settings settings = new Filter.Settings();
+            settings.booleanFieldNameHandling = GETTER;
+            sut = new Filter(settings);
+        }
 
         @Test
         void useGetterBooleanFieldNameWithSimpleCondition() {
@@ -395,7 +408,7 @@ class FilterTest {
                     eltonJohn(),
                     bruceSpringsteen());
 
-            Set<MusicArtist> result = sut.evaluate(equal("still_playing", false), musicArtists);
+            Set<MusicArtist> result = sut.evaluate(equal("stillPlaying", false), musicArtists);
 
             assertThat(result).containsExactlyInAnyOrder(edithPiaf(), beatles(), nirvana(), marvinGaye());
         }
@@ -406,8 +419,8 @@ class FilterTest {
             assertFalse(methodExists(MusicArtist.class, "isStillPlaying"));
 
             CompoundCondition condition = and(
-                    equal("still_playing", false),
-                    greaterThan("number_of_components", 1));
+                    equal("stillPlaying", false),
+                    greaterThan("numberOfComponents", 1));
 
             List<MusicArtist> musicArtists = Arrays.asList(
                     beatles(),
@@ -453,7 +466,9 @@ class FilterTest {
             TestEntity nonMatchingTestEntity = new TestEntity();
             nonMatchingTestEntity.setNestedEntity(nonMatchingNestedEntity);
 
-            Filter sut = new Filter(SNAKE_CASE, GETTER, "/");
+            Filter.Settings settings = new Filter.Settings();
+            settings.nestingSeparator = "/";
+            Filter sut = new Filter(settings);
 
             Set<TestEntity> result =
                     sut.evaluate(

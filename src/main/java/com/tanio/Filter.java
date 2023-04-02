@@ -9,18 +9,26 @@ import java.util.stream.Collectors;
 import static com.tanio.FieldValueRetriever.BooleanFieldNameHandling.IS;
 import static com.tanio.Filter.FieldNameCase.CAMEL_CASE;
 
-class Filter {
+public class Filter {
     private final FieldValueRetriever retriever;
     private final FieldConditionEvaluator evaluator = new FieldConditionEvaluator();
     private final SetCombiner setCombiner = new SetCombiner();
 
-    public Filter() {
-        this(CAMEL_CASE, IS, ".");
+    public static class Settings {
+        FieldNameCase fieldNameCase = CAMEL_CASE;
+        BooleanFieldNameHandling booleanFieldNameHandling = IS;
+        String nestingSeparator = ".";
     }
 
-    public Filter(FieldNameCase fieldNameCase,
-                  BooleanFieldNameHandling booleanFieldNameHandling,
-                  String nestingSeparator) {
+    public Filter() {
+        this(new Settings());
+    }
+
+    public Filter(Settings settings) {
+        FieldNameCase fieldNameCase = settings.fieldNameCase;
+        BooleanFieldNameHandling booleanFieldNameHandling = settings.booleanFieldNameHandling;
+        String nestingSeparator = settings.nestingSeparator;
+
         GetterMethodNameBuilder getterMethodNameBuilder = null;
         switch (fieldNameCase) {
             case CAMEL_CASE -> getterMethodNameBuilder = new GetterMethodNameBuilderFromCamelCase();
