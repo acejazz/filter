@@ -5,6 +5,8 @@ class MusicArtist {
     String genre;
     int numberOfComponents;
     String country;
+    boolean stillPlaying;
+    boolean alive;
 
     public String getName() {
         return name;
@@ -20,6 +22,14 @@ class MusicArtist {
 
     public String getCountry() {
         return country;
+    }
+
+    public boolean getStillPlaying() {
+        return stillPlaying;
+    }
+
+    public boolean isAlive() {
+        return alive;
     }
 
     @Override

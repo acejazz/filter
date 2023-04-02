@@ -1,9 +1,12 @@
 package com.tanio;
 
+import com.tanio.FieldValueRetriever.BooleanHandling;
+
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.tanio.FieldValueRetriever.BooleanHandling.IS;
 import static com.tanio.Filter.FieldCase.CAMEL_CASE;
 
 class Filter {
@@ -12,16 +15,17 @@ class Filter {
     private final SetCombiner setCombiner = new SetCombiner();
 
     public Filter() {
-        this(CAMEL_CASE);
+        this(CAMEL_CASE, IS);
     }
 
-    public Filter(FieldCase fieldCase) {
+    public Filter(FieldCase fieldCase, BooleanHandling booleanHandling) {
         GetterMethodNameBuilder getterMethodNameBuilder = null;
         switch (fieldCase) {
             case CAMEL_CASE -> getterMethodNameBuilder = new GetterMethodNameBuilderFromCamelCase();
             case SNAKE_CASE -> getterMethodNameBuilder = new GetterMethodNameBuilderFromSnakeCase();
         }
-        retriever = new FieldValueRetriever(getterMethodNameBuilder, FieldValueRetriever.BooleanHandling.IS);
+
+        retriever = new FieldValueRetriever(getterMethodNameBuilder, booleanHandling);
     }
 
     <T> Set<T> evaluate(Condition condition, List<T> target) {

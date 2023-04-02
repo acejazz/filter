@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.tanio.CompoundCondition.*;
+import static com.tanio.FieldValueRetriever.BooleanHandling.GETTER;
 import static com.tanio.Filter.FieldCase.CAMEL_CASE;
 import static com.tanio.Filter.FieldCase.SNAKE_CASE;
 import static com.tanio.Fixture.*;
@@ -15,9 +16,11 @@ import static com.tanio.SimpleCondition.*;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FilterTest {
-    Filter sut = new Filter(CAMEL_CASE);
+    Filter sut = new Filter(CAMEL_CASE, FieldValueRetriever.BooleanHandling.IS);
 
     @Test
     void performEvaluableSimpleCondition() {
@@ -327,12 +330,29 @@ class FilterTest {
     }
 
     @Nested
-    class WithGetterMethodNameBuilderFromSnakeCase {
-        Filter sut = new Filter(SNAKE_CASE);
+    class WithSnakeCaseFieldName {
+        Filter sut = new Filter(SNAKE_CASE, FieldValueRetriever.BooleanHandling.IS);
 
         @Test
-        void useGetterMethodNameBuilderFromSnakeCase() {
+        void useSnakeCaseForSimpleCondition() {
+            List<MusicArtist> musicArtists = Arrays.asList(
+                    beatles(),
+                    rollingStones(),
+                    madonna(),
+                    marvinGaye(),
+                    bjork(),
+                    edithPiaf(),
+                    nirvana(),
+                    eltonJohn(),
+                    bruceSpringsteen());
 
+            Set<MusicArtist> result = sut.evaluate(greaterThan("number_of_components", 1), musicArtists);
+
+            assertThat(result).containsExactlyInAnyOrder(beatles(), rollingStones(), nirvana());
+        }
+
+        @Test
+        void useSnakeCaseForCompoundCondition() {
             CompoundCondition condition = or(
                     contains("country", "UK"),
                     greaterThan("number_of_components", 1));
@@ -352,17 +372,41 @@ class FilterTest {
 
             assertThat(result).containsExactlyInAnyOrder(beatles(), rollingStones(), eltonJohn(), nirvana());
         }
+    }
+
+    @Nested
+    class WithGetterBooleanFieldHandling {
+        Filter sut = new Filter(SNAKE_CASE, GETTER);
 
         @Test
-        void performEvaluableCompoundConditionNested_mixedOrAnd() {
-            CompoundCondition condition = or(
-                    and(
-                            equal("country", "USA"),
-                            notEqual("number_of_components", 3),
-                            notEqual("number_of_components", 4)),
-                    and(
-                            contains("country", "UK"),
-                            equal("genre", "Pop")));
+        void useGetterBooleanFieldNameWithSimpleCondition()  {
+            assertTrue(methodExists(MusicArtist.class, "getStillPlaying"));
+            assertFalse(methodExists(MusicArtist.class, "isStillPlaying"));
+
+            List<MusicArtist> musicArtists = Arrays.asList(
+                    beatles(),
+                    rollingStones(),
+                    madonna(),
+                    marvinGaye(),
+                    bjork(),
+                    edithPiaf(),
+                    nirvana(),
+                    eltonJohn(),
+                    bruceSpringsteen());
+
+            Set<MusicArtist> result = sut.evaluate(equal("still_playing", false), musicArtists);
+
+            assertThat(result).containsExactlyInAnyOrder(edithPiaf(), beatles(), nirvana(), marvinGaye());
+        }
+
+        @Test
+        void useGetterBooleanFieldNameWithCompoundCondition() {
+            assertTrue(methodExists(MusicArtist.class, "getStillPlaying"));
+            assertFalse(methodExists(MusicArtist.class, "isStillPlaying"));
+
+            CompoundCondition condition = and(
+                    equal("still_playing", false),
+                    greaterThan("number_of_components", 1));
 
             List<MusicArtist> musicArtists = Arrays.asList(
                     beatles(),
@@ -377,9 +421,16 @@ class FilterTest {
 
             Set<MusicArtist> result = sut.evaluate(condition, musicArtists);
 
-            assertThat(result)
-                    .containsExactlyInAnyOrder(marvinGaye(), bruceSpringsteen(), eltonJohn(), madonna());
+            assertThat(result).containsExactlyInAnyOrder(nirvana(), beatles());
         }
 
+        boolean methodExists(Class<?> clazz, String methodName) {
+            try {
+                clazz.getMethod(methodName);
+            } catch (NoSuchMethodException e) {
+                return false;
+            }
+            return true;
+        }
     }
 }

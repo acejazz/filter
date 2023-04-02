@@ -7,6 +7,8 @@ class Fixture {
         beatles.genre = "Rock";
         beatles.numberOfComponents = 4;
         beatles.country = "UK - United Kingdom";
+        beatles.stillPlaying = false;
+        beatles.alive = true;
         return beatles;
     }
 
@@ -16,6 +18,8 @@ class Fixture {
         rollingStones.genre = "Rock";
         rollingStones.numberOfComponents = 4;
         rollingStones.country = "UK";
+        rollingStones.stillPlaying = true;
+        rollingStones.alive = true;
         return rollingStones;
     }
 
@@ -25,6 +29,8 @@ class Fixture {
         madonna.genre = "Pop";
         madonna.numberOfComponents = 1;
         madonna.country = "USA";
+        madonna.stillPlaying = true;
+        madonna.alive = true;
         return madonna;
     }
 
@@ -34,6 +40,8 @@ class Fixture {
         marvinGaye.genre = "R&B";
         marvinGaye.numberOfComponents = 1;
         marvinGaye.country = "USA";
+        marvinGaye.stillPlaying = false;
+        marvinGaye.alive = false;
         return marvinGaye;
     }
 
@@ -43,6 +51,8 @@ class Fixture {
         bjork.genre = "Art Pop";
         bjork.numberOfComponents = 1;
         bjork.country = "Iceland";
+        bjork.stillPlaying = true;
+        bjork.alive = true;
         return bjork;
     }
 
@@ -52,6 +62,8 @@ class Fixture {
         edithPiaf.genre = "Cabaret";
         edithPiaf.numberOfComponents = 1;
         edithPiaf.country = "France";
+        edithPiaf.stillPlaying = false;
+        edithPiaf.alive = false;
         return edithPiaf;
     }
 
@@ -61,6 +73,8 @@ class Fixture {
         nirvana.genre = "Rock";
         nirvana.numberOfComponents = 3;
         nirvana.country = "USA";
+        nirvana.stillPlaying = false;
+        nirvana.alive = true;
         return nirvana;
     }
 
@@ -70,6 +84,8 @@ class Fixture {
         bruceSpringsteen.genre = "Rock";
         bruceSpringsteen.numberOfComponents = 1;
         bruceSpringsteen.country = "USA";
+        bruceSpringsteen.stillPlaying = true;
+        bruceSpringsteen.alive = true;
         return bruceSpringsteen;
     }
 
@@ -79,6 +95,8 @@ class Fixture {
         eltonJohn.genre = "Pop";
         eltonJohn.numberOfComponents = 1;
         eltonJohn.country = "UK";
+        eltonJohn.stillPlaying = true;
+        eltonJohn.alive = true;
         return eltonJohn;
     }
 }
