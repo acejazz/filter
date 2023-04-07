@@ -11,15 +11,22 @@ import java.util.Set;
 import static com.tanio.CompoundCondition.BooleanOperator.AND;
 import static com.tanio.StringToOperatorMapper.*;
 
-// TODO: pass the object mapper and the default operator from the constructor
-class Deserializer {
-    private final ObjectMapper objectMapper = new ObjectMapper();
+public class Deserializer {
     private final StringToOperatorMapper stringToOperatorMapper = new StringToOperatorMapper();
     private final ConditionValueDeserializer conditionValueDeserializer = new ConditionValueDeserializer();
+    private final ObjectMapper objectMapper;
+    private final CompoundCondition.BooleanOperator booleanOperator;
 
-    public static final CompoundCondition.BooleanOperator DEFAULT_BOOLEAN_OPERATOR = AND;
+    public Deserializer() {
+        this(new Settings());
+    }
 
-    Condition deserialize(String json) throws JsonProcessingException {
+    public Deserializer(Settings settings) {
+        this.objectMapper = settings.objectMapper;
+        this.booleanOperator = settings.defaultBooleanOperator;
+    }
+
+    public Condition deserialize(String json) throws JsonProcessingException {
         JsonNode jsonNode = objectMapper.readTree(json);
 
         if (jsonNode.isArray()) {
@@ -35,7 +42,7 @@ class Deserializer {
 
     private CompoundCondition toCompoundConditionWithDefaultOperator(JsonNode jsonNode) {
         Set<Condition> conditions = toConditionSet(jsonNode);
-        return new CompoundCondition(DEFAULT_BOOLEAN_OPERATOR, conditions);
+        return new CompoundCondition(booleanOperator, conditions);
     }
 
     private CompoundCondition toCompoundCondition(JsonNode jsonNode) {
@@ -69,5 +76,10 @@ class Deserializer {
 
     private boolean isCompoundCondition(JsonNode node) {
         return node.has(STRING_AND) || node.has(STRING_OR) || node.has(STRING_NOT);
+    }
+
+    public static class Settings {
+        ObjectMapper objectMapper = new ObjectMapper();
+        CompoundCondition.BooleanOperator defaultBooleanOperator = AND;
     }
 }

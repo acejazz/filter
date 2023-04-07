@@ -14,23 +14,13 @@ public class Filter {
     private final FieldConditionEvaluator evaluator = new FieldConditionEvaluator();
     private final SetCombiner setCombiner = new SetCombiner();
 
-    public static class Settings {
-        FieldNameCase fieldNameCase = CAMEL_CASE;
-        BooleanFieldNameHandling booleanFieldNameHandling = IS;
-        String nestingSeparator = ".";
-    }
-
     public Filter() {
         this(new Settings());
     }
 
     public Filter(Settings settings) {
-        FieldNameCase fieldNameCase = settings.fieldNameCase;
-        BooleanFieldNameHandling booleanFieldNameHandling = settings.booleanFieldNameHandling;
-        String nestingSeparator = settings.nestingSeparator;
-
         GetterMethodNameBuilder getterMethodNameBuilder = null;
-        switch (fieldNameCase) {
+        switch (settings.fieldNameCase) {
             case CAMEL_CASE -> getterMethodNameBuilder = new GetterMethodNameBuilderFromCamelCase();
             case SNAKE_CASE -> getterMethodNameBuilder = new GetterMethodNameBuilderFromSnakeCase();
         }
@@ -38,8 +28,8 @@ public class Filter {
         retriever =
                 new FieldValueRetriever(
                         getterMethodNameBuilder,
-                        booleanFieldNameHandling,
-                        nestingSeparator);
+                        settings.booleanFieldNameHandling,
+                        settings.nestingSeparator);
     }
 
     public <T> Set<T> evaluate(Condition condition, List<T> target) {
@@ -73,7 +63,14 @@ public class Filter {
         return evaluator.evaluateCondition(condition.getOperator(), fieldValue, condition.getValue());
     }
 
-    enum FieldNameCase {
+    public enum FieldNameCase {
         SNAKE_CASE, CAMEL_CASE;
+
+    }
+
+    public static class Settings {
+        FieldNameCase fieldNameCase = CAMEL_CASE;
+        BooleanFieldNameHandling booleanFieldNameHandling = IS;
+        String nestingSeparator = ".";
     }
 }

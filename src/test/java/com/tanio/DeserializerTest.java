@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 
 import static com.tanio.CompoundCondition.*;
+import static com.tanio.CompoundCondition.BooleanOperator.OR;
 import static com.tanio.SimpleCondition.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -229,5 +230,43 @@ class DeserializerTest {
 
         SimpleCondition result = (SimpleCondition) sut.deserialize(json);
         assertThat(result).isEqualTo(equal("anyFieldName", "anyValue"));
+    }
+
+    @Test
+    void useDifferentBooleanOperator() throws JsonProcessingException {
+        String json = """
+                [
+                    {
+                        "fieldName": "anyFieldName0",
+                        "operator": "equal",
+                        "value": "anyString"
+                    },
+                    {
+                        "not": [
+                        {
+                            "fieldName": "anyFieldName1",
+                            "operator": "not_equal",
+                            "value": "f"
+                        },
+                        {
+                            "fieldName": "anyFieldName2",
+                            "operator": "greater_than",
+                            "value": true
+                         }
+                       ]
+                    }
+                ]
+                """;
+
+        Deserializer.Settings settings = new Deserializer.Settings();
+        settings.defaultBooleanOperator = OR;
+        Deserializer sut = new Deserializer(settings);
+        CompoundCondition result = (CompoundCondition) sut.deserialize(json);
+        assertThat(result).isEqualTo(
+                or( // Different boolean operator
+                        equal("anyFieldName0", "anyString"),
+                        not(
+                                notEqual("anyFieldName1", 'f'),
+                                greaterThan("anyFieldName2", true))));
     }
 }
