@@ -57,8 +57,8 @@ class FieldConditionEvaluatorTest {
 
         @Test
         void evaluateNull() {
+            assertTrue(sut.evaluateCondition(NOT_EQUAL, null, 7));
             assertFalse(sut.evaluateCondition(EQUAL, null, 7));
-            assertFalse(sut.evaluateCondition(NOT_EQUAL, null, 7));
             assertFalse(sut.evaluateCondition(GREATER_THAN, null, 7));
             assertFalse(sut.evaluateCondition(LESS_THAN, null, 7));
         }
@@ -108,8 +108,8 @@ class FieldConditionEvaluatorTest {
 
         @Test
         void evaluateNull() {
+            assertTrue(sut.evaluateCondition(NOT_EQUAL, null, 7L));
             assertFalse(sut.evaluateCondition(EQUAL, null, 7L));
-            assertFalse(sut.evaluateCondition(NOT_EQUAL, null, 7L));
             assertFalse(sut.evaluateCondition(GREATER_THAN, null, 7L));
             assertFalse(sut.evaluateCondition(LESS_THAN, null, 7L));
         }
@@ -145,8 +145,8 @@ class FieldConditionEvaluatorTest {
 
         @Test
         void evaluateNull() {
+            assertTrue(sut.evaluateCondition(NOT_EQUAL, null, "anyString"));
             assertFalse(sut.evaluateCondition(EQUAL, null, "anyString"));
-            assertFalse(sut.evaluateCondition(NOT_EQUAL, null, "anyString"));
             assertFalse(sut.evaluateCondition(GREATER_THAN, null, "anyString"));
             assertFalse(sut.evaluateCondition(LESS_THAN, null, "anyString"));
         }
@@ -216,8 +216,8 @@ class FieldConditionEvaluatorTest {
 
         @Test
         void evaluateNull() {
+            assertTrue(sut.evaluateCondition(NOT_EQUAL, null, false));
             assertFalse(sut.evaluateCondition(EQUAL, null, true));
-            assertFalse(sut.evaluateCondition(NOT_EQUAL, null, false));
         }
     }
 
@@ -265,8 +265,8 @@ class FieldConditionEvaluatorTest {
 
         @Test
         void evaluateNull() {
+            assertTrue(sut.evaluateCondition(NOT_EQUAL, null, 7F));
             assertFalse(sut.evaluateCondition(EQUAL, null, 7F));
-            assertFalse(sut.evaluateCondition(NOT_EQUAL, null, 7F));
             assertFalse(sut.evaluateCondition(GREATER_THAN, null, 7F));
             assertFalse(sut.evaluateCondition(LESS_THAN, null, 7F));
         }
@@ -316,8 +316,8 @@ class FieldConditionEvaluatorTest {
 
         @Test
         void evaluateNull() {
+            assertTrue(sut.evaluateCondition(NOT_EQUAL, null, 7.1));
             assertFalse(sut.evaluateCondition(EQUAL, null, 7.1));
-            assertFalse(sut.evaluateCondition(NOT_EQUAL, null, 7.1));
             assertFalse(sut.evaluateCondition(GREATER_THAN, null, 7.1));
             assertFalse(sut.evaluateCondition(LESS_THAN, null, 7.1));
         }
@@ -367,8 +367,8 @@ class FieldConditionEvaluatorTest {
 
         @Test
         void evaluateNull() {
+            assertTrue(sut.evaluateCondition(NOT_EQUAL, null, 'a'));
             assertFalse(sut.evaluateCondition(EQUAL, null, 'a'));
-            assertFalse(sut.evaluateCondition(NOT_EQUAL, null, 'a'));
             assertFalse(sut.evaluateCondition(GREATER_THAN, null, 'a'));
             assertFalse(sut.evaluateCondition(LESS_THAN, null, 'a'));
         }
@@ -426,8 +426,8 @@ class FieldConditionEvaluatorTest {
 
         @Test
         void evaluateNull() {
+            assertTrue(sut.evaluateCondition(NOT_EQUAL, null, ENUM_VALUE0));
             assertFalse(sut.evaluateCondition(EQUAL, null, ENUM_VALUE0));
-            assertFalse(sut.evaluateCondition(NOT_EQUAL, null, ENUM_VALUE0));
             assertFalse(sut.evaluateCondition(GREATER_THAN, null, ENUM_VALUE0));
             assertFalse(sut.evaluateCondition(LESS_THAN, null, ENUM_VALUE0));
         }
@@ -438,5 +438,15 @@ class FieldConditionEvaluatorTest {
         assertThatThrownBy(() -> sut.evaluateCondition(EQUAL, "anything", new Object()))
                 .isInstanceOf(FilterException.class)
                 .hasMessage("Filter applicable only to primitives, primitive wrappers and strings");
+    }
+
+    @Test
+    void handleNull() {
+        assertTrue(sut.evaluateCondition(EQUAL, null, null));
+        assertFalse(sut.evaluateCondition(NOT_EQUAL, null, null));
+        assertFalse(sut.evaluateCondition(LESS_THAN, null, null));
+        assertFalse(sut.evaluateCondition(GREATER_THAN, null, null));
+        assertFalse(sut.evaluateCondition(CONTAINS, null, null));
+        assertFalse(sut.evaluateCondition(NOT_CONTAINS, null, null));
     }
 }

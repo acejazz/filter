@@ -321,6 +321,26 @@ class FilterTest {
     }
 
     @Test
+    void filterByNull() {
+        SimpleCondition condition = notEqual("realName", null);
+
+        List<MusicArtist> musicArtists = Arrays.asList(
+                beatles(),
+                rollingStones(),
+                madonna(),
+                marvinGaye(),
+                bjork(),
+                edithPiaf(),
+                nirvana(),
+                eltonJohn(),
+                bruceSpringsteen());
+
+        Set<MusicArtist> result = sut.evaluate(condition, musicArtists);
+
+        assertThat(result).containsExactlyInAnyOrder(madonna(), marvinGaye(), bjork(), edithPiaf(), eltonJohn());
+    }
+
+    @Test
     void filterNonExistingField() {
         SimpleCondition condition = equal("nonExistingField", "anything");
 

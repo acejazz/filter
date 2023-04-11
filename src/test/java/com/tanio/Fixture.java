@@ -31,6 +31,7 @@ class Fixture {
         madonna.country = "USA";
         madonna.stillPlaying = true;
         madonna.alive = true;
+        madonna.realName = "Madonna Louise Ciccone";
         return madonna;
     }
 
@@ -42,6 +43,7 @@ class Fixture {
         marvinGaye.country = "USA";
         marvinGaye.stillPlaying = false;
         marvinGaye.alive = false;
+        marvinGaye.realName = "Marvin Pentz Gay Jr";
         return marvinGaye;
     }
 
@@ -53,6 +55,7 @@ class Fixture {
         bjork.country = "Iceland";
         bjork.stillPlaying = true;
         bjork.alive = true;
+        bjork.realName = "Björk Gudmundsdottir";
         return bjork;
     }
 
@@ -64,6 +67,7 @@ class Fixture {
         edithPiaf.country = "France";
         edithPiaf.stillPlaying = false;
         edithPiaf.alive = false;
+        edithPiaf.realName = "Edith Giovanna Gassion";
         return edithPiaf;
     }
 
@@ -97,6 +101,7 @@ class Fixture {
         eltonJohn.country = "UK";
         eltonJohn.stillPlaying = true;
         eltonJohn.alive = true;
+        eltonJohn.realName = "Reginald Kenneth Dwight";
         return eltonJohn;
     }
 }

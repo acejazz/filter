@@ -7,6 +7,7 @@ class MusicArtist {
     String country;
     boolean stillPlaying;
     boolean alive;
+    String realName;
 
     public String getName() {
         return name;
@@ -30,6 +31,10 @@ class MusicArtist {
 
     public boolean isAlive() {
         return alive;
+    }
+
+    public String getRealName() {
+        return realName;
     }
 
     @Override
