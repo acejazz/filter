@@ -1,6 +1,7 @@
 package com.tanio;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
 import static com.tanio.CompoundCondition.*;
@@ -258,9 +259,7 @@ class DeserializerTest {
                 ]
                 """;
 
-        Deserializer.Settings settings = new Deserializer.Settings();
-        settings.defaultBooleanOperator = OR;
-        Deserializer sut = new Deserializer(settings);
+        Deserializer sut = new Deserializer(new ObjectMapper(), OR);
         CompoundCondition result = (CompoundCondition) sut.deserialize(json);
         assertThat(result).isEqualTo(
                 or( // Different boolean operator

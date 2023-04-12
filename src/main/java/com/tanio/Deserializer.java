@@ -3,6 +3,7 @@ package com.tanio;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tanio.CompoundCondition.BooleanOperator;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -12,24 +13,27 @@ import static com.tanio.CompoundCondition.BooleanOperator.AND;
 import static com.tanio.StringToOperatorMapper.*;
 
 public class Deserializer {
-    private final StringToOperatorMapper stringToOperatorMapper = new StringToOperatorMapper();
-    private final ConditionValueDeserializer conditionValueDeserializer = new ConditionValueDeserializer();
+    private final StringToOperatorMapper stringToOperatorMapper;
+    private final ConditionValueDeserializer conditionValueDeserializer;
     private final ObjectMapper objectMapper;
-    private final CompoundCondition.BooleanOperator booleanOperator;
+    private final BooleanOperator firstLevelMixedConditionsBooleanOperator;
 
     public Deserializer() {
-        this(new Settings());
+        this(new ObjectMapper(), AND);
     }
 
-    public Deserializer(Settings settings) {
-        this.objectMapper = settings.objectMapper;
-        this.booleanOperator = settings.defaultBooleanOperator;
+    public Deserializer(ObjectMapper objectMapper,
+                        BooleanOperator firstLevelMixedConditionsBooleanOperator) {
+        this.objectMapper = objectMapper;
+        this.firstLevelMixedConditionsBooleanOperator = firstLevelMixedConditionsBooleanOperator;
+        this.stringToOperatorMapper = new StringToOperatorMapper();
+        this.conditionValueDeserializer = new ConditionValueDeserializer();
     }
 
     public Condition deserialize(String json) throws JsonProcessingException {
         JsonNode jsonNode = objectMapper.readTree(json);
 
-        if (jsonNode.isArray()) {
+        if (areConditionsMixedOnFirstLevel(jsonNode)) {
             return toCompoundConditionWithDefaultOperator(jsonNode);
         }
 
@@ -40,9 +44,13 @@ public class Deserializer {
         return toSimpleCondition(jsonNode);
     }
 
+    private boolean areConditionsMixedOnFirstLevel(JsonNode jsonNode) {
+        return jsonNode.isArray();
+    }
+
     private CompoundCondition toCompoundConditionWithDefaultOperator(JsonNode jsonNode) {
         Set<Condition> conditions = toConditionSet(jsonNode);
-        return new CompoundCondition(booleanOperator, conditions);
+        return new CompoundCondition(firstLevelMixedConditionsBooleanOperator, conditions);
     }
 
     private CompoundCondition toCompoundCondition(JsonNode jsonNode) {
@@ -76,10 +84,5 @@ public class Deserializer {
 
     private boolean isCompoundCondition(JsonNode node) {
         return node.has(STRING_AND) || node.has(STRING_OR) || node.has(STRING_NOT);
-    }
-
-    public static class Settings {
-        ObjectMapper objectMapper = new ObjectMapper();
-        CompoundCondition.BooleanOperator defaultBooleanOperator = AND;
     }
 }
