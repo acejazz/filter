@@ -2,8 +2,12 @@ package com.tanio;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import static com.tanio.ArgumentChecks.checkNotNull;
+
 class ConditionValueDeserializer {
     Object deserializeConditionValue(JsonNode jsonNode) {
+        checkNotNull(jsonNode, "jsonNode");
+
         if (jsonNode.isInt()) {
             return jsonNode.asInt();
         } else if (jsonNode.isDouble()) {

@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import static com.tanio.ArgumentChecks.checkNotNull;
 import static com.tanio.CompoundCondition.BooleanOperator.AND;
 import static com.tanio.StringToOperatorMapper.*;
 
@@ -24,6 +25,9 @@ public class Deserializer {
 
     public Deserializer(ObjectMapper objectMapper,
                         BooleanOperator firstLevelMixedConditionsBooleanOperator) {
+        checkNotNull(objectMapper, "objectMapper");
+        checkNotNull(firstLevelMixedConditionsBooleanOperator, "firstLevelMixedConditionsBooleanOperator");
+
         this.objectMapper = objectMapper;
         this.firstLevelMixedConditionsBooleanOperator = firstLevelMixedConditionsBooleanOperator;
         this.stringToOperatorMapper = new StringToOperatorMapper();
@@ -31,6 +35,8 @@ public class Deserializer {
     }
 
     public Condition deserialize(String json) throws JsonProcessingException {
+        checkNotNull(json, "json");
+
         JsonNode jsonNode = objectMapper.readTree(json);
 
         if (areConditionsMixedOnFirstLevel(jsonNode)) {

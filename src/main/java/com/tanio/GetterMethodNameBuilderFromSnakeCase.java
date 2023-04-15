@@ -1,7 +1,11 @@
 package com.tanio;
 
+import static com.tanio.ArgumentChecks.checkNotNull;
+
 class GetterMethodNameBuilderFromSnakeCase implements GetterMethodNameBuilder {
     public String buildGetterName(String fieldName) {
+        checkNotNull(fieldName, "target");
+
         while (fieldName.contains("_")) {
             fieldName = fieldName.replaceFirst(
                     "_[a-z]",

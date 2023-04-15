@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.tanio.ArgumentChecks.checkNotNull;
 import static com.tanio.FieldValueRetriever.BooleanFieldNameHandling.IS;
 import static com.tanio.Filter.FieldNameCase.CAMEL_CASE;
 
@@ -19,6 +20,8 @@ public class Filter {
     }
 
     public Filter(Settings settings) {
+        checkNotNull(settings, "settings");
+
         GetterMethodNameBuilder getterMethodNameBuilder = null;
         switch (settings.fieldNameCase) {
             case CAMEL_CASE -> getterMethodNameBuilder = new GetterMethodNameBuilderFromCamelCase();
@@ -33,6 +36,9 @@ public class Filter {
     }
 
     public <T> Set<T> evaluate(Condition condition, List<T> target) {
+        checkNotNull(condition, "condition");
+        checkNotNull(target, "target");
+
         if (condition instanceof CompoundCondition compoundCondition) {
             return handleCompoundCondition(compoundCondition, target);
         }

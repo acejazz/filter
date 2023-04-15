@@ -3,11 +3,16 @@ package com.tanio;
 import java.util.Objects;
 import java.util.Set;
 
+import static com.tanio.ArgumentChecks.checkNotNull;
+
 class CompoundCondition implements Condition {
     private final BooleanOperator operator;
     private final Set<Condition> conditions;
 
     CompoundCondition(BooleanOperator operator, Set<Condition> conditions) {
+        checkNotNull(operator, "operator");
+        checkNotNull(conditions, "conditions");
+
         this.operator = operator;
         this.conditions = conditions;
     }

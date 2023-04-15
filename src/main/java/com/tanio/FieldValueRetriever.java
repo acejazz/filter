@@ -2,6 +2,7 @@ package com.tanio;
 
 import java.lang.reflect.Method;
 
+import static com.tanio.ArgumentChecks.checkNotNull;
 import static com.tanio.FieldValueRetriever.BooleanFieldNameHandling.IS;
 
 class FieldValueRetriever {
@@ -13,12 +14,19 @@ class FieldValueRetriever {
     FieldValueRetriever(GetterMethodNameBuilder getterMethodNameBuilder,
                         BooleanFieldNameHandling booleanFieldNameHandling,
                         String nestingSeparator) {
+        checkNotNull(getterMethodNameBuilder, "getterMethodNameBuilder");
+        checkNotNull(booleanFieldNameHandling, "booleanFieldNameHandling");
+        checkNotNull(nestingSeparator, "nestingSeparator");
+
         this.getterMethodNameBuilder = getterMethodNameBuilder;
         this.booleanFieldNameHandling = booleanFieldNameHandling;
         this.nestingSeparator = nestingSeparator;
     }
 
     Object retrieveFieldValue(String fieldName, Object object) {
+        checkNotNull(fieldName, "fieldName");
+        checkNotNull(object, "object");
+
         if (isNestedFieldName(fieldName)) {
             return retrieveNestedFieldValue(fieldName, object);
         }

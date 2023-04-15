@@ -3,6 +3,7 @@ package com.tanio;
 import com.tanio.CompoundCondition.BooleanOperator;
 import com.tanio.SimpleCondition.ComparisonOperator;
 
+import static com.tanio.ArgumentChecks.checkNotNull;
 import static com.tanio.CompoundCondition.BooleanOperator.*;
 import static com.tanio.SimpleCondition.ComparisonOperator.*;
 
@@ -15,6 +16,8 @@ class StringToOperatorMapper {
     static final String STRING_VALUE = "value";
 
     BooleanOperator mapToBooleanOperator(String text) {
+        checkNotNull(text, "text");
+
         return switch (text) {
             case STRING_AND -> AND;
             case STRING_OR -> OR;
@@ -24,6 +27,8 @@ class StringToOperatorMapper {
     }
 
     ComparisonOperator mapToComparisonOperator(String text) {
+        checkNotNull(text, "text");
+
         return switch (text) {
             case "equal" -> EQUAL;
             case "not_equal" -> NOT_EQUAL;

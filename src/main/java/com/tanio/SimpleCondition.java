@@ -2,6 +2,7 @@ package com.tanio;
 
 import java.util.Objects;
 
+import static com.tanio.ArgumentChecks.checkNotNull;
 import static com.tanio.SimpleCondition.ComparisonOperator.*;
 
 class SimpleCondition implements Condition {
@@ -12,7 +13,12 @@ class SimpleCondition implements Condition {
     public SimpleCondition() {
     }
 
-    SimpleCondition(String fieldName, ComparisonOperator operator, Object value) {
+    SimpleCondition(String fieldName,
+                    ComparisonOperator operator,
+                    Object value /* nullable */) {
+        checkNotNull(fieldName, "fieldName");
+        checkNotNull(operator, "operator");
+
         this.fieldName = fieldName;
         this.operator = operator;
         this.value = value;
@@ -31,14 +37,16 @@ class SimpleCondition implements Condition {
     }
 
     public void setFieldName(String fieldName) {
+        checkNotNull(fieldName, "fieldName");
         this.fieldName = fieldName;
     }
 
     public void setOperator(ComparisonOperator operator) {
+        checkNotNull(operator, "operator");
         this.operator = operator;
     }
 
-    public void setValue(Object value) {
+    public void setValue(Object value /* nullable */) {
         this.value = value;
     }
 
@@ -57,11 +65,8 @@ class SimpleCondition implements Condition {
 
     @Override
     public String toString() {
-        return "SimpleCondition{" +
-                "fieldName='" + fieldName + '\'' +
-                ", operator=" + operator +
-                ", value=" + value +
-                '}';
+        String template = "{%s %s %s}";
+        return String.format(template, fieldName, operator, value);
     }
 
     public static SimpleCondition equal(String fieldName, Object value) {

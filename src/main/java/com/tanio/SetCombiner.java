@@ -6,17 +6,22 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.tanio.ArgumentChecks.checkNotNull;
 import static java.util.List.copyOf;
 
 class SetCombiner {
-    <T> Set<T> or(List<Set<T>> resultLists) {
-        return resultLists.stream()
+    <T> Set<T> or(List<Set<T>> sets) {
+        checkNotNull(sets, "sets");
+
+        return sets.stream()
                 .flatMap(Set::stream)
                 .collect(Collectors.toSet());
     }
 
-    <T> Set<T> and(List<Set<T>> resultLists) {
-        Iterator<Set<T>> iterator = resultLists.iterator();
+    <T> Set<T> and(List<Set<T>> sets) {
+        checkNotNull(sets, "sets");
+
+        Iterator<Set<T>> iterator = sets.iterator();
         Set<T> result = new HashSet<>(iterator.next());
         while (iterator.hasNext()) {
             result.retainAll(iterator.next());
@@ -24,10 +29,13 @@ class SetCombiner {
         return result;
     }
 
-    <T> Set<T> not(List<T> target, List<Set<T>> resultLists) {
+    <T> Set<T> not(List<T> target, List<Set<T>> sets) {
+        checkNotNull(target, "target");
+        checkNotNull(sets, "sets");
+
         // !A and !B and !C = !(A or B or C)
         Not<T> not = new Not<>(target);
-        return not.of(or(resultLists));
+        return not.of(or(sets));
     }
 
     // It is possible to define the not operator only against a reference universe
