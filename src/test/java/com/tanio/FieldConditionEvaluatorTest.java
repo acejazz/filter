@@ -434,6 +434,36 @@ class FieldConditionEvaluatorTest {
     }
 
     @Test
+    void handleValidDifferentTypeForBoolean() {
+        assertTrue(sut.evaluateCondition(EQUAL, true, "true"));
+        assertTrue(sut.evaluateCondition(EQUAL, false, "false"));
+        assertFalse(sut.evaluateCondition(EQUAL, true, "false"));
+        assertFalse(sut.evaluateCondition(EQUAL, false, "true"));
+    }
+
+    @Test
+    void handleInvalidDifferentTypeForBoolean() {
+        assertThatThrownBy(() -> sut.evaluateCondition(EQUAL, true, "anything"))
+                .isInstanceOf(FilterException.class)
+                .hasMessage("[anything] is not a valid boolean value");
+    }
+
+    @Test
+    void handleValidDifferentTypeForNumbers() {
+        assertTrue(sut.evaluateCondition(EQUAL, 1.3, "1.3"));
+        assertTrue(sut.evaluateCondition(EQUAL, -5, "-5"));
+        assertFalse(sut.evaluateCondition(EQUAL, 1.3, "-1.5"));
+        assertFalse(sut.evaluateCondition(EQUAL, 7, "9"));
+    }
+
+    @Test
+    void handleInvalidDifferentTypeForNumbers() {
+        assertThatThrownBy(() -> sut.evaluateCondition(EQUAL, 1.3, "anything"))
+                .isInstanceOf(FilterException.class)
+                .hasMessage("[anything] is not a valid numeric value");
+    }
+
+    @Test
     void handleObject() {
         assertThatThrownBy(() -> sut.evaluateCondition(EQUAL, "anything", new Object()))
                 .isInstanceOf(FilterException.class)

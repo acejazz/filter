@@ -2,41 +2,68 @@ package com.tanio;
 
 import com.tanio.SimpleCondition.ComparisonOperator;
 
+import java.util.regex.Pattern;
+
 class FieldConditionEvaluator {
-    boolean evaluateCondition(ComparisonOperator operator, Object first, Object second) {
-        if ((first == null) ^ (second == null)) {
+    private final static Pattern NUMERIC_REGEX_PATTERN = Pattern.compile("-?\\d+(\\.\\d+)?");
+
+    boolean evaluateCondition(ComparisonOperator operator, Object actualValue, Object filterValue) {
+        if ((actualValue == null) ^ (filterValue == null)) {
             return evaluateConditionForOneNull(operator);
         }
 
-        if (first == null) {
-            // second is also null
+        if (actualValue == null) { // filterValue is also null
             return evaluateConditionOnBothNulls(operator);
         }
 
-        // The second object is the actual field value, so it rules the way the condition is evaluated
-        Class<?> secondObjectClass = second.getClass();
+        Class<?> actualValueClass = actualValue.getClass();
+        Class<?> filterValueClass = filterValue.getClass();
 
-        if (secondObjectClass.isEnum()) {
-            return evaluateConditionOnStringifiableObjects(operator, first, second);
+        if (filterValueClass.isEnum()) {
+            return evaluateConditionOnStringifiableObjects(operator, actualValue, filterValue);
         }
 
-        if (secondObjectClass.equals(String.class)) {
-            return evaluateConditionOnStringifiableObjects(operator, first, second);
+        if (filterValueClass.equals(String.class)) {
+            if (actualValueClass.equals(Boolean.class)) {
+                ensureFilterValueStringHoldsBoolean((String) filterValue);
+            }
+
+            if (Number.class.isAssignableFrom(actualValueClass)) {
+                ensureFilterValueStringHoldsNumber((String) filterValue);
+            }
+
+            return evaluateConditionOnStringifiableObjects(operator, actualValue, filterValue);
         }
 
-        if (secondObjectClass.equals(Character.class)) {
-            return evaluateConditionOnStringifiableObjects(operator, first, second);
+        if (filterValueClass.equals(Character.class)) {
+            return evaluateConditionOnStringifiableObjects(operator, actualValue, filterValue);
         }
 
-        if (secondObjectClass.equals(Boolean.class)) {
-            return evaluateConditionOnBooleans(operator, first, second);
+        if (filterValueClass.equals(Boolean.class)) {
+            return evaluateConditionOnBooleans(operator, actualValue, filterValue);
         }
 
-        if (Number.class.isAssignableFrom(secondObjectClass)) {
-            return evaluateConditionOnNumbers(operator, (Number) first, (Number) second);
+        if (Number.class.isAssignableFrom(filterValueClass)) {
+            return evaluateConditionOnNumbers(operator, (Number) actualValue, (Number) filterValue);
         }
 
         throw new FilterException("Filter applicable only to primitives, primitive wrappers and strings");
+    }
+
+    private static void ensureFilterValueStringHoldsBoolean(String filterValueString) {
+        boolean isParseableToBoolean = filterValueString.equals("true") || filterValueString.equals("false");
+        if (!isParseableToBoolean) {
+            String message = String.format("[%s] is not a valid boolean value", filterValueString);
+            throw new FilterException(message);
+        }
+    }
+
+    private static void ensureFilterValueStringHoldsNumber(String filterValueString) {
+        boolean isParseableToNumber = NUMERIC_REGEX_PATTERN.matcher(filterValueString).matches();
+        if (!isParseableToNumber) {
+            String message = String.format("[%s] is not a valid numeric value", filterValueString);
+            throw new FilterException(message);
+        }
     }
 
     private static boolean evaluateConditionForOneNull(ComparisonOperator operator) {

@@ -349,6 +349,28 @@ class FilterTest {
                 .hasMessage("Method [getNonExistingField] does not exist in class [java.lang.Object]");
     }
 
+    @Test
+    void filterWithInvalidStringifiedBoolean() {
+        SimpleCondition condition = equal("stillPlaying", "anything");
+
+        List<MusicArtist> musicArtists = Arrays.asList(beatles(), rollingStones());
+
+        assertThatThrownBy(() -> sut.evaluate(condition, musicArtists))
+                .isInstanceOf(FilterException.class)
+                .hasMessage("[anything] is not a valid boolean value");
+    }
+
+    @Test
+    void filterWithInvalidNumber() {
+        SimpleCondition condition = equal("numberOfComponents", "anything");
+
+        List<MusicArtist> musicArtists = Arrays.asList(beatles(), rollingStones());
+
+        assertThatThrownBy(() -> sut.evaluate(condition, musicArtists))
+                .isInstanceOf(FilterException.class)
+                .hasMessage("[anything] is not a valid numeric value");
+    }
+
     @Nested
     class WithSnakeCaseFieldName {
         Filter sut;
