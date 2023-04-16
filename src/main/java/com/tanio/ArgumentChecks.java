@@ -1,8 +1,8 @@
 package com.tanio;
 
-public interface ArgumentChecks {
-    static <T> void checkNotNull(T t, String argumentName) {
-        if (t == null) {
+interface ArgumentChecks {
+    static <T> void checkNotNull(T argument, String argumentName) {
+        if (argument == null) {
             String message = "%s must not be null";
             throw new IllegalArgumentException(String.format(message, argumentName));
         }

@@ -12,7 +12,7 @@ import static com.tanio.Filter.FieldNameCase.CAMEL_CASE;
 
 public class Filter {
     private final FieldValueRetriever retriever;
-    private final FieldConditionEvaluator evaluator = new FieldConditionEvaluator();
+    private final ComparisonEvaluator evaluator = new ComparisonEvaluator();
     private final SetCombiner setCombiner = new SetCombiner();
 
     public Filter() {
@@ -66,7 +66,7 @@ public class Filter {
 
     private <T> boolean fulfillsSimpleCondition(T object, SimpleCondition condition) {
         Object fieldValue = retriever.retrieveFieldValue(condition.getFieldName(), object);
-        return evaluator.evaluateCondition(condition.getOperator(), fieldValue, condition.getValue());
+        return evaluator.compare(condition.getOperator(), fieldValue, condition.getValue());
     }
 
     public enum FieldNameCase {
