@@ -7,13 +7,22 @@ class GetterMethodNameBuilderFromSnakeCase implements GetterMethodNameBuilder {
         checkNotNull(fieldName, "target");
 
         while (fieldName.contains("_")) {
-            fieldName = fieldName.replaceFirst(
-                    "_[a-z]",
-                    String.valueOf(
-                            Character.toUpperCase(
-                                    fieldName.charAt(
-                                            fieldName.indexOf("_") + 1))));
+            fieldName = replaceFirstUnderscore(fieldName);
         }
         return "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+    }
+
+    private static String replaceFirstUnderscore(String text) {
+        return text.replaceFirst(
+                "_[a-z]",
+                capitalize(firstCharacterAfterUnderscore(text)));
+    }
+
+    private static char firstCharacterAfterUnderscore(String text) {
+        return text.charAt(text.indexOf("_") + 1);
+    }
+
+    private static String capitalize(char character) {
+        return String.valueOf(Character.toUpperCase(character));
     }
 }

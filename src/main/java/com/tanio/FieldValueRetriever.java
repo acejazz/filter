@@ -6,7 +6,6 @@ import static com.tanio.ArgumentChecks.checkNotNull;
 import static com.tanio.FieldValueRetriever.BooleanFieldNameHandling.IS;
 
 class FieldValueRetriever {
-
     private final GetterMethodNameBuilder getterMethodNameBuilder;
     private final BooleanFieldNameHandling booleanFieldNameHandling;
     private final String nestingSeparator;
